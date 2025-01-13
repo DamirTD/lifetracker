@@ -34,15 +34,14 @@ abstract class Controller
 
         } catch (\Exception $e) {
             $statusCode = $e->getCode();
-
             if (!is_numeric($statusCode) || $statusCode < 100 || $statusCode > 599) {
                 $statusCode = HttpStatusCodes::INTERNAL_SERVER_ERROR;
             }
-
             return $this->jsonResponse([
                 'success' => false,
                 'error'   => $e->getMessage(),
             ], (int)$statusCode);
         }
     }
+
 }
