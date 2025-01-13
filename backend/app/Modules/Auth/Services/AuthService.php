@@ -27,6 +27,8 @@ class AuthService implements AuthServiceInterface
 
         $this->userRepository->save($user);
 
+        $user->createToken('auth_token')->plainTextToken;
+
         return $user;
     }
 
