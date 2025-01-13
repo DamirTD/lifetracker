@@ -34,14 +34,10 @@ class AuthService implements AuthServiceInterface
     {
         $user = $this->userQuery->findByLogin($login);
 
-
-        // Удаляем старые токены
         $user->tokens()->delete();
 
-        // Создаем новый токен
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Возвращаем массив с данными пользователя и токеном
         return [
             'user'  => $user,
             'token' => $token,
