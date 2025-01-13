@@ -21,17 +21,21 @@ abstract class Controller
             $this->validatedData = $request->validated();
         } else {
             $this->validatedData = $request->all();
-        };
+        }
 
         try {
-            $callback($this->validatedData);
+            // Выполняем логику без рекурсии
+            $result = $callback($this->validatedData);
 
+            // Возвращаем успешный ответ
             return $this->jsonResponse([
                 'success' => true,
                 'error'   => null,
+                'data'    => $result,
             ]);
 
         } catch (\Exception $e) {
+            // Обработка исключений
             $statusCode = $e->getCode();
 
             if (!is_numeric($statusCode) || $statusCode < 100 || $statusCode > 599) {
