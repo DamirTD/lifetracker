@@ -17,7 +17,7 @@ class AuthService implements AuthServiceInterface
     ) {
     }
 
-    public function register(array $data): User
+    public function register(array $data): array
     {
         $user = new User([
             'name'     => $data['name'],
@@ -27,9 +27,12 @@ class AuthService implements AuthServiceInterface
 
         $this->userRepository->save($user);
 
-        $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $user;
+        return [
+            'user'  => $user,
+            'token' => $token,
+        ];
     }
 
     public function login(string $login, string $password): array

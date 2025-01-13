@@ -26,7 +26,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         return $this->wrap($request, function ($validatedData) {
-            return $this->authService->login(
+            $this->authService->login(
                 $validatedData['login'], $validatedData['password']
             );
         });
@@ -35,9 +35,7 @@ class AuthController extends Controller
     public function logout(): JsonResponse
     {
         return $this->wrap(request(), function () {
-
             $this->authService->logout();
-
             return response()->json(['message' => 'Successfully logged out.']);
         });
     }
