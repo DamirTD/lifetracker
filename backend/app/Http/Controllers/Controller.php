@@ -24,10 +24,8 @@ abstract class Controller
         }
 
         try {
-            // Выполняем логику без рекурсии
             $result = $callback($this->validatedData);
 
-            // Возвращаем успешный ответ
             return $this->jsonResponse([
                 'success' => true,
                 'error'   => null,
@@ -35,7 +33,6 @@ abstract class Controller
             ]);
 
         } catch (\Exception $e) {
-            // Обработка исключений
             $statusCode = $e->getCode();
 
             if (!is_numeric($statusCode) || $statusCode < 100 || $statusCode > 599) {
