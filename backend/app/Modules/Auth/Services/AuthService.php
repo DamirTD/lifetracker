@@ -40,16 +40,11 @@ class AuthService implements AuthServiceInterface
     {
         $user = $this->userQuery->findByLogin($login);
 
-        if (!$user || !Hash::check($password, $user->password)) {
-            throw new \Exception('Неверные учетные данные.');
-        }
-
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'message' => 'Вход выполнен успешно.',
             'user'    => $user,
             'token'   => $token,
         ];
