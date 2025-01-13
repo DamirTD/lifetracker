@@ -21,14 +21,15 @@ abstract class Controller
             $this->validatedData = $request->validated();
         } else {
             $this->validatedData = $request->all();
-        };
+        }
 
         try {
-            $callback($this->validatedData);
+            $result = $callback($this->validatedData);
 
             return $this->jsonResponse([
                 'success' => true,
                 'error'   => null,
+                'data'    => $result,
             ]);
 
         } catch (\Exception $e) {
@@ -44,4 +45,5 @@ abstract class Controller
             ], (int)$statusCode);
         }
     }
+
 }
