@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Auth\QueryInterface\UserQueryInterface;
 use App\Modules\Auth\Repository\UserRepository;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -27,12 +28,21 @@ class AuthService implements AuthServiceInterface
 
         $this->userRepository->save($user);
 
+        $user->createToken('auth_token')->plainTextToken;
+
         return $user;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function login(string $login, string $password): array
     {
         $user = $this->userQuery->findByLogin($login);
+
+        if (!$user || !Hash::check($password, $user->password)) {
+            throw new \Exception('Неверные учетные данные.');
+        }
 
         $user->tokens()->delete();
 
@@ -43,16 +53,5 @@ class AuthService implements AuthServiceInterface
             'user'    => $user,
             'token'   => $token,
         ];
-    }
-
-    public function logout(): void
-    {
-        $user = Auth::user();
-
-        if ($user instanceof User) {
-            $user->tokens()->delete();
-        } else {
-            abort(404, 'No user found.');
-        }
     }
 }

@@ -7,6 +7,7 @@ use App\Modules\Auth\Requests\LoginRequest;
 use App\Modules\Auth\Requests\RegisterRequest;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -21,11 +22,8 @@ class AuthController extends Controller
 
             $user = $this->authService->register($validatedData);
 
-            $token = $user->createToken('auth_token')->plainTextToken;
-
             return response()->json([
-                'user'  => $user,
-                'token' => $token,
+                'user'  => $user
             ]);
         });
     }
@@ -41,11 +39,10 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        return $this->wrap(request(), function () {
+        $user = Auth::user();
 
-            $this->authService->logout();
+        return $user->update(['token' => null]);
 
-            return response()->json(['message' => 'Successfully logged out.']);
-        });
     }
+
 }
