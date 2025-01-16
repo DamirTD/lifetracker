@@ -39,7 +39,9 @@ class AuthService implements AuthServiceInterface
     {
         $user = $this->userQuery->findByLogin($login);
 
-        $user->tokens()->delete();
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -54,7 +56,7 @@ class AuthService implements AuthServiceInterface
         $user = Auth::user();
 
         if ($user instanceof User) {
-            $user->tokens()->delete();
+            $user->currentAccessToken()->delete();
         } else {
             abort(404, 'No user found.');
         }
