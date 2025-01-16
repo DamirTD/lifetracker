@@ -8,14 +8,26 @@ services:
         working_dir: /var/www/html
         volumes:
             - ../backend:/var/www/html
-        ports:
-            - "9000:9000"
         environment:
             - APP_ENV=local
             - APP_DEBUG=true
-            - APP_KEY=base64:base64:w5QNiO6wgZAERtV0U0EpKx6QGW3u87ACHU67hk1+sXg=
         depends_on:
             - db
+        networks:
+            - app-network
+
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ../backend:/var/www/html
+            - ./nginx/conf.d:/etc/nginx/conf.d
+        depends_on:
+            - app
+        networks:
+            - app-network
 
     db:
         image: mysql:8.0
@@ -25,9 +37,15 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: diplom
+            MYSQL_USER: root
             MYSQL_PASSWORD: root
         volumes:
             - db_data:/var/lib/mysql
+        networks:
+            - app-network
 
 volumes:
     db_data:
+
+networks:
+    app-network:
