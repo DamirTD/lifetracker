@@ -56,7 +56,7 @@ class AuthService implements AuthServiceInterface
         $user = Auth::user();
 
         if ($user instanceof User) {
-            $user->currentAccessToken()->delete();
+            $user->tokens()->delete();
         } else {
             abort(404, 'No user found.');
         }
