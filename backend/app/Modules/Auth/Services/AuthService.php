@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Auth\QueryInterface\UserQueryInterface;
 use App\Modules\Auth\Repository\UserRepository;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
+use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -58,7 +59,7 @@ class AuthService implements AuthServiceInterface
         if ($user instanceof User) {
             $user->tokens()->delete();
         } else {
-            abort(404, 'No user found.');
+            abort(HttpStatusCodes::NOT_FOUND, 'No user found.');
         }
     }
 }

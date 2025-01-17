@@ -50,7 +50,7 @@ class WaterService implements WaterServiceInterface
             'status' => HttpStatusCodes::OK,
             'data'   => [
                 'message' => 'Стакан добавлен!',
-                'data' => [
+                'data'    => [
                     'consumed_ml'   => $progress->consumed_ml,
                     'daily_goal_ml' => $progress->daily_goal_ml,
                     'remaining_ml'  => $progress->remaining_ml,
