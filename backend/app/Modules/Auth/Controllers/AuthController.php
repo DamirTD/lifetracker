@@ -19,15 +19,16 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         return $this->wrap($request, function ($validatedData) {
-            $this->authService->register($validatedData);
+            return $this->authService->register($validatedData);
         });
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         return $this->wrap($request, function ($validatedData) {
-            $this->authService->login(
-                $validatedData['login'], $validatedData['password']
+            return $this->authService->login(
+                $validatedData['login'],
+                $validatedData['password']
             );
         });
     }
@@ -36,7 +37,7 @@ class AuthController extends Controller
     {
         return $this->wrap(request(), function () {
             $this->authService->logout();
-            return response()->json(['message' => 'Successfully logged out.']);
+            return ['message' => 'Successfully logged out.'];
         });
     }
 }
