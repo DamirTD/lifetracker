@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 
 class WaterController extends Controller
 {
-
     public function __construct(
         protected WaterServiceInterface $waterService
     ){
@@ -97,7 +96,6 @@ class WaterController extends Controller
 
         return response()->json($result['data'], $result['status']);
     }
-
 
     /**
      * @OA\Get(
