@@ -6,6 +6,12 @@ use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @OA\Info(
+ *     title="Swagger API",
+ *     version="1.0.0"
+ * )
+ */
 abstract class Controller
 {
     protected array $validatedData;

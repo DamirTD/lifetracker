@@ -4,6 +4,16 @@ namespace App\Modules\Auth\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="RegisterRequest",
+ *     type="object",
+ *     required={"name", "login", "password"},
+ *     @OA\Property(property="name", type="string", example="Damir"),
+ *     @OA\Property(property="login", type="string", example="damir"),
+ *     @OA\Property(property="password", type="string", example="password123")
+ * )
+ */
 class RegisterRequest extends FormRequest
 {
 
