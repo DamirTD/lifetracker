@@ -4,6 +4,17 @@ namespace App\Modules\Health\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="SetDailyGoalRequest",
+ *     type="object",
+ *     required={"weight", "height", "goal", "glass_volume_ml"},
+ *     @OA\Property(property="weight", type="number", format="float", description="Вес пользователя в кг", example=70),
+ *     @OA\Property(property="height", type="number", format="float", description="Рост пользователя в см", example=170),
+ *     @OA\Property(property="goal", type="string", enum={"maintain", "lose_weight"}, description="Цель пользователя", example="maintain"),
+ *     @OA\Property(property="glass_volume_ml", type="integer", description="Объем одного стакана в мл", example=200)
+ * )
+ */
 class SetDailyGoalRequest extends FormRequest
 {
     public function rules(): array
