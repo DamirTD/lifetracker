@@ -10,7 +10,9 @@ Route::post('/login',                                [AuthController::class, 'lo
 Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
 
 // WATER
-Route::post('/water/set-daily-goal',   [WaterController::class, 'setDailyGoal']);
-Route::post('/water/add-glass',        [WaterController::class, 'addGlass']);
-Route::get('/water/daily-stats',       [WaterController::class, 'getDailyStats']);
-Route::get('/water/overall-stats',     [WaterController::class, 'getOverallStats']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/water/set-daily-goal', [WaterController::class, 'setDailyGoal']);
+    Route::post('/water/add-glass', [WaterController::class, 'addGlass']);
+    Route::get('/water/daily-stats', [WaterController::class, 'getDailyStats']);
+    Route::get('/water/overall-stats', [WaterController::class, 'getOverallStats']);
+});

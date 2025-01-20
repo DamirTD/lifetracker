@@ -111,6 +111,236 @@
                     }
                 }
             }
+        },
+        "/api/water/set-daily-goal": {
+            "post": {
+                "tags": [
+                    "Water"
+                ],
+                "summary": "Установить дневную норму воды",
+                "operationId": "bd4f5085a6128a28d63f6cd1659a2229",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SetDailyGoalRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Дневная норма рассчитана и установлена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Дневная норма рассчитана и установлена."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "daily_goal_ml": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                },
+                                                "glass_volume_ml": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "recommended_glasses": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Поле weight обязательно."
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/water/add-glass": {
+            "post": {
+                "tags": [
+                    "Water"
+                ],
+                "summary": "Добавить стакан воды",
+                "operationId": "b19a6dc2ebd28edd347a646ba19b70f1",
+                "responses": {
+                    "200": {
+                        "description": "Стакан добавлен успешно.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Стакан воды добавлен."
+                                        },
+                                        "remaining_ml": {
+                                            "type": "integer",
+                                            "example": 1800
+                                        },
+                                        "glasses_today": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный запрос.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User is not authenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/water/daily-stats": {
+            "get": {
+                "tags": [
+                    "Water"
+                ],
+                "summary": "Получить статистику за день",
+                "operationId": "86800669493e8215767ad34ecd55f73c",
+                "responses": {
+                    "200": {
+                        "description": "Статистика за день успешно получена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_consumed_ml": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "daily_goal_ml": {
+                                            "type": "integer",
+                                            "example": 2000
+                                        },
+                                        "remaining_ml": {
+                                            "type": "integer",
+                                            "example": 1600
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный запрос.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User is not authenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/water/overall-stats": {
+            "get": {
+                "tags": [
+                    "Water"
+                ],
+                "summary": "Получить общую статистику",
+                "operationId": "77cebca012641f4aece5ee18c05bb6cd",
+                "responses": {
+                    "200": {
+                        "description": "Общая статистика успешно получена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_consumed_ml": {
+                                            "type": "integer",
+                                            "example": 100000
+                                        },
+                                        "days_tracked": {
+                                            "type": "integer",
+                                            "example": 50
+                                        },
+                                        "average_daily_ml": {
+                                            "type": "integer",
+                                            "example": 2000
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный запрос.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User is not authenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -153,6 +383,43 @@
                     }
                 },
                 "type": "object"
+            },
+            "SetDailyGoalRequest": {
+                "required": [
+                    "weight",
+                    "height",
+                    "goal",
+                    "glass_volume_ml"
+                ],
+                "properties": {
+                    "weight": {
+                        "description": "Вес пользователя в кг",
+                        "type": "number",
+                        "format": "float",
+                        "example": 70
+                    },
+                    "height": {
+                        "description": "Рост пользователя в см",
+                        "type": "number",
+                        "format": "float",
+                        "example": 170
+                    },
+                    "goal": {
+                        "description": "Цель пользователя",
+                        "type": "string",
+                        "enum": [
+                            "maintain",
+                            "lose_weight"
+                        ],
+                        "example": "maintain"
+                    },
+                    "glass_volume_ml": {
+                        "description": "Объем одного стакана в мл",
+                        "type": "integer",
+                        "example": 200
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -160,6 +427,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Water",
+            "description": "Water"
         }
     ]
 }
