@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Controllers\AuthController;
+use App\Modules\Finance\Controllers\KaspiBankController;
 use App\Modules\Health\Controllers\WaterController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +17,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/water/daily-stats',     [WaterController::class, 'getDailyStats']);
     Route::get('/water/overall-stats',   [WaterController::class, 'getOverallStats']);
 });
+
+// FINANCE
+Route::post('/import-pdf', [KaspiBankController::class, 'importPdf']);
+Route::post('/analyze',    [KaspiBankController::class, 'analyze']);
