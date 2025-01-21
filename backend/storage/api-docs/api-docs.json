@@ -112,6 +112,243 @@
                 }
             }
         },
+        "/api/import-pdf": {
+            "post": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Импорт PDF с транзакциями",
+                "description": "Загружает PDF-файл с транзакциями, сортирует данные и возвращает их вместе с итоговым резюме.",
+                "operationId": "950d1a83afc1fb2aed46c770d3e29740",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "PDF-файл с транзакциями.",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sortBy": {
+                                        "description": "Поле для сортировки транзакций.",
+                                        "type": "string",
+                                        "enum": [
+                                            "date",
+                                            "amount",
+                                            "operation"
+                                        ]
+                                    },
+                                    "sortOrder": {
+                                        "description": "Порядок сортировки (по умолчанию - по убыванию).",
+                                        "type": "string",
+                                        "default": "desc",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный импорт.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "summary": {
+                                            "properties": {
+                                                "total_spent": {
+                                                    "type": "string",
+                                                    "example": "1234.56"
+                                                },
+                                                "total_received": {
+                                                    "type": "string",
+                                                    "example": "789.01"
+                                                },
+                                                "period": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01 - 2024-12-31"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "transactions": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "2024-01-01"
+                                                    },
+                                                    "amount": {
+                                                        "type": "string",
+                                                        "example": "500.00"
+                                                    },
+                                                    "operation": {
+                                                        "type": "string",
+                                                        "example": "Перевод"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analyze": {
+            "post": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Анализ транзакций",
+                "description": "Выполняет анализ переданного массива транзакций.",
+                "operationId": "ce12384e62ec8f7f9746fe6bc8970ae5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "transactions"
+                                ],
+                                "properties": {
+                                    "transactions": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "date": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01"
+                                                },
+                                                "operation": {
+                                                    "type": "string",
+                                                    "example": "Перевод"
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 500
+                                                },
+                                                "details": {
+                                                    "type": "string",
+                                                    "example": "Описание операции"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный анализ транзакций.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "most_common_operation": {
+                                            "type": "string",
+                                            "example": "Перевод"
+                                        },
+                                        "highest_transaction": {
+                                            "properties": {
+                                                "date": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01"
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 1500
+                                                },
+                                                "operation": {
+                                                    "type": "string",
+                                                    "example": "Пополнение"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total_transactions": {
+                                            "type": "integer",
+                                            "example": 3
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/water/set-daily-goal": {
             "post": {
                 "tags": [
@@ -427,6 +664,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Finance",
+            "description": "Finance"
         },
         {
             "name": "Water",
