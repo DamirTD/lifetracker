@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Controllers\AuthController;
+use App\Modules\Finance\Controllers\FinanceController;
 use App\Modules\Finance\Controllers\KaspiBankController;
 use App\Modules\Health\Controllers\WaterController;
 use Illuminate\Support\Facades\Route;
@@ -21,3 +22,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // FINANCE
 Route::post('/import-pdf', [KaspiBankController::class, 'importPdf']);
 Route::post('/analyze',    [KaspiBankController::class, 'analyze']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/finance/calculate', [FinanceController::class, 'calculateFinance']);
+    Route::post('/finance/record',    [FinanceController::class, 'storeFinanceRecord']);
+    Route::get('/finance/records',    [FinanceController::class, 'getFinanceRecords']);
+});

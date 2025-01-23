@@ -112,6 +112,256 @@
                 }
             }
         },
+        "/api/finance/calculate": {
+            "post": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Рассчитать распределение финансов",
+                "description": "Рассчитывает распределение финансов по заданному правилу и зарплате.",
+                "operationId": "8e7114c10b18ee7ed15fad50ecb2726c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "salary",
+                                    "rule"
+                                ],
+                                "properties": {
+                                    "salary": {
+                                        "description": "Зарплата пользователя.",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "rule": {
+                                        "description": "Правило распределения финансов.",
+                                        "type": "string",
+                                        "enum": [
+                                            "50-30-20",
+                                            "70-20-10",
+                                            "80-10-10"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный расчет",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "essentials": {
+                                            "description": "Сумма для базовых расходов.",
+                                            "type": "number",
+                                            "format": "float"
+                                        },
+                                        "wants": {
+                                            "description": "Сумма для желаемых расходов.",
+                                            "type": "number",
+                                            "format": "float"
+                                        },
+                                        "savings": {
+                                            "description": "Сумма для сбережений.",
+                                            "type": "number",
+                                            "format": "float"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/finance/record": {
+            "post": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Сохранить запись о финансах",
+                "description": "Сохраняет новую запись о финансах.",
+                "operationId": "a503cc1fb4fc85e057784a64e6f7a040",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "type",
+                                    "period"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "description": "Сумма записи.",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "type": {
+                                        "description": "Тип записи (расход или сбережение).",
+                                        "type": "string",
+                                        "enum": [
+                                            "expense",
+                                            "saving"
+                                        ]
+                                    },
+                                    "period": {
+                                        "description": "Период записи.",
+                                        "type": "string",
+                                        "enum": [
+                                            "week",
+                                            "month",
+                                            "year"
+                                        ]
+                                    },
+                                    "description": {
+                                        "description": "Описание записи (опционально).",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Запись успешно сохранена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Запись успешно сохранена."
+                                        },
+                                        "record": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID записи.",
+                                                    "type": "integer"
+                                                },
+                                                "amount": {
+                                                    "description": "Сумма.",
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "type": {
+                                                    "description": "Тип записи.",
+                                                    "type": "string"
+                                                },
+                                                "period": {
+                                                    "description": "Период записи.",
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "description": "Описание записи.",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/finance/records": {
+            "get": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Получить записи о финансах",
+                "description": "Возвращает записи о финансах за указанный период.",
+                "operationId": "040255419f8dacff7f0a6d5fa357daea",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Период записей (week, month, year).",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "week",
+                                "month",
+                                "year"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список записей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "records": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "ID записи.",
+                                                        "type": "integer"
+                                                    },
+                                                    "amount": {
+                                                        "description": "Сумма.",
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "type": {
+                                                        "description": "Тип записи.",
+                                                        "type": "string"
+                                                    },
+                                                    "period": {
+                                                        "description": "Период записи.",
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "description": "Описание записи.",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/import-pdf": {
             "post": {
                 "tags": [
@@ -617,6 +867,82 @@
                     "password": {
                         "type": "string",
                         "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
+            "CalculateFinanceRequest": {
+                "required": [
+                    "salary",
+                    "rule"
+                ],
+                "properties": {
+                    "salary": {
+                        "description": "Зарплата пользователя.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rule": {
+                        "description": "Правило распределения финансов.",
+                        "type": "string",
+                        "enum": [
+                            "50-30-20",
+                            "70-20-10",
+                            "80-10-10"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "GetFinanceRecordsRequest": {
+                "required": [
+                    "period"
+                ],
+                "properties": {
+                    "period": {
+                        "description": "Период записей.",
+                        "type": "string",
+                        "enum": [
+                            "week",
+                            "month",
+                            "year"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "StoreFinanceRecordRequest": {
+                "required": [
+                    "amount",
+                    "type",
+                    "period"
+                ],
+                "properties": {
+                    "amount": {
+                        "description": "Сумма записи.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "type": {
+                        "description": "Тип записи (расход или сбережение).",
+                        "type": "string",
+                        "enum": [
+                            "expense",
+                            "saving"
+                        ]
+                    },
+                    "period": {
+                        "description": "Период записи.",
+                        "type": "string",
+                        "enum": [
+                            "week",
+                            "month",
+                            "year"
+                        ]
+                    },
+                    "description": {
+                        "description": "Описание записи (опционально).",
+                        "type": "string"
                     }
                 },
                 "type": "object"
