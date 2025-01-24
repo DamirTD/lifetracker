@@ -3,6 +3,7 @@
 use App\Modules\Auth\Controllers\AuthController;
 use App\Modules\Finance\Controllers\FinanceController;
 use App\Modules\Finance\Controllers\KaspiBankController;
+use App\Modules\Health\Controllers\SportController;
 use App\Modules\Health\Controllers\WaterController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register',                             [AuthController::class, 'register']);
 Route::post('/login',                                [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
+
+// SPORT
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/sport/types',    [SportController::class, 'getSportTypes']);
+    Route::post('/sport/select',  [SportController::class, 'selectSport']);
+    Route::post('/sport/analyze', [SportController::class, 'analyzeSport']);
+});
 
 // WATER
 Route::middleware(['auth:sanctum'])->group(function () {
