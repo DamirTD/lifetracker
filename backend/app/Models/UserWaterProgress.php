@@ -15,7 +15,6 @@ class UserWaterProgress extends Model
         'date',
     ];
 
-
     public $timestamps = false;
 
     protected $casts = [

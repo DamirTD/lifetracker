@@ -41,7 +41,22 @@ class WaterService implements WaterServiceInterface
             ->where('date', Carbon::today())
             ->first();
 
+        if (!$progress) {
+            return [
+                'status' => HttpStatusCodes::NOT_FOUND,
+                'data'   => [
+                    'message' => 'Прогресс не найден. Создайте запись для текущего дня.',
+                ],
+            ];
+        }
+
         $progress->increment('consumed_ml', $progress->glass_volume_ml);
+
+        if (!isset($progress->glasses_today)) {
+            $progress->glasses_today = 0;
+        }
+
+        $progress->increment('glasses_today');
 
         $remainingMl = max(0, $progress->daily_goal_ml - $progress->consumed_ml);
         $progress->update(['remaining_ml' => $remainingMl]);
@@ -51,9 +66,12 @@ class WaterService implements WaterServiceInterface
             'data'   => [
                 'message' => 'Стакан добавлен!',
                 'data'    => [
-                    'consumed_ml'   => $progress->consumed_ml,
-                    'daily_goal_ml' => $progress->daily_goal_ml,
-                    'remaining_ml'  => $progress->remaining_ml,
+                    'consumed_ml'       => $progress->consumed_ml,
+                    'daily_goal_ml'     => $progress->daily_goal_ml,
+                    'remaining_ml'      => $progress->remaining_ml,
+                    'glasses_today'     => $progress->glasses_today,
+                    'glasses_volume_ml' => $progress->glass_volume_ml,
+                    'last_added_at'     => Carbon::now()->toDateTimeString(),
                 ],
             ],
         ];
