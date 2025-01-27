@@ -7,6 +7,7 @@ use App\Modules\Health\DTO\WaterGoalDTO;
 use App\Modules\Health\Requests\SetDailyGoalRequest;
 use App\Modules\Health\ServiceInterfaces\WaterServiceInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 class WaterController extends Controller
 {
