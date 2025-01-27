@@ -3,6 +3,7 @@
 namespace App\Modules\Health\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(

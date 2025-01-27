@@ -3,6 +3,7 @@
 namespace App\Modules\Health\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
@@ -32,8 +33,7 @@ class AnalyzeSportRequest extends FormRequest
     {
         return [
             'sport' => ['required', 'string', 'in:Зал,Бег,Плавание,Велоспорт'],
-            'goal'  => ['required', 'string'],
-            'data'  => ['required', 'array']
+            'goal'  => ['required', 'string']
         ];
     }
 

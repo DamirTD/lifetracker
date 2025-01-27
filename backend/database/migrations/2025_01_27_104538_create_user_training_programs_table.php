@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('training_programs', function (Blueprint $table) {
+        Schema::create('user_training_programs', function (Blueprint $table) {
             $table->id();
-            $table->string('sport');
-            $table->string('goal');
-            $table->text('recommendation');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('sport_id')->constrained();
+            $table->enum('goal', ['weight_loss', 'muscle_gain', 'maintain']);
+            $table->string('name');
+            $table->text('recommendation')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_programs');
+        Schema::dropIfExists('user_training_programs');
     }
 };
