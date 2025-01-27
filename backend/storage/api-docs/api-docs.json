@@ -362,6 +362,135 @@
                 ]
             }
         },
+        "/api/finance/record/{id}": {
+            "put": {
+                "tags": [
+                    "Finance"
+                ],
+                "summary": "Обновить запись о финансах",
+                "description": "Обновляет запись о финансах по указанному ID, добавляя к текущей сумме.",
+                "operationId": "229f6da5811442f47330fd63a56d4c95",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID записи для обновления.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "type",
+                                    "period"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "description": "Сумма записи, которая будет добавлена к текущей сумме.",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "type": {
+                                        "description": "Тип записи (расход или сбережение).",
+                                        "type": "string",
+                                        "enum": [
+                                            "expense",
+                                            "saving"
+                                        ]
+                                    },
+                                    "period": {
+                                        "description": "Период записи.",
+                                        "type": "string",
+                                        "enum": [
+                                            "week",
+                                            "month",
+                                            "year"
+                                        ]
+                                    },
+                                    "description": {
+                                        "description": "Описание записи (опционально).",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Запись успешно обновлена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Запись успешно обновлена."
+                                        },
+                                        "record": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID записи.",
+                                                    "type": "integer"
+                                                },
+                                                "amount": {
+                                                    "description": "Сумма после обновления.",
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "type": {
+                                                    "description": "Тип записи.",
+                                                    "type": "string"
+                                                },
+                                                "period": {
+                                                    "description": "Период записи.",
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "description": "Описание записи.",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Запись не найдена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Запись не найдена."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/import-pdf": {
             "post": {
                 "tags": [

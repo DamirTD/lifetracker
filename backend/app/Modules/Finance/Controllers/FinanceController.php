@@ -8,6 +8,7 @@ use App\Modules\Finance\Requests\CalculateFinanceRequest;
 use App\Modules\Finance\Requests\GetFinanceRecordsRequest;
 use App\Modules\Finance\Requests\StoreFinanceRecordRequest;
 use App\Modules\Finance\ServiceInterfaces\FinanceAdviceServiceInterface;
+use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Http\JsonResponse;
 
 class FinanceController extends Controller
@@ -173,5 +174,99 @@ class FinanceController extends Controller
             $request->validated('period'));
 
         return response()->json(['records' => $records]);
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/finance/record/{id}",
+     *     summary="Обновить запись о финансах",
+     *     description="Обновляет запись о финансах по указанному ID, добавляя к текущей сумме.",
+     *     tags={"Finance"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID записи для обновления.",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"amount", "type", "period"},
+     *             @OA\Property(
+     *                 property="amount",
+     *                 type="number",
+     *                 format="float",
+     *                 description="Сумма записи, которая будет добавлена к текущей сумме."
+     *             ),
+     *             @OA\Property(
+     *                 property="type",
+     *                 type="string",
+     *                 enum={"expense", "saving"},
+     *                 description="Тип записи (расход или сбережение)."
+     *             ),
+     *             @OA\Property(
+     *                 property="period",
+     *                 type="string",
+     *                 enum={"week", "month", "year"},
+     *                 description="Период записи."
+     *             ),
+     *             @OA\Property(
+     *                 property="description",
+     *                 type="string",
+     *                 description="Описание записи (опционально)."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Запись успешно обновлена.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Запись успешно обновлена."),
+     *             @OA\Property(
+     *                 property="record",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", description="ID записи."),
+     *                 @OA\Property(property="amount", type="number", format="float", description="Сумма после обновления."),
+     *                 @OA\Property(property="type", type="string", description="Тип записи."),
+     *                 @OA\Property(property="period", type="string", description="Период записи."),
+     *                 @OA\Property(property="description", type="string", description="Описание записи.")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Запись не найдена.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Запись не найдена.")
+     *         )
+     *     )
+     * )
+     */
+    public function updateFinanceRecord($id, StoreFinanceRecordRequest $request): JsonResponse
+    {
+        // Получаем запись по пользователю и периоду
+        $record = $this->recordQuery->getByUserAndPeriod(auth()->id(), $request->validated('period'))->find($id);
+
+        // Если запись не найдена, возвращаем ошибку
+        if (!$record) {
+            return response()->json(['message' => 'Запись не найдена.'], HttpStatusCodes::NOT_FOUND);
+        }
+
+        // Прибавляем новую сумму к текущей
+        $newAmount = $record->amount + $request->validated('amount');
+        $record->amount = $newAmount;
+
+        // Обновляем только поле amount, оставляя остальные без изменений
+        $record->save();
+
+        return response()->json([
+            'message' => 'Запись успешно обновлена.',
+            'record'  => $record,
+        ]);
     }
 }
