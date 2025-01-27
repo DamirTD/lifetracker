@@ -111,4 +111,59 @@ class WaterService implements WaterServiceInterface
             ],
         ];
     }
+
+    public function getDailyConsumption(int $userId): array
+    {
+        $progress = UserWaterProgress::where('user_id', $userId)
+            ->where('date', Carbon::today())
+            ->first();
+
+        return [
+            'status' => HttpStatusCodes::OK,
+            'data'   => [
+                'date'         => Carbon::today()->toDateString(),
+                'consumed_ml'  => $progress->consumed_ml ?? 0,
+            ],
+        ];
+    }
+
+    public function getWeeklyConsumption(int $userId): array
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $progressStats = UserWaterProgress::where('user_id', $userId)
+            ->whereBetween('date', [$startOfWeek, $endOfWeek])
+            ->get();
+
+        $totalConsumedMl = $progressStats->sum('consumed_ml');
+
+        return [
+            'status' => HttpStatusCodes::OK,
+            'data'   => [
+                'date'            => Carbon::now()->format('Y-m-d'),
+                'consumed_ml'     => $totalConsumedMl,
+            ],
+        ];
+    }
+
+    public function getMonthlyConsumption(int $userId): array
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $progressStats = UserWaterProgress::where('user_id', $userId)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->get();
+
+        $totalConsumedMl = $progressStats->sum('consumed_ml');
+
+        return [
+            'status' => HttpStatusCodes::OK,
+            'data'   => [
+                'date'            => Carbon::now()->format('Y-m-d'),
+                'consumed_ml'     => $totalConsumedMl,
+            ],
+        ];
+    }
 }
