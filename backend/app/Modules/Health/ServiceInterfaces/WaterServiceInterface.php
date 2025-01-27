@@ -9,4 +9,7 @@ interface WaterServiceInterface{
     public function addGlass(int $userId): array;
     public function getDailyStats(int $userId): array;
     public function getOverallStats(int $userId): array;
+    public function getWeeklyConsumption(int $userId): array;
+    public function getDailyConsumption(int $userId): array;
+    public function getMonthlyConsumption(int $userId): array;
 }

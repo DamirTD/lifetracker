@@ -16,6 +16,93 @@ class WaterController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/water/daily-consumption",
+     *     summary="Получить ежедневное потребление воды",
+     *     tags={"Water"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Данные о потреблении воды за день.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="date", type="string", example="2025-01-27"),
+     *             @OA\Property(property="consumed_ml", type="integer", example=1200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Неавторизованный запрос.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User is not authenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function getDailyConsumption(): JsonResponse
+    {
+        $result = $this->waterService->getDailyConsumption(auth()->id());
+
+        return response()->json($result['data'], $result['status']);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/water/weekly-consumption",
+     *     summary="Получить потребление воды за неделю",
+     *     tags={"Water"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Данные о потреблении воды за неделю.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="date", type="string", example="2025-01-27"),
+     *             @OA\Property(property="consumed_ml", type="integer", example=8400)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Неавторизованный запрос.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User is not authenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function getWeeklyConsumption(): JsonResponse
+    {
+        $result = $this->waterService->getWeeklyConsumption(auth()->id());
+
+        return response()->json($result['data'], $result['status']);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/water/monthly-consumption",
+     *     summary="Получить потребление воды за месяц",
+     *     tags={"Water"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Данные о потреблении воды за месяц.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="date", type="string", example="2025-01-27"),
+     *             @OA\Property(property="consumed_ml", type="integer", example=35000)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Неавторизованный запрос.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User is not authenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function getMonthlyConsumption(): JsonResponse
+    {
+        $result = $this->waterService->getMonthlyConsumption(auth()->id());
+
+        return response()->json($result['data'], $result['status']);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/water/set-daily-goal",
      *     summary="Установить дневную норму воды",
