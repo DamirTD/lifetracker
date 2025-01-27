@@ -16,4 +16,6 @@ class FinanceRecord extends Model
         'period',
         'description',
     ];
+
+    public $timestamps = true;
 }
