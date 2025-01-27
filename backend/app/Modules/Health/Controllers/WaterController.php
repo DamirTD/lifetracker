@@ -76,7 +76,11 @@ class WaterController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Стакан воды добавлен."),
      *             @OA\Property(property="remaining_ml", type="integer", example=1800),
-     *             @OA\Property(property="glasses_today", type="integer", example=1)
+     *             @OA\Property(property="consumed_ml", type="integer", example=1000),
+     *             @OA\Property(property="daily_goal_ml", type="integer", example=2000),
+     *             @OA\Property(property="glasses_today", type="integer", example=1),
+     *             @OA\Property(property="glasses_volume_ml", type="integer", example=200),
+     *             @OA\Property(property="last_added_at", type="string", format="date-time", example="2025-01-27T12:34:56")
      *         )
      *     ),
      *     @OA\Response(
