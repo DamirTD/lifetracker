@@ -728,6 +728,462 @@
                 }
             }
         },
+        "/api/sleep/record": {
+            "post": {
+                "tags": [
+                    "Sleep"
+                ],
+                "summary": "Запись данных о сне",
+                "operationId": "b4fc704235ef89602b6c2c09f063c0a4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "bedtime": {
+                                        "description": "Время отхода ко сну",
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "23:30"
+                                    },
+                                    "wake_up_time": {
+                                        "description": "Время пробуждения",
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "07:00"
+                                    },
+                                    "interruptions": {
+                                        "description": "Прерывания сна",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "time": {
+                                                    "description": "Время прерывания",
+                                                    "type": "string",
+                                                    "format": "time",
+                                                    "example": "02:15"
+                                                },
+                                                "reason": {
+                                                    "description": "Причина прерывания",
+                                                    "type": "string",
+                                                    "example": "Шум"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные о сне успешно записаны",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Данные о сне успешно записаны."
+                                        },
+                                        "sleep_data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "bedtime": {
+                                                    "type": "string",
+                                                    "example": "23:30"
+                                                },
+                                                "wake_up_time": {
+                                                    "type": "string",
+                                                    "example": "07:00"
+                                                },
+                                                "interruptions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "time": {
+                                                                "type": "string",
+                                                                "example": "02:15"
+                                                            },
+                                                            "reason": {
+                                                                "type": "string",
+                                                                "example": "Шум"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "duration": {
+                                                    "description": "Продолжительность сна в минутах",
+                                                    "type": "integer",
+                                                    "example": 450
+                                                },
+                                                "quality": {
+                                                    "description": "Качество сна",
+                                                    "type": "string",
+                                                    "example": "Хороший сон"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sleep/recommendations": {
+            "get": {
+                "tags": [
+                    "Sleep"
+                ],
+                "summary": "Получение рекомендаций по улучшению сна",
+                "operationId": "27e93a1b8c2c8ea868d3e2eb86f59e33",
+                "responses": {
+                    "200": {
+                        "description": "Рекомендации успешно получены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "recommendations": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Соблюдайте режим сна: ложитесь и просыпайтесь в одно и то же время каждый день."
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sports": {
+            "get": {
+                "tags": [
+                    "Sport"
+                ],
+                "summary": "Получить список видов спорта",
+                "operationId": "69dda78a02466a57c89b7517f0c6ad55",
+                "responses": {
+                    "200": {
+                        "description": "Список всех видов спорта",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "sports": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Футбол"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sports/select": {
+            "post": {
+                "tags": [
+                    "Sport"
+                ],
+                "summary": "Выбрать вид спорта и цель",
+                "operationId": "a064abae83ed1fe0bdacddc4c09cdc83",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sport_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "goal": {
+                                        "type": "string",
+                                        "example": "Похудение"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Спорт и цель успешно выбраны",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Спорт и цель успешно выбраны."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "sport_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "goal": {
+                                                    "type": "string",
+                                                    "example": "Похудение"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sports/analyze": {
+            "post": {
+                "tags": [
+                    "Sport"
+                ],
+                "summary": "Анализ выбранного спорта и цели",
+                "operationId": "ac1ae0165015eb039c3006797b4d14df",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sport": {
+                                        "type": "string",
+                                        "example": "Футбол"
+                                    },
+                                    "goal": {
+                                        "type": "string",
+                                        "example": "Похудение"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Анализ завершен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Анализ завершен."
+                                        },
+                                        "advice": {
+                                            "type": "string",
+                                            "example": "Рекомендуется 3 тренировки в неделю."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Программа для выбранного спорта и цели не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Программа для выбранного спорта и цели не найдена."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/training-programs": {
+            "post": {
+                "tags": [
+                    "Training Program"
+                ],
+                "summary": "Добавить пользовательскую тренировочную программу",
+                "operationId": "cbe3466b07ea79e7c74189208cbb9ca8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sport_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "goal": {
+                                        "type": "string",
+                                        "example": "Похудение"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Моя программа тренировок"
+                                    },
+                                    "recommendation": {
+                                        "type": "string",
+                                        "example": "Уделять внимание кардио.",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Программа успешно добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировочная программа успешно добавлена."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "sport_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "goal": {
+                                                    "type": "string",
+                                                    "example": "Похудение"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Моя программа тренировок"
+                                                },
+                                                "recommendation": {
+                                                    "type": "string",
+                                                    "example": "Уделять внимание кардио."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/training-programs/complete": {
+            "post": {
+                "tags": [
+                    "Training Program"
+                ],
+                "summary": "Завершить тренировку и записать в историю",
+                "operationId": "5dc9896088c7077150e9637174a459c2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "training_program_id": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "duration": {
+                                        "type": "integer",
+                                        "example": 60
+                                    },
+                                    "calories_burned": {
+                                        "type": "integer",
+                                        "example": 300
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тренировка завершена, история добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка завершена, история добавлена."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/water/daily-consumption": {
             "get": {
                 "tags": [
@@ -1262,6 +1718,73 @@
                 },
                 "type": "object"
             },
+            "CompleteTrainingRequest": {
+                "required": [
+                    "training_program_id",
+                    "duration",
+                    "calories_burned"
+                ],
+                "properties": {
+                    "training_program_id": {
+                        "description": "ID тренировочной программы",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "duration": {
+                        "description": "Длительность тренировки в минутах",
+                        "type": "integer",
+                        "example": 60
+                    },
+                    "calories_burned": {
+                        "description": "Количество потраченных калорий",
+                        "type": "integer",
+                        "example": 300
+                    }
+                },
+                "type": "object"
+            },
+            "RecordSleepRequest": {
+                "required": [
+                    "bedtime",
+                    "wake_up_time"
+                ],
+                "properties": {
+                    "bedtime": {
+                        "description": "Время отхода ко сну (в формате ЧЧ:ММ)",
+                        "type": "string",
+                        "format": "time",
+                        "example": "23:30"
+                    },
+                    "wake_up_time": {
+                        "description": "Время пробуждения (в формате ЧЧ:ММ)",
+                        "type": "string",
+                        "format": "time",
+                        "example": "07:00"
+                    },
+                    "interruptions": {
+                        "description": "Список прерываний сна",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "time": {
+                                    "description": "Время прерывания",
+                                    "type": "string",
+                                    "format": "time",
+                                    "example": "02:15"
+                                },
+                                "reason": {
+                                    "description": "Причина прерывания",
+                                    "type": "string",
+                                    "example": "Шум"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "SelectSportRequest": {
                 "required": [
                     "sport_id",
@@ -1317,6 +1840,36 @@
                     }
                 },
                 "type": "object"
+            },
+            "UserTrainingRequest": {
+                "required": [
+                    "sport_id",
+                    "goal",
+                    "name"
+                ],
+                "properties": {
+                    "sport_id": {
+                        "description": "ID спорта",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "goal": {
+                        "description": "Цель программы",
+                        "type": "string",
+                        "example": "Сбросить вес"
+                    },
+                    "name": {
+                        "description": "Название программы",
+                        "type": "string",
+                        "example": "Утренняя зарядка"
+                    },
+                    "recommendation": {
+                        "description": "Рекомендации (необязательное поле)",
+                        "type": "string",
+                        "example": "Добавить больше кардио"
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -1328,6 +1881,18 @@
         {
             "name": "Finance",
             "description": "Finance"
+        },
+        {
+            "name": "Sleep",
+            "description": "Sleep"
+        },
+        {
+            "name": "Sport",
+            "description": "Sport"
+        },
+        {
+            "name": "Training Program",
+            "description": "Training Program"
         },
         {
             "name": "Water",
