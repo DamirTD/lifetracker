@@ -4,7 +4,6 @@ namespace App\Modules\Task\Services;
 
 use App\Models\Task;
 use App\Modules\Task\QueryInterfaces\TaskQueryInterface;
-use App\Modules\Task\Repository\TaskRepository;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
