@@ -728,6 +728,194 @@
                 }
             }
         },
+        "/api/diet/food": {
+            "post": {
+                "tags": [
+                    "Diet"
+                ],
+                "summary": "Добавить продукт в рацион",
+                "operationId": "149bc6dccb1772c130f80b7cc42e1adf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "food_id",
+                                    "quantity",
+                                    "date"
+                                ],
+                                "properties": {
+                                    "food_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "number",
+                                        "example": 200
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-29"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Продукт добавлен в рацион",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "calories": {
+                                            "type": "integer",
+                                            "example": 300
+                                        },
+                                        "protein": {
+                                            "type": "integer",
+                                            "example": 20
+                                        },
+                                        "fat": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "carbohydrates": {
+                                            "type": "integer",
+                                            "example": 50
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Невалидные данные"
+                    }
+                }
+            }
+        },
+        "/api/diet/daily/{date}": {
+            "get": {
+                "tags": [
+                    "Diet"
+                ],
+                "summary": "Получить рацион на день",
+                "operationId": "a45b45b175f15eaa55479d5c749c3e5a",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-01-29"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Рацион на день",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "date": {
+                                            "type": "string",
+                                            "example": "2025-01-29"
+                                        },
+                                        "total": {
+                                            "properties": {
+                                                "calories": {
+                                                    "type": "integer",
+                                                    "example": 1200
+                                                },
+                                                "protein": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "fat": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "carbohydrates": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "entries": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DietEntry"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Данные не найдены"
+                    }
+                }
+            }
+        },
+        "/api/diet/weekly": {
+            "get": {
+                "tags": [
+                    "Diet"
+                ],
+                "summary": "Получить рацион за неделю",
+                "operationId": "6c57cd1426deeb74325c5b1eae94d3e3",
+                "responses": {
+                    "200": {
+                        "description": "Рацион за неделю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-01-22"
+                                        },
+                                        "calories": {
+                                            "type": "integer",
+                                            "example": 1800
+                                        },
+                                        "protein": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "fat": {
+                                            "type": "integer",
+                                            "example": 60
+                                        },
+                                        "carbohydrates": {
+                                            "type": "integer",
+                                            "example": 250
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Данные не найдены"
+                    }
+                }
+            }
+        },
         "/api/sleep/record": {
             "post": {
                 "tags": [
@@ -1865,6 +2053,72 @@
                 },
                 "type": "object"
             },
+            "DietEntry": {
+                "required": [
+                    "food_id",
+                    "quantity",
+                    "date",
+                    "calories",
+                    "protein",
+                    "fat",
+                    "carbohydrates"
+                ],
+                "properties": {
+                    "food_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-29"
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 300
+                    },
+                    "protein": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "fat": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "carbohydrates": {
+                        "type": "integer",
+                        "example": 50
+                    }
+                },
+                "type": "object"
+            },
+            "AddFoodRequest": {
+                "required": [
+                    "food_id",
+                    "quantity",
+                    "date"
+                ],
+                "properties": {
+                    "food_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-29"
+                    }
+                },
+                "type": "object"
+            },
             "AnalyzeSportRequest": {
                 "required": [
                     "sport",
@@ -1914,6 +2168,16 @@
                         "description": "Количество потраченных калорий",
                         "type": "integer",
                         "example": 300
+                    }
+                },
+                "type": "object"
+            },
+            "GetDietRequest": {
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-01-29"
                     }
                 },
                 "type": "object"
@@ -2137,6 +2401,10 @@
         {
             "name": "Finance",
             "description": "Finance"
+        },
+        {
+            "name": "Diet",
+            "description": "Diet"
         },
         {
             "name": "Sleep",

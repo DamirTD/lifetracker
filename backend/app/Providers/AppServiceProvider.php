@@ -16,7 +16,9 @@ use App\Modules\Finance\ServiceInterfaces\KaspiPDFServiceInterface;
 use App\Modules\Finance\Services\FinanceAdviceService;
 use App\Modules\Finance\Services\KaspiPDFAnalyzerService;
 use App\Modules\Finance\Services\KaspiPDFService;
+use App\Modules\Health\Repository\DietRepository;
 use App\Modules\Health\Repository\SleepRepository;
+use App\Modules\Health\RepositoryInterfaces\DietRepositoryInterface;
 use App\Modules\Health\RepositoryInterfaces\SleepRepositoryInterface;
 use App\Modules\Health\ServiceInterfaces\SleepServiceInterface;
 use App\Modules\Health\ServiceInterfaces\WaterServiceInterface;
@@ -48,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(SleepRepositoryInterface::class, SleepRepository::class);
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+        $this->app->bind(DietRepositoryInterface::class, DietRepository::class);
 
         // Query
         $this->app->bind(UserQueryInterface::class, UserQuery::class);
