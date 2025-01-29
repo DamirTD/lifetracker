@@ -6,6 +6,7 @@ use App\Modules\Finance\Controllers\KaspiBankController;
 use App\Modules\Health\Controllers\SleepController;
 use App\Modules\Health\Controllers\SportController;
 use App\Modules\Health\Controllers\WaterController;
+use App\Modules\Task\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 // AUTH
@@ -48,4 +49,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/finance/record',     [FinanceController::class, 'storeFinanceRecord']);
     Route::get('/finance/records',     [FinanceController::class, 'getFinanceRecords']);
     Route::put('/finance/record/{id}', [FinanceController::class, 'updateFinanceRecord']);
+});
+
+// TASK
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('tasks', TaskController::class);
+    Route::post('tasks/{task}/complete',   [TaskController::class, 'markAsCompleted']);
 });
