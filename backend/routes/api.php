@@ -3,6 +3,7 @@
 use App\Modules\Auth\Controllers\AuthController;
 use App\Modules\Finance\Controllers\FinanceController;
 use App\Modules\Finance\Controllers\KaspiBankController;
+use App\Modules\Health\Controllers\DietController;
 use App\Modules\Health\Controllers\SleepController;
 use App\Modules\Health\Controllers\SportController;
 use App\Modules\Health\Controllers\WaterController;
@@ -52,7 +53,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // TASK
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/complete',   [TaskController::class, 'markAsCompleted']);
+});
+
+// DIET
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/diet/food',        [DietController::class, 'addFood']);
+    Route::get('/diet/daily/{date}', [DietController::class, 'getDailyDiet']);
+    Route::get('/diet/weekly',       [DietController::class, 'getWeeklyDiet']);
 });
