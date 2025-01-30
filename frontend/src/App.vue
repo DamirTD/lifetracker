@@ -1,30 +1,36 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { useAuthStore } from './store/authStore';
+import { computed } from 'vue';
+
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => !!authStore.user);
 </script>
 
 <template>
   <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <header>
+      <nav>
+        <router-link to="/">Главная</router-link>
+        <router-link to="/login">Вход</router-link>
+        <router-link to="/register">Регистрация</router-link>
+      </nav>
+
+      <div v-if="isAuthenticated">
+        <p>Добро пожаловать, {{ authStore.user?.name }}!</p>
+        <button @click="authStore.logout()">Выйти</button>
+      </div>
+
+      <div v-else>
+        <p>Пожалуйста, войдите или зарегистрируйтесь.</p>
+      </div>
+    </header>
+
+    <main>
+      <router-view />
+    </main>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+/* Стили компонента */
 </style>
