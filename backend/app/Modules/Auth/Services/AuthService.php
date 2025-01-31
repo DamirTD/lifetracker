@@ -22,6 +22,8 @@ class AuthService implements AuthServiceInterface
     {
         $user = new User([
             'name'     => $data['name'],
+            'surname'  => $data['surname'],
+            'login'    => $data['login'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password'])
         ]);
@@ -36,13 +38,18 @@ class AuthService implements AuthServiceInterface
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function login(string $login, string $password): array
     {
         $user = $this->userQuery->findByLogin($login);
 
-        $user->tokens->each(function ($token) {
-            $token->delete();
-        });
+        if (!$user) {
+            throw new \Exception('Пользователь с таким логином не найден.');
+        }
+
+        $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

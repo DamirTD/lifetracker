@@ -7,6 +7,7 @@ use App\Modules\Auth\Requests\LoginRequest;
 use App\Modules\Auth\Requests\RegisterRequest;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 class AuthController extends Controller
 {
@@ -56,6 +57,14 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="token", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ошибка авторизации",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="error", type="string", example="Пользователь с таким логином не найден.")
      *         )
      *     )
      * )

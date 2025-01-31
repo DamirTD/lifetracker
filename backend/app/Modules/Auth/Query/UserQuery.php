@@ -10,9 +10,6 @@ class UserQuery implements UserQueryInterface
 {
     public function findByLogin(string $login): ?User
     {
-        return User::where(function (Builder $query) use ($login) {
-            $query->where('email', $login)
-                  ->orWhere('name', $login);
-        })->first();
+        return User::where('login', $login)->first();
     }
 }
