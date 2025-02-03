@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
-import { authService } from "../services/api";
-import type { User, RegisterRequest, LoginRequest } from "../types/auth";
+import {defineStore} from "pinia";
+import {authService} from "../services/api";
+import type {LoginRequest, RegisterRequest, User} from "../types/auth";
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
@@ -30,9 +30,21 @@ export const useAuthStore = defineStore("auth", {
                 await authService.logout();
                 this.user = null;
             } catch (error) {
-                console.error("Ошибка выхода:", (error as any).response?.data);
-                throw error;
+                console.error("Ошибка выхода:", error);
+            } finally {
+                localStorage.removeItem('token');
             }
         },
+        async checkAuth() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    this.user = await authService.getAuthUser();
+                }
+            } catch (error) {
+                this.user = null;
+                localStorage.removeItem('token');
+            }
+        }
     },
 });
