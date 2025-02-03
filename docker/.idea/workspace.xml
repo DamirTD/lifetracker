@@ -5,10 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../backend/database/migrations/2025_01_27_062611_add_glasses_today_and_last_added_at_to_user_water_progresses_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/app/Models/UserWaterProgress.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Models/UserWaterProgress.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Health/Controllers/WaterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Health/Controllers/WaterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Health/Services/WaterService.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Health/Services/WaterService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Auth/Services/AuthService.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Auth/Services/AuthService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx/conf.d/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx/conf.d/default.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/php/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/php/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Logout.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Logout.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Register.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/router/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +54,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "ft-8",
+    "git-widget-placeholder": "ft-16",
     "last_opened_file_path": "C:/Users/toriy/PhpstormProjects/lifetracker/docker",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -82,6 +90,7 @@
       <workItem from="1737013470147" duration="3310000" />
       <workItem from="1737396458445" duration="3905000" />
       <workItem from="1737959782157" duration="66000" />
+      <workItem from="1738579831102" duration="4692000" />
     </task>
     <servers />
   </component>

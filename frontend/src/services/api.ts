@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {RegisterRequest, LoginRequest, AuthResponse} from "../types/auth";
+import type {RegisterRequest, LoginRequest, AuthResponse, User} from "../types/auth";
 
 const api = axios.create({
     baseURL: "http://localhost/api/",
@@ -8,6 +8,17 @@ const api = axios.create({
         "Accept": "application/json"
     },
 });
+
+api.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
@@ -32,4 +43,8 @@ export const authService = {
         await api.post("/logout");
         localStorage.removeItem('token');
     },
+    async getAuthUser(): Promise<User> {
+        const response = await api.get("/user");
+        return response.data;
+    }
 };
