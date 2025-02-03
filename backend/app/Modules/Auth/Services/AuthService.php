@@ -50,7 +50,9 @@ class AuthService implements AuthServiceInterface
             throw new \Exception('Пользователь с таким логином не найден.');
         }
 
-        $user->tokens()->delete();
+        $user->tokens()
+            ->where('name', 'auth_token')
+            ->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
