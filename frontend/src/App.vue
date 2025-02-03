@@ -23,10 +23,6 @@ onMounted(async () => {
         <p>Добро пожаловать, {{ authStore.user?.name }}!</p>
         <button @click="authStore.logout()">Выйти</button>
       </div>
-
-      <div v-else>
-        <p>Пожалуйста, войдите или зарегистрируйтесь.</p>
-      </div>
     </header>
 
     <main>
@@ -36,5 +32,18 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* Стили компонента */
+/* Глобальные стили */
+body {
+  background: #FFFFFF;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Для всех кнопок сохраняем единый стиль */
+button {
+  font-family: inherit;
+  font-weight: 500;
+}
 </style>
