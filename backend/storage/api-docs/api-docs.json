@@ -81,6 +81,26 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Пользователь с таким логином не найден."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -110,6 +130,25 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получить данные пользователя",
+                "operationId": "8fbcb17ede4ef9c62122f70291b49c92",
+                "responses": {
+                    "200": {
+                        "description": "Успешно"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/finance/calculate": {
@@ -1958,20 +1997,38 @@
             "RegisterRequest": {
                 "required": [
                     "name",
+                    "surname",
                     "login",
-                    "password"
+                    "email",
+                    "password",
+                    "password_confirmation"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
                         "example": "Damir"
                     },
+                    "surname": {
+                        "type": "string",
+                        "example": "Toriya"
+                    },
                     "login": {
                         "type": "string",
                         "example": "damir"
                     },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "damir@example.com"
+                    },
                     "password": {
                         "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
                         "example": "password123"
                     }
                 },
