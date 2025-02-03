@@ -100,4 +100,18 @@ class AuthController extends Controller
             return ['message' => 'Successfully logged out.'];
         });
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/user",
+     *     summary="Получить данные пользователя",
+     *     tags={"Auth"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Успешно")
+     * )
+     */
+    public function getUser(): JsonResponse
+    {
+        return response()->json(auth()->user());
+    }
 }

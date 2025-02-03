@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
@@ -32,11 +33,7 @@ abstract class Controller
         try {
             $result = $callback($this->validatedData);
 
-            return $this->jsonResponse([
-                'success' => true,
-                'error'   => null,
-                'data'    => $result,
-            ]);
+            return $this->jsonResponse($result);
 
         } catch (\Exception $e) {
             $statusCode = $e->getCode();

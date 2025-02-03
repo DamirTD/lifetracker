@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Services;
 use App\Models\User;
 use App\Modules\Auth\QueryInterface\UserQueryInterface;
 use App\Modules\Auth\Repository\UserRepository;
+use App\Modules\Auth\RepositoryInterface\UserRepositoryInterface;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
 use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthService implements AuthServiceInterface
 {
     public function __construct(
-        protected UserRepository $userRepository,
+        protected UserRepositoryInterface $userRepository,
         protected UserQueryInterface $userQuery
     ) {
     }
