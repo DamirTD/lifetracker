@@ -29,6 +29,14 @@ services:
         networks:
             - app-network
 
+    redis:
+        image: redis:alpine
+        container_name: redis
+        ports:
+            - "6379:6379"
+        networks:
+            - app-network
+
     db:
         image: mysql:8.0
         container_name: diplom_db
@@ -43,6 +51,15 @@ services:
             - db_data:/var/lib/mysql
         networks:
             - app-network
+        command:
+            - --default-authentication-plugin=mysql_native_password
+            - --innodb-flush-method=O_DIRECT
+            - --innodb-buffer-pool-size=256M
+            - --innodb-log-file-size=128M
+            - --max_connections=200
+            - --key_buffer_size=64M
+            - --table_open_cache=400
+            - --thread_cache_size=128
 
 volumes:
     db_data:
