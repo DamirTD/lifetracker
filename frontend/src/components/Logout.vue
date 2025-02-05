@@ -13,25 +13,9 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <button @click="handleLogout">Выйти</button>
+  <button
+      @click="handleLogout"
+      class="bg-blue-50 text-blue-800 px-4 py-2 border border-blue-200 rounded-md cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-600 hover:text-white hover:border-blue-600">
+    Выйти
+  </button>
 </template>
-
-<style scoped>
-
-button {
-  background: #E3F2FD;
-  color: #0D47A1;
-  padding: 8px 16px;
-  border: 1px solid #90CAF9;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background: #1E88E5;
-  color: white;
-  border-color: #1E88E5;
-}
-
-</style>
