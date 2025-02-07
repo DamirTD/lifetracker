@@ -4,14 +4,12 @@ import Landing from '../pages/Landing.vue';
 import Home from '../components/Home.vue';
 import LoginForm from '../components/LoginForm.vue';
 import RegisterForm from '../components/RegisterForm.vue';
-import NotLogin from '../components/NotLogin.vue';
 
 const routes = [
     { path: '/', component: Landing },
     { path: '/home', component: Home, meta: { requiresAuth: true } },
     { path: '/login', component: LoginForm, meta: { requiresGuest: true } },
     { path: '/register', component: RegisterForm, meta: { requiresGuest: true } },
-    { path: '/not-login', component: NotLogin },
 ];
 
 const router = createRouter({
@@ -24,7 +22,7 @@ router.beforeEach(async (to, _from, next) => {
     await authStore.checkAuth();
 
     if (to.meta.requiresAuth && !authStore.user) {
-        return next('/not-login');
+        return next('/register');
     }
 
     if (to.meta.requiresGuest && authStore.user) {
