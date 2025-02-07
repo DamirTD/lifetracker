@@ -1,32 +1,38 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useAuthStore } from './store/authStore';
-import { useRoute } from 'vue-router';
-import Sidebar from "./components/Sidebar.vue";
-import NotLogin from "./components/NotLogin.vue";
+import { ref, computed, onMounted, watchEffect } from "vue";
+import { useAuthStore } from "./store/authStore";
+import { useRoute, useRouter } from "vue-router";
 
 const authStore = useAuthStore();
-const route     = useRoute();
+const route = useRoute();
+const router = useRouter();
 
 const isAuthenticated = computed(() => !!authStore.user);
-const isProtectedPage = computed(() => route.meta.requiresAuth);
+const isAuthChecked = ref(false);
 
 onMounted(async () => {
   await authStore.checkAuth();
+  isAuthChecked.value = true;
+});
+
+// Следим за авторизацией и перенаправляем на Home.vue после входа
+watchEffect(() => {
+  console.log("Auth checked:", isAuthChecked.value);
+  console.log("Is authenticated:", isAuthenticated.value);
+  console.log("Current route:", route.path);
+
+  if (isAuthChecked.value && isAuthenticated.value && route.path === "/") {
+    router.push("/home");
+  }
 });
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] relative flex">
-    <Sidebar v-if="isAuthenticated" />
-
-    <main class="p-6 flex-1 relative">
-      <div v-if="isProtectedPage && !isAuthenticated" class="absolute inset-0 backdrop-blur-md z-10"></div>
-      <router-view />
-    </main>
-
-    <div v-if="isProtectedPage && !isAuthenticated" class="fixed inset-0 flex items-center justify-center z-20">
-      <NotLogin />
-    </div>
+  <div v-if="!isAuthChecked" class="fixed inset-0 flex items-center justify-center bg-white">
+    <span class="text-gray-600 text-lg">Загрузка...</span>
   </div>
+
+  <template v-else>
+    <router-view />
+  </template>
 </template>
