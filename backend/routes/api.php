@@ -56,7 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // TASK
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tasks', TaskController::class);
-    Route::post('tasks/{task}/complete',   [TaskController::class, 'markAsCompleted']);
+    Route::patch('tasks/{task}/complete',   [TaskController::class, 'markAsCompleted']);
 });
 
 // DIET
