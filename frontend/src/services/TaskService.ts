@@ -1,33 +1,30 @@
 import axios from "axios";
-import type {Task} from "../types/task.ts";
+import type { Task, CreateTask } from "../types/task";
 
-export const api = axios.create({
-    baseURL: "http://localhost/api/",
+const API_URL = "http://localhost/api";
+
+const axiosInstance = axios.create({
+    baseURL: API_URL,
     headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
-        "Accept": "application/json"
     },
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
 });
 
 export const TaskService = {
     async getTasks() {
-        return api.get('/tasks');
+        return await axiosInstance.get<{ data: Task[] }>("/tasks");
     },
-    async createTask(task: Task) {
-        return api.post('/tasks', task);
+    async createTask(task: CreateTask) {
+        return await axiosInstance.post<Task>("/tasks", task);
     },
-    async markTaskCompleted(taskId: number) {
-        return api.post(`/tasks/${taskId}/complete`);
+    async markTaskCompleted(taskId: number, data: { is_completed: boolean }) {
+        return axiosInstance.patch(`/tasks/${taskId}/complete`, data);
+    },
+    async updateTask(taskId: number, updatedData: Partial<Task>) {
+        return axiosInstance.put(`/tasks/${taskId}`, updatedData);
     },
     async deleteTask(taskId: number) {
-        return api.delete(`/tasks/${taskId}`);
+        return await axiosInstance.delete(`/tasks/${taskId}`);
     },
 };

@@ -64,7 +64,7 @@ class TaskController extends Controller {
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Put(
      *     path="/api/tasks/{task}",
      *     summary="Обновление задачи",
      *     tags={"Tasks"},
@@ -118,7 +118,7 @@ class TaskController extends Controller {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/api/tasks/{task}/complete",
      *     summary="Отметить задачу как выполненную",
      *     tags={"Tasks"},
