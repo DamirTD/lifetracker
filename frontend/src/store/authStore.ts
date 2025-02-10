@@ -21,7 +21,7 @@ export const useAuthStore = defineStore("auth", {
             try {
                 const response = await authService.register(formData);
                 this.setAuthData(response);
-                window.location.href = "/dashboard"; // Редирект сразу
+                window.location.href = "/dashboard";
             } catch (error) {
                 console.error("Ошибка регистрации:", error);
                 throw error;
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore("auth", {
             try {
                 const response = await authService.login(formData);
                 this.setAuthData(response);
-                window.location.href = "/dashboard"; // Редирект сразу
+                window.location.href = "/dashboard";
             } catch (error) {
                 console.error("Ошибка входа:", error);
                 throw error;

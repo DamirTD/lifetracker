@@ -24,7 +24,7 @@ api.interceptors.response.use(
             console.warn("Сессия истекла. Автоматический выход...");
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            window.location.href = "/login"; // Перенаправляем на логин
+            window.location.href = "/login";
         }
         return Promise.reject(error);
     }

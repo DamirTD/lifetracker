@@ -18,7 +18,7 @@ const registerData = ref<RegisterRequest>({
 const handleRegister = async () => {
   try {
     await authStore.register(registerData.value);
-    await router.push("/dashboard"); // Теперь router вызывается в компоненте
+    await router.push("/dashboard");
   } catch (error) {
     console.error("Ошибка регистрации:", (error as any).response?.data);
   }
