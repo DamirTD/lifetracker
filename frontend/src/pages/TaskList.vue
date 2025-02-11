@@ -39,11 +39,11 @@ const setEditTask = (task: Task) => {
 const updateTask = async (updatedTask: Task) => {
   try {
     await TaskService.updateTask(updatedTask.id, {
-      title: updatedTask.title,
-      description: updatedTask.description,
-      priority: updatedTask.priority,
-      category: updatedTask.category,
-      due_date: updatedTask.due_date,
+      title:        updatedTask.title,
+      description:  updatedTask.description,
+      priority:     updatedTask.priority,
+      category:     updatedTask.category,
+      due_date:     updatedTask.due_date,
       is_completed: updatedTask.is_completed
     });
 
