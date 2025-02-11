@@ -1,50 +1,51 @@
 import axios from "axios";
-import type { RegisterRequest, LoginRequest, AuthResponse, User } from "../types/auth";
+import type {
+    AxiosInstance,
+    InternalAxiosRequestConfig,
+    AxiosResponse,
+    AxiosError
+} from "axios";
 
-export const api = axios.create({
-    baseURL: "http://localhost/api/",
-    headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    },
-});
+const API_URL = "http://localhost/api";
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+export const getAuthToken = (): string | null => localStorage.getItem("token");
 
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            window.location.href = "/login";
-        }
-        return Promise.reject(error);
-    }
-);
+export const createApiInstance = (): AxiosInstance => {
+    const instance = axios.create({
+        baseURL: API_URL,
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+    });
 
-export const authService = {
-    async register(data: RegisterRequest): Promise<AuthResponse> {
-        const response = await api.post("/register", data);
-        return response.data;
-    },
-    async login(data: LoginRequest): Promise<AuthResponse> {
-        const response = await api.post("/login", data);
-        return response.data;
-    },
-    async logout(): Promise<void> {
-        await api.post("/logout");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-    },
-    async getAuthUser(): Promise<User> {
-        const response = await api.get("/user");
-        return response.data;
-    }
+    setupInterceptors(instance);
+    return instance;
 };
+
+const setupInterceptors = (instance: AxiosInstance): void => {
+    instance.interceptors.request.use(
+        (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+            const token = getAuthToken();
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        (error: AxiosError): Promise<AxiosError> => Promise.reject(error)
+    );
+
+    instance.interceptors.response.use(
+        (response: AxiosResponse): AxiosResponse => response,
+        async (error: AxiosError): Promise<never> => {
+            if (error.response?.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "/login";
+            }
+            return Promise.reject(error);
+        }
+    );
+};
+
+export const api: AxiosInstance = createApiInstance();

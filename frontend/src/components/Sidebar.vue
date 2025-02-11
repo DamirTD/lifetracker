@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { useAuthStore } from '../store/authStore';
+import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const router    = useRouter();
+
+const handleLogout = () => {
+  authStore.logout(router);
+};
 </script>
 
 <template>
@@ -13,7 +19,7 @@ const authStore = useAuthStore();
     </nav>
 
     <button
-        @click="authStore.logout()"
+        @click="handleLogout"
         class="mt-auto bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">
       Выйти
     </button>
