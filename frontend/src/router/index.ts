@@ -4,28 +4,28 @@ import Landing from "../pages/Landing.vue";
 import Home from "../components/Home.vue";
 import LoginForm from "../components/LoginForm.vue";
 import RegisterForm from "../components/RegisterForm.vue";
-import TaskList from "../components/TaskList.vue";
+import TaskList from "../pages/TaskList.vue";
 
-const routes = [
-    { path: "/", component: Landing },
-    { path: "/dashboard", component: Home, meta: { requiresAuth: true } },
-    { path: "/login", component: LoginForm },
+const publicRoutes = [
+    { path: "/",         component: Landing },
+    { path: "/login",    component: LoginForm },
     { path: "/register", component: RegisterForm },
-    { path: "/tasks", component: TaskList, meta: { requiresAuth: true } },
 ];
+
+const privateRoutes = [
+    { path: "/dashboard", component: Home, meta: { requiresAuth: true } },
+    { path: "/tasks",     component: TaskList, meta: { requiresAuth: true } },
+];
+
+const routes = [...publicRoutes, ...privateRoutes];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach((to, _, next) => {
     const authStore = useAuthStore();
-
-    if (!authStore.isAuthChecked) {
-        await authStore.checkAuth();
-    }
-
     if (to.meta.requiresAuth && !authStore.user) {
         next("/login");
     } else {
