@@ -11,11 +11,11 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <aside class="w-64 bg-white shadow-md p-4 flex flex-col h-screen">
-
+  <aside class="w-64 bg-white shadow-md p-4 flex flex-col h-screen fixed left-0 top-0">
     <nav class="flex-grow space-y-4">
       <RouterLink to="/dashboard" class="block p-2 hover:bg-gray-700 mb-2">Главная</RouterLink>
       <RouterLink to="/tasks" class="block p-2 hover:bg-gray-700 mb-2">Задачи</RouterLink>
+      <RouterLink to="/sport" class="block p-2 hover:bg-gray-700 mb-2">Спорт</RouterLink>
     </nav>
 
     <button

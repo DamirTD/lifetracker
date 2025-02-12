@@ -8,22 +8,17 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Schema(
  *     schema="AnalyzeSportRequest",
- *     required={"sport", "goal", "data"},
+ *     required={"sport_id", "goal"},
  *     @OA\Property(
- *         property="sport",
- *         type="string",
- *         enum={"Зал", "Бег", "Плавание", "Велоспорт"},
- *         description="Выбранный вид спорта"
- *     ),
+ * *         property="sport_id",
+ * *         type="integer",
+ * *         description="ID выбранного вида спорта",
+ * *         example=1
+ * *     ),
  *     @OA\Property(
  *         property="goal",
  *         type="string",
  *         description="Цель занятий спортом"
- *     ),
- *     @OA\Property(
- *         property="data",
- *         type="object",
- *         description="Введенные параметры пользователя (например, вес, рост, время тренировки)"
  *     )
  * )
  */
@@ -32,17 +27,17 @@ class AnalyzeSportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sport' => ['required', 'string', 'in:Зал,Бег,Плавание,Велоспорт'],
-            'goal'  => ['required', 'string']
+            'sport_id' => ['required', 'integer', 'exists:sports,id'],
+            'goal'     => 'required|string',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'sport.required' => 'Выберите вид спорта.',
-            'sport.exists'   => 'Выбранный вид спорта недействителен.',
-            'goal.required'  => 'Укажите цель.',
+            'sport_id.required' => 'Выберите вид спорта.',
+            'sport_id.exists'   => 'Выбранный вид спорта недействителен.',
+            'goal.required'     => 'Укажите цель.',
         ];
     }
 }

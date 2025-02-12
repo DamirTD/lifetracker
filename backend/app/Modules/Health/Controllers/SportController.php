@@ -94,14 +94,14 @@ class SportController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/sports/analyze",
+     *     path="/api/sport/analyze",
      *     summary="Анализ выбранного спорта и цели",
      *     tags={"Sport"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="sport", type="string", example="Футбол"),
-     *             @OA\Property(property="goal", type="string", example="Похудение")
+     *             @OA\Property(property="sport", type="string", example="Бег"),
+     *             @OA\Property(property="goal", type="string", example="Похудеть")
      *         )
      *     ),
      *     @OA\Response(
@@ -125,20 +125,28 @@ class SportController extends Controller
     {
         $data = $request->validated();
 
-        $program = TrainingProgram::where('sport', $data['sport'])
+        $sport = Sport::find($data['sport_id']);
+
+        if (!$sport) {
+            return response()->json([
+                'message' => 'Выбранный вид спорта не найден.'
+            ], HttpStatusCodes::NOT_FOUND);
+        }
+
+        $program = TrainingProgram::where('sport_id', $data['sport_id'])
             ->where('goal', $data['goal'])
             ->first();
 
         if (!$program) {
             return response()->json([
-                'message' => 'Программа для выбранного спорта и цели не найдена.',
+                'message' => 'Программа для выбранного спорта и цели не найдена.'
             ], HttpStatusCodes::NOT_FOUND);
         }
 
         return response()->json([
             'message' => 'Анализ завершен.',
             'advice'  => $program->recommendation,
-        ]);
+        ], HttpStatusCodes::OK);
     }
 
     /**

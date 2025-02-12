@@ -85,7 +85,7 @@ onMounted(loadTasks);
   <div class="flex min-h-screen">
     <Sidebar />
 
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 ml-64">
       <TaskForm @addTask="addTask" />
 
       <h1 class="text-2xl font-bold mb-4">Список задач</h1>
@@ -130,3 +130,4 @@ onMounted(loadTasks);
     </main>
   </div>
 </template>
+
