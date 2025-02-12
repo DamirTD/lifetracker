@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore.ts";
 import { useRouter } from "vue-router";
-import type { RegisterRequest } from "../types/auth";
+import type { RegisterRequest } from "../../types/auth.ts";
 
 const authStore = useAuthStore();
 const router = useRouter();
