@@ -18,11 +18,12 @@ Route::middleware(['auth:sanctum'])->get('/user',    [AuthController::class, 'ge
 
 // SPORT
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/sport/types',                  [SportController::class, 'getSportTypes']);
-    Route::post('/sport/select',                [SportController::class, 'selectSport']);
-    Route::post('/sport/analyze',               [SportController::class, 'analyzeSport']);
-    Route::post('/sport/user-training-program', [SportController::class, 'addUserTrainingProgram']);
-    Route::post('/sport/complete-training',     [SportController::class, 'completeTraining']);
+    Route::get('/sport/types',                    [SportController::class, 'getSportTypes']);
+    Route::post('/sport/select',                  [SportController::class, 'selectSport']);
+    Route::post('/sport/analyze',                 [SportController::class, 'analyzeSport']);
+    Route::post('/sport/user-training-program',   [SportController::class, 'addUserTrainingProgram']);
+    Route::post('/sport/complete-training',       [SportController::class, 'completeTraining']);
+    Route::get('/sports/{sport_id}/goals/{goal}', [SportController::class, 'getRecommendation']);
 });
 
 // WATER

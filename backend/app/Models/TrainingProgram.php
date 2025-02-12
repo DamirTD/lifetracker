@@ -9,5 +9,7 @@ class TrainingProgram extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['sport', 'goal', 'recommendation'];
+    protected $fillable = ['sport_id', 'goal', 'recommendation'];
+
+    public $timestamps = false;
 }
