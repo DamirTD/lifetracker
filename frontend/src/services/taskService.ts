@@ -14,14 +14,14 @@ export const TaskService: ITaskService = {
     },
 
     markTaskCompleted: async (taskId: number, data: { is_completed: boolean }) => {
-        await api.patch(`/tasks/${taskId}/complete`, data); // Исправлено
+        await api.patch(`/tasks/${taskId}/complete`, data);
     },
 
     updateTask: async (taskId: number, updatedData: Partial<Task>) => {
-        await api.put(`/tasks/${taskId}`, updatedData); // Исправлено
+        await api.put(`/tasks/${taskId}`, updatedData);
     },
 
     deleteTask: async (taskId: number) => {
-        await api.delete(`/tasks/${taskId}`); // Исправлено
+        await api.delete(`/tasks/${taskId}`);
     },
 };

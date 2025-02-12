@@ -4,8 +4,8 @@ import { useAuthStore } from "../../store/authStore.ts";
 import { useRouter } from "vue-router";
 import type { RegisterRequest } from "../../types/auth.ts";
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore    = useAuthStore();
+const router       = useRouter();
 const registerData = ref<RegisterRequest>({
   name: "",
   surname: "",

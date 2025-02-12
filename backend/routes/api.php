@@ -23,7 +23,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/sport/analyze',                 [SportController::class, 'analyzeSport']);
     Route::post('/sport/user-training-program',   [SportController::class, 'addUserTrainingProgram']);
     Route::post('/sport/complete-training',       [SportController::class, 'completeTraining']);
-    Route::get('/sports/{sport_id}/goals/{goal}', [SportController::class, 'getRecommendation']);
 });
 
 // WATER

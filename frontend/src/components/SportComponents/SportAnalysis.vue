@@ -2,10 +2,10 @@
 import { ref, watch, onMounted } from "vue";
 import { SportService } from "../../services/sportService.ts";
 
-const sports = ref<{ id: number; name: string }[]>([]);
+const sports        = ref<{ id: number; name: string }[]>([]);
 const selectedSport = ref<{ id: number; name: string } | null>(null);
 
-const goal = ref("");
+const goal           = ref("");
 const analysisResult = ref<string | null>(null);
 
 const goalsBySport: Record<number, string[]> = {
@@ -17,14 +17,9 @@ const goalsBySport: Record<number, string[]> = {
 
 const analyzeSport = async () => {
   if (selectedSport.value && goal.value) {
-    try {
-      await SportService.selectSport(selectedSport.value.id, goal.value);
-
-      const result = await SportService.analyzeSport(selectedSport.value.id, goal.value);
-      analysisResult.value = result.advice;
-    } catch (error) {
-      console.error("Ошибка при анализе:", error);
-    }
+    await SportService.selectSport(selectedSport.value.id, goal.value);
+    const result = await SportService.analyzeSport(selectedSport.value.id, goal.value);
+    analysisResult.value = result.advice;
   }
 };
 
@@ -33,7 +28,7 @@ onMounted(async () => {
 });
 
 watch(selectedSport, () => {
-  goal.value = "";
+  goal.value           = "";
   analysisResult.value = null;
 });
 </script>

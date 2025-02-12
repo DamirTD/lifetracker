@@ -8,7 +8,7 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Schema(
  *     schema="AnalyzeSportRequest",
- *     required={"sport_id", "goal", "data"},
+ *     required={"sport_id", "goal"},
  *     @OA\Property(
  * *         property="sport_id",
  * *         type="integer",
@@ -19,11 +19,6 @@ use OpenApi\Annotations as OA;
  *         property="goal",
  *         type="string",
  *         description="Цель занятий спортом"
- *     ),
- *     @OA\Property(
- *         property="data",
- *         type="object",
- *         description="Введенные параметры пользователя (например, вес, рост, время тренировки)"
  *     )
  * )
  */
@@ -33,7 +28,7 @@ class AnalyzeSportRequest extends FormRequest
     {
         return [
             'sport_id' => ['required', 'integer', 'exists:sports,id'],
-            'goal' => 'required|string',
+            'goal'     => 'required|string',
         ];
     }
 

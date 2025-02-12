@@ -2,9 +2,9 @@
 import { ref, onMounted, watch } from "vue";
 import { SportService } from "../../services/sportService.ts";
 
-const sports = ref<{ id: number; name: string }[]>([]);
-const selectedSport = ref<number | null>(null);
-const goal = ref("");
+const sports            = ref<{ id: number; name: string }[]>([]);
+const selectedSport     = ref<number | null>(null);
+const goal              = ref("");
 const selectedSportData = ref<{ sport_id: number; goal: string } | null>(null);
 
 const goalsBySport: Record<number, string[]> = {
@@ -15,11 +15,7 @@ const goalsBySport: Record<number, string[]> = {
 };
 
 onMounted(async () => {
-  try {
-    sports.value = await SportService.fetchSports();
-  } catch (error) {
-    console.error("Ошибка при загрузке видов спорта:", error);
-  }
+  sports.value = await SportService.fetchSports();
 });
 
 watch(selectedSport, () => {
@@ -28,11 +24,7 @@ watch(selectedSport, () => {
 
 const selectSport = async () => {
   if (selectedSport.value && goal.value) {
-    try {
-      selectedSportData.value = await SportService.selectSport(selectedSport.value, goal.value);
-    } catch (error) {
-      console.error("Ошибка при выборе спорта:", error);
-    }
+    selectedSportData.value = await SportService.selectSport(selectedSport.value, goal.value);
   }
 };
 </script>
