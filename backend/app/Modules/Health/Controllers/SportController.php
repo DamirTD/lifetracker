@@ -7,7 +7,7 @@ use App\Models\Sport;
 use App\Models\TrainingProgram;
 use App\Models\UserSport;
 use App\Modules\Health\Helpers\UserTrainingProgramHelper;
-use App\Modules\Health\Requests\AnalyzeSportRequest;
+use App\Modules\Health\Requests\BasicSportRequest;
 use App\Modules\Health\Requests\CompleteTrainingRequest;
 use App\Modules\Health\Requests\SelectSportRequest;
 use App\Modules\Health\Requests\UserTrainingRequest;
@@ -94,8 +94,8 @@ class SportController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/sport/analyze",
-     *     summary="Анализ выбранного спорта и цели",
+     *     path="/api/sport/basic-training-program",
+     *     summary="Базовая программа выбранного спорта и цели",
      *     tags={"Sport"},
      *     @OA\RequestBody(
      *         required=true,
@@ -121,7 +121,7 @@ class SportController extends Controller
      *     )
      * )
      */
-    public function analyzeSport(AnalyzeSportRequest $request): JsonResponse
+    public function basicTrainingProgram(BasicSportRequest $request): JsonResponse
     {
         $data = $request->validated();
 

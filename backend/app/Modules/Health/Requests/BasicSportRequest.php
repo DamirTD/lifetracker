@@ -7,7 +7,7 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
- *     schema="AnalyzeSportRequest",
+ *     schema="BasicSportRequest",
  *     required={"sport_id", "goal"},
  *     @OA\Property(
  * *         property="sport_id",
@@ -22,7 +22,7 @@ use OpenApi\Annotations as OA;
  *     )
  * )
  */
-class AnalyzeSportRequest extends FormRequest
+class BasicSportRequest extends FormRequest
 {
     public function rules(): array
     {
