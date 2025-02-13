@@ -20,3 +20,18 @@ export interface UserTrainingProgram {
     name:            string;
     recommendation?: string;
 }
+
+export interface UserSport {
+    id:              number;
+    user_id:         number;
+    sport_id:        number;
+    goal:            string;
+    name:            string;
+    recommendation?: string;
+    created_at:      string;
+    updated_at:      string;
+    sport: {
+        id:   number;
+        name: string;
+    };
+}

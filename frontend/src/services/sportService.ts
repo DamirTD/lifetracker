@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { Sport, SelectedSport, BasicProgram, UserTrainingProgram  } from "../serviceInterfaces/sportInterface.ts";
+import type { Sport, SelectedSport, BasicProgram, UserTrainingProgram, UserSport } from "../serviceInterfaces/sportInterface.ts";
 
 export const SportService = {
     async fetchSports(): Promise<Sport[]> {
@@ -32,4 +32,18 @@ export const SportService = {
         });
         return response.data.data;
     },
+
+    async getUserSport(): Promise<UserSport[]> {
+        const response = await api.get("/sport/user-sport");
+        return response.data.data;
+    },
+
+    async updateSport(id: number, data: { name: string, goal: string }) {
+        const response = await api.put(`/sport/edit/${id}`, data);
+        return response.data;
+    },
+
+    async deleteUserSport(sportId: number): Promise<void> {
+        await api.delete(`/sport/user-sport/${sportId}`);
+    }
 };
