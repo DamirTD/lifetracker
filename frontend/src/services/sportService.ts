@@ -1,18 +1,5 @@
 import { api } from "./api";
-
-interface Sport {
-    id: number;
-    name: string;
-}
-
-interface SelectedSport {
-    sport_id: number;
-    goal: string;
-}
-
-interface Analysis {
-    advice: string;
-}
+import type { Sport, SelectedSport, BasicProgram } from "../serviceInterfaces/sportInterface.ts";
 
 export const SportService = {
     async fetchSports(): Promise<Sport[]> {
@@ -28,8 +15,8 @@ export const SportService = {
         return response.data.data;
     },
 
-    async analyzeSport(sport_id: number, goal: string): Promise<Analysis> {
-        const response = await api.post<{ advice: string }>("/sport/analyze", {
+    async BasicProgramRecommendation(sport_id: number, goal: string): Promise<BasicProgram> {
+        const response = await api.post<{ advice: string }>("/sport/basic-training-program", {
             sport_id,
             goal
         });

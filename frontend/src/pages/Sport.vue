@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Sidebar from "../components/Sidebar.vue";
 import SportSelection from "../components/SportComponents/SportSelection.vue";
-import SportAnalysis from "../components/SportComponents/SportAnalysis.vue";
+import SportBasicProgram from "../components/SportComponents/SportBasicProgram.vue";
 </script>
 
 <template>
@@ -16,7 +16,7 @@ import SportAnalysis from "../components/SportComponents/SportAnalysis.vue";
         </div>
 
         <div class="bg-white p-6 shadow-md rounded">
-          <SportAnalysis />
+          <SportBasicProgram />
         </div>
       </div>
     </div>
