@@ -95,7 +95,7 @@ class SportController extends Controller
     /**
      * @OA\Post(
      *     path="/api/sport/basic-training-program",
-     *     summary="Анализ выбранного спорта и цели",
+     *     summary="Базовая программа выбранного спорта и цели",
      *     tags={"Sport"},
      *     @OA\RequestBody(
      *         required=true,
