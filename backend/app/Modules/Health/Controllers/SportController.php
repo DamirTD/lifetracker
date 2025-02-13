@@ -125,23 +125,11 @@ class SportController extends Controller
     {
         $data = $request->validated();
 
-        $sport = Sport::find($data['sport_id']);
-
-        if (!$sport) {
-            return response()->json([
-                'message' => 'Выбранный вид спорта не найден.'
-            ], HttpStatusCodes::NOT_FOUND);
-        }
+        Sport::find($data['sport_id']);
 
         $program = TrainingProgram::where('sport_id', $data['sport_id'])
             ->where('goal', $data['goal'])
             ->first();
-
-        if (!$program) {
-            return response()->json([
-                'message' => 'Программа для выбранного спорта и цели не найдена.'
-            ], HttpStatusCodes::NOT_FOUND);
-        }
 
         return response()->json([
             'message' => 'Анализ завершен.',
