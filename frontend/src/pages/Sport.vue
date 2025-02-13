@@ -2,6 +2,7 @@
 import Sidebar from "../components/Sidebar.vue";
 import SportSelection from "../components/SportComponents/SportSelection.vue";
 import SportBasicProgram from "../components/SportComponents/SportBasicProgram.vue";
+import AddTrainingProgram from "../components/SportComponents/AddTrainingProgram.vue";
 </script>
 
 <template>
@@ -17,6 +18,10 @@ import SportBasicProgram from "../components/SportComponents/SportBasicProgram.v
 
         <div class="bg-white p-6 shadow-md rounded">
           <SportBasicProgram />
+        </div>
+
+        <div class="bg-white p-6 shadow-md rounded">
+          <AddTrainingProgram />
         </div>
       </div>
     </div>

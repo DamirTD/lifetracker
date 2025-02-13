@@ -11,3 +11,12 @@ export interface SelectedSport {
 export interface BasicProgram {
     advice: string;
 }
+
+export interface UserTrainingProgram {
+    id:              number;
+    user_id:         number;
+    sport_id:        number;
+    goal:            string;
+    name:            string;
+    recommendation?: string;
+}
