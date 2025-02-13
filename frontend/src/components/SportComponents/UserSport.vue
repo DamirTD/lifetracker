@@ -33,15 +33,9 @@ const updateSport = async () => {
 };
 
 const deleteSport = async (sportId: number) => {
-  try {
-    await SportService.deleteUserSport(sportId);
-    userSports.value = userSports.value.filter(sport => sport.id !== sportId);
-  } catch (error) {
-    console.error('Ошибка при удалении вида спорта:', error);
-  }
+  await SportService.deleteUserSport(sportId);
+  userSports.value = userSports.value.filter(sport => sport.id !== sportId);
 };
-
-
 </script>
 
 <template>

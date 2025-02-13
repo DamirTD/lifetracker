@@ -6,11 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSportRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
