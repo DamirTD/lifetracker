@@ -10,6 +10,7 @@ use App\Modules\Finance\ServiceInterfaces\KaspiPDFAnalyzerServiceInterface;
 use App\Modules\Finance\ServiceInterfaces\KaspiPDFServiceInterface;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 class KaspiBankController extends Controller
 {

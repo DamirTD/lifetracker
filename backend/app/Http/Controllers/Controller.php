@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Exceptions\ApiExceptionHandler;
 use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
@@ -24,27 +25,20 @@ abstract class Controller
 
     protected function wrap($request, callable $callback): JsonResponse
     {
-        if ($request instanceof FormRequest) {
-            $this->validatedData = $request->validated();
-        } else {
-            $this->validatedData = $request->all();
-        }
+        $this->validatedData = $this->getValidatedData($request);
 
-        try {
+        return ApiExceptionHandler::handle(function () use ($callback) {
             $result = $callback($this->validatedData);
-
             return $this->jsonResponse($result);
-
-        } catch (\Exception $e) {
-            $statusCode = $e->getCode();
-            if (!is_numeric($statusCode) || $statusCode < 100 || $statusCode > 599) {
-                $statusCode = HttpStatusCodes::INTERNAL_SERVER_ERROR;
-            }
-            return $this->jsonResponse([
-                'success' => false,
-                'error'   => $e->getMessage(),
-            ], (int)$statusCode);
-        }
+        });
     }
 
+    private function getValidatedData($request): array
+    {
+        if ($request instanceof FormRequest) {
+            return $request->validated();
+        }
+
+        return $request->all();
+    }
 }
