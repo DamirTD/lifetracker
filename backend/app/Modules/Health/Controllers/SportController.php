@@ -26,7 +26,7 @@ class SportController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/sports",
+     *     path="/api/sport/list",
      *     summary="Получить список видов спорта",
      *     tags={"Sport"},
      *     @OA\Response(
@@ -41,102 +41,91 @@ class SportController extends Controller
      *     )
      * )
      */
-    public function getSportTypes(): JsonResponse
+    public function getSportList(): JsonResponse
     {
-        $sports = Sport::all(['id', 'name']);
-
-        return response()->json(['sports' => $sports]);
+        return $this->wrap(request(), function () {
+            $sports = Sport::all(['id', 'name']);
+            return ['sports' => $sports];
+        });
     }
 
     /**
      * @OA\Get(
-     *     path="/api/sport/user-sport",
-     *     summary="Получить виды спорта пользователя",
+     *     path="/api/sport/user-sport-list",
+     *     summary="Получить список видов спорта пользователя",
      *     tags={"Sport"},
-     *     security={{"sanctum": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Список видов спорта пользователя",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Список видов спорта пользователя."),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="user_id", type="integer", example=5),
-     *                     @OA\Property(property="sport_id", type="integer", example=2),
-     *                     @OA\Property(property="goal", type="string", example="Похудение"),
-     *                     @OA\Property(property="name", type="string", example="Моя программа тренировок"),
-     *                     @OA\Property(property="recommendation", type="string", example="Уделять внимание кардио."),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-02-13 09:56:29"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-02-13 09:56:29"),
-     *                     @OA\Property(property="sport", type="object",
-     *                         @OA\Property(property="id", type="integer", example=2),
-     *                         @OA\Property(property="name", type="string", example="Футбол")
-     *                     )
-     *                 )
-     *             )
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Футбол")
+     *             ))
      *         )
      *     )
      * )
      */
-    public function getUserSport(): JsonResponse
+    public function getUserSportList(): JsonResponse
     {
-        $userId = auth()->id();
+        return $this->wrap(request(), function () {
+            $userId = auth()->id();
+            $userSports = UserSport::with('sport:name,id')
+                ->where('user_id', $userId)
+                ->get()
+                ->pluck('sport');
 
-        $userSports = UserTrainingProgram::with('sport')
-            ->where('user_id', $userId)
-            ->get();
-
-        return response()->json([
-            'message' => 'Список видов спорта пользователя.',
-            'data'    => $userSports
-        ]);
+            return [
+                'message' => 'Список видов спорта пользователя.',
+                'data'    => $userSports
+            ];
+        });
     }
 
     /**
      * @OA\Post(
-     *     path="/api/sports/select",
+     *     path="/api/sports/select-user-sport",
      *     summary="Выбрать вид спорта и цель",
      *     tags={"Sport"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="sport_id", type="integer", example=1),
-     *             @OA\Property(property="goal", type="string", example="Похудение")
+     *             @OA\Property(property="sport_id", type="integer", example=1)
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Спорт и цель успешно выбраны",
+     *         description="Спорт успешно выбран",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Спорт и цель успешно выбраны."),
+     *             @OA\Property(property="message", type="string", example="Спорт успешно выбран."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="user_id", type="integer", example=5),
-     *                 @OA\Property(property="sport_id", type="integer", example=1),
-     *                 @OA\Property(property="goal", type="string", example="Похудение")
+     *                 @OA\Property(property="sport_id", type="integer", example=1)
      *             )
      *         )
      *     )
      * )
      */
-    public function selectSport(SelectSportRequest $request): JsonResponse
+    public function selectUserSport(SelectSportRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        return $this->wrap($request, function ($data) {
+            $userSport = UserSport::updateOrCreate(
+                [
+                    'user_id'  => auth()->id(),
+                    'sport_id' => $data['sport_id'],
+                ]
+            );
 
-        $userSport = UserSport::updateOrCreate(
-            [
-                'user_id'  => auth()->id(),
-                'sport_id' => $data['sport_id'],
-            ],
-            [
-                'goal' => $data['goal'],
-            ]
-        );
+            $message = $userSport->wasRecentlyCreated
+                ? 'Спорт успешно выбран.'
+                : 'Вы уже выбрали этот спорт.';
 
-        return response()->json([
-            'message' => 'Спорт и цель успешно выбраны.',
-            'data' => $userSport,
-        ]);
+            return [
+                'message' => $message,
+                'data'    => $userSport,
+            ];
+        });
     }
 
     /**
@@ -153,9 +142,9 @@ class SportController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Анализ завершен",
+     *         description="Базовая тренировка найдена",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Анализ завершен."),
+     *             @OA\Property(property="message", type="string", example="Базовая тренировка найдена."),
      *             @OA\Property(property="advice", type="string", example="Рекомендуется 3 тренировки в неделю.")
      *         )
      *     ),
@@ -170,23 +159,21 @@ class SportController extends Controller
      */
     public function basicTrainingProgram(BasicSportRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        return $this->wrap($request, function ($data) {
+            $program = TrainingProgram::find($data['sport_id'])
+                ->where('goal', $data['goal'])
+                ->firstOrFail();
 
-        Sport::find($data['sport_id']);
-
-        $program = TrainingProgram::where('sport_id', $data['sport_id'])
-            ->where('goal', $data['goal'])
-            ->first();
-
-        return response()->json([
-            'message' => 'Анализ завершен.',
-            'advice'  => $program->recommendation,
-        ], HttpStatusCodes::OK);
+            return [
+                'message' => "Базовая тренировка найдена!",
+                'advice'  => $program->recommendation,
+            ];
+        });
     }
 
     /**
      * @OA\Post(
-     *     path="/api/training-programs",
+     *     path="/api/create-personal-training-program",
      *     summary="Добавить пользовательскую тренировочную программу",
      *     tags={"Training Program"},
      *     @OA\RequestBody(
@@ -217,14 +204,14 @@ class SportController extends Controller
      */
     public function addUserTrainingProgram(UserTrainingRequest $request): JsonResponse
     {
-        $validated = $request->validated();
+        return $this->wrap($request, function ($data) {
+            $program = $this->trainingProgramHelper->createUserTrainingProgram($data);
 
-        $program = $this->trainingProgramHelper->createUserTrainingProgram($validated);
-
-        return response()->json([
-            'message' => 'Тренировочная программа успешно добавлена.',
-            'data' => $program,
-        ]);
+            return [
+                'message' => 'Тренировочная программа успешно добавлена.',
+                'data'    => $program,
+            ];
+        });
     }
 
     /**
@@ -246,18 +233,41 @@ class SportController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Тренировка завершена, история добавлена.")
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ошибка валидации данных",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Ошибка валидации данных."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Программа тренировки не найдена",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Программа тренировки не найдена.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Внутренняя ошибка сервера",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Внутренняя ошибка сервера.")
+     *         )
      *     )
      * )
      */
     public function completeTraining(CompleteTrainingRequest $request): JsonResponse
     {
-        $validated = $request->validated();
+        return $this->wrap($request, function ($data) use ($request) {
+            $validated = $request->validated();
+            $this->trainingProgramHelper->completeUserTraining($validated);
 
-        $this->trainingProgramHelper->completeUserTraining($validated);
-
-        return response()->json([
-            'message' => 'Тренировка завершена, история добавлена.',
-        ]);
+            return [
+                'message' => 'Тренировка завершена, история добавлена.',
+            ];
+        });
     }
 
     /**
@@ -300,14 +310,16 @@ class SportController extends Controller
      */
     public function editSport(UpdateSportRequest $request, int $id): JsonResponse
     {
-        $sport = UserTrainingProgram::find($id);
+        return $this->wrap($request, function () use ($id, $request) {
+            $sport = UserTrainingProgram::find($id);
 
-        $sport->update($request->validated());
+            $sport->update($request->validated());
 
-        return response()->json([
-            'message' => 'Вид спорта успешно обновлён.',
-            'data' => $sport
-        ], HttpStatusCodes::OK);
+            return [
+                'message' => 'Вид спорта успешно обновлён.',
+                'data' => $sport
+            ];
+        });
     }
 
     /**
@@ -340,10 +352,12 @@ class SportController extends Controller
      */
     public function deleteSport(int $id): JsonResponse
     {
-        $sport = UserTrainingProgram::find($id);
+        return $this->wrap(null, function () use ($id) {
+            $sport = UserTrainingProgram::find($id);
 
-        $sport->delete();
+            $sport->delete();
 
-        return response()->json(['message' => 'Вид спорта успешно удалён.'], HttpStatusCodes::OK);
+            return ['message' => 'Вид спорта успешно удалён.'];
+        });
     }
 }

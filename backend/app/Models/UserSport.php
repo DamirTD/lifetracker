@@ -10,7 +10,7 @@ class UserSport extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'sport_id', 'goal'];
+    protected $fillable = ['user_id', 'sport_id'];
 
     public function user(): BelongsTo
     {

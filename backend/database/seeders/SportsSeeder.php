@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Sport;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SportsSeeder extends Seeder
 {
@@ -12,26 +13,30 @@ class SportsSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        Sport::truncate();
+
         $sports = [
-            ['name' => 'Зал'],
-            ['name' => 'Бег'],
-            ['name' => 'Плавание'],
-            ['name' => 'Велоспорт'],
-            ['name' => 'Йога'],
-            ['name' => 'Теннис'],
-            ['name' => 'Бокс'],
-            ['name' => 'Гимнастика'],
-            ['name' => 'Ходьба'],
-            ['name' => 'Футбол'],
-            ['name' => 'Баскетбол'],
-            ['name' => 'Волейбол'],
-            ['name' => 'Горные лыжи'],
-            ['name' => 'Скалолазание'],
-            ['name' => 'Катание на коньках'],
+            ['id' => 1, 'name'  => 'Зал'],
+            ['id' => 2, 'name'  => 'Бег'],
+            ['id' => 3, 'name'  => 'Плавание'],
+            ['id' => 4, 'name'  => 'Велоспорт'],
+            ['id' => 5, 'name'  => 'Йога'],
+            ['id' => 6, 'name'  => 'Теннис'],
+            ['id' => 7, 'name'  => 'Бокс'],
+            ['id' => 8, 'name'  => 'Гимнастика'],
+            ['id' => 9, 'name'  => 'Ходьба'],
+            ['id' => 10, 'name' => 'Футбол'],
+            ['id' => 11, 'name' => 'Баскетбол'],
+            ['id' => 12, 'name' => 'Волейбол'],
+            ['id' => 13, 'name' => 'Горные лыжи'],
+            ['id' => 14, 'name' => 'Скалолазание'],
+            ['id' => 15, 'name' => 'Катание на коньках'],
         ];
 
-        foreach ($sports as $sport) {
-            Sport::create($sport);
-        }
+        DB::table('sports')->insert($sports);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

@@ -139,6 +139,6 @@ class TaskController extends Controller {
      */
     public function markAsCompleted(Task $task): TaskResource
     {
-        return new TaskResource($this->taskRepository->markAsCompleted($task));
+        return new TaskResource($this->taskService->markAsCompleted($task));
     }
 }
