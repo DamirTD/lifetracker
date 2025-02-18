@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="[FT-16] Docker little optimize." />
+    <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="[FT-16] Docker little optimize.">
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Task/Controllers/TaskController.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Task/Controllers/TaskController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Task/Query/TaskQuery.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Task/Query/TaskQuery.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Task/QueryInterfaces/TaskQueryInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Task/QueryInterfaces/TaskQueryInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Task/Resources/TaskResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Task/Resources/TaskResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/app/Modules/Task/Services/TaskService.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Modules/Task/Services/TaskService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/bootstrap/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bootstrap/cache/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/api-docs/api-docs.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/api-docs/api-docs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/app/public/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/app/public/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/cache/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/cache/data/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/cache/data/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/sessions/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/sessions/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/testing/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/testing/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/framework/views/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/framework/views/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/storage/logs/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/storage/logs/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,13 +41,13 @@
     &quot;assignee&quot;: &quot;DamirTD&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/DamirTD/lifetracker&quot;,
-    &quot;accountId&quot;: &quot;ac0a23b8-2002-4f8f-82aa-b7329aec22d5&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/DamirTD/lifetracker",
+    "accountId": "8940e052-ca72-404e-9eba-aa82dc96ce60"
   }
-}</component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="D:\php-8.4.2-Win32-vs17-x64\php.exe" />
+}]]></component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -41,8 +60,8 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "ft-17",
-    "last_opened_file_path": "C:/Users/toriy/PhpstormProjects/lifetracker/docker",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/damir/code/personal_projects/lifetracker/docker",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -78,6 +97,7 @@
       <workItem from="1737396458445" duration="3905000" />
       <workItem from="1737959782157" duration="66000" />
       <workItem from="1738579831102" duration="5034000" />
+      <workItem from="1739876595430" duration="649000" />
     </task>
     <task id="LOCAL-00001" summary="[FT-16] Docker little optimize.">
       <option name="closed" value="true" />
