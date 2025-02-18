@@ -16,7 +16,7 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="description", type="string", example="Подготовить отчет"),
  *     @OA\Property(property="priority", type="string", example="high"),
  *     @OA\Property(property="category", type="string", example="study"),
- *     @OA\Property(property="due_date", type="string", format="date-time", example="2024-01-30 12:00:00"),
+ *     @OA\Property(property="due_date", type="string", example="18.02.2025"),
  *     @OA\Property(property="is_completed", type="boolean", example=false),
  * )
  */
@@ -28,7 +28,7 @@ class TaskResource extends JsonResource {
             'description'  => $this->description,
             'priority'     => $this->priority,
             'category'     => $this->category,
-            'due_date'     => $this->due_date?->format('Y-m-d H:i:s'),
+            'due_date'     => $this->due_date?->format('d.m.Y'),
             'is_completed' => (bool) $this->is_completed,
         ];
     }

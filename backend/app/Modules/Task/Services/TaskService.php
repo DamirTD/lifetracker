@@ -7,6 +7,7 @@ use App\Modules\Task\QueryInterfaces\TaskQueryInterface;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class TaskService implements TaskServiceInterface
@@ -20,11 +21,6 @@ class TaskService implements TaskServiceInterface
     public function markAsCompleted(Task $task): Task
     {
         return $this->taskRepository->markAsCompleted($task);
-    }
-
-    public function getTasks(): LengthAwarePaginator
-    {
-        return $this->taskQuery->getAllTasks(Auth::id());
     }
 
     public function createTask(array $data): Task
@@ -42,4 +38,16 @@ class TaskService implements TaskServiceInterface
     {
         $this->taskRepository->delete($task);
     }
+
+    public function getTaskGroupedByDate($userId): Collection
+    {
+        $tasks = Task::where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        return $tasks->groupBy(function ($task) {
+            return $task->due_date->format('d-m-Y');
+        });
+    }
+
 }
