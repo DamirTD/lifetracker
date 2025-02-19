@@ -46,6 +46,12 @@ class UserTrainingRequest extends FormRequest
             'goal'           => 'required|string',
             'name'           => 'required|string',
             'recommendation' => 'nullable|string',
+            'sections'       => 'required|array|min:1|max:6',
+            'sections.*.name' => 'required|string',
+            'sections.*.exercises' => 'required|array|min:1|max:5',
+            'sections.*.exercises.*.name' => 'required|string',
+            'sections.*.exercises.*.reps' => 'required|integer|min:1',
+            'sections.*.exercises.*.video_url' => 'nullable|url',
         ];
     }
 
