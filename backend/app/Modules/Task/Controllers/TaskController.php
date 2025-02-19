@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
 use App\Modules\Task\Requests\TaskRequest;
+use App\Modules\Task\Resources\TaskCategoryResource;
 use App\Modules\Task\Resources\TaskResource;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
-use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class TaskController extends Controller {
@@ -34,7 +33,8 @@ class TaskController extends Controller {
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
-     *                 @OA\Property(property="date", type="string", example="18-02-2025"),
+     *                 @OA\Property(property="date", type="string", example="18.02.2025"),
+     *                 @OA\Property(property="category", ref="#/components/schemas/TaskCategoryResource"),
      *                 @OA\Property(property="tasks", type="array",
      *                     @OA\Items(ref="#/components/schemas/TaskResource")
      *                 )
@@ -45,22 +45,24 @@ class TaskController extends Controller {
      */
     public function index(): JsonResource
     {
-        $tasksGroupedByDate = $this->taskService->getTaskGroupedByDate(Auth::id());
+        $groupedTasks = $this->taskService->getTasks(Auth::id());
 
-        $tasksWithDates = [];
+        $result = $groupedTasks->map(function ($tasks, $key) {
+            $keyParts = explode('|', $key);
+            $date = array_shift($keyParts);
 
-        foreach ($tasksGroupedByDate as $date => $tasks) {
-            $tasksWithDates[] = [
-                'date'  => $date,
-                'tasks' => TaskResource::collection($tasks)
+            return [
+                'date'     => $date,
+                'category' => new TaskCategoryResource($tasks->first()->category),
+                'tasks'    => TaskResource::collection($tasks),
             ];
-        }
+        })->values();
 
-        return JsonResource::collection($tasksWithDates);
+        return JsonResource::collection($result);
     }
 
     /**
-     * @OA\Post(
+     * @OA\Post
      *     path="/api/tasks",
      *     summary="Создание новой задачи",
      *     tags={"Tasks"},

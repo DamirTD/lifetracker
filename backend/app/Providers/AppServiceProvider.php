@@ -28,7 +28,9 @@ use App\Modules\Task\Query\TaskQuery;
 use App\Modules\Task\QueryInterfaces\TaskQueryInterface;
 use App\Modules\Task\Repository\TaskRepository;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
+use App\Modules\Task\ServiceInterfaces\TaskCategoryServiceInterface;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
+use App\Modules\Task\Services\TaskCategoryService;
 use App\Modules\Task\Services\TaskService;
 use Illuminate\Support\ServiceProvider;
 
@@ -45,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FinanceAdviceServiceInterface::class, FinanceAdviceService::class);
         $this->app->bind(SleepServiceInterface::class, SleepService::class);
         $this->app->bind(TaskServiceInterface::class, TaskService::class);
+        $this->app->bind(TaskCategoryServiceInterface::class, TaskCategoryService::class);
 
         // Repositories
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
