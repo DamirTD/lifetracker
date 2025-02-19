@@ -27,7 +27,7 @@ class TaskResource extends JsonResource {
             'title'        => $this->title,
             'description'  => $this->description,
             'priority'     => $this->priority,
-            'category'     => $this->category,
+            'category'     => new TaskCategoryResource($this->category),
             'due_date'     => $this->due_date?->format('d.m.Y'),
             'is_completed' => (bool) $this->is_completed,
         ];

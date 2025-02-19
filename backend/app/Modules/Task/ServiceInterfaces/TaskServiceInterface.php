@@ -11,5 +11,5 @@ interface TaskServiceInterface
     public function createTask(array $data);
     public function updateTask(Task $task, array $data);
     public function deleteTask(Task $task);
-    public function getTaskGroupedByDate($userId): Collection;
+    public function getTasks($userId): Collection;
 }
