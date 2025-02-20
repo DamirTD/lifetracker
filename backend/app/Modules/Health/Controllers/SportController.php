@@ -13,7 +13,6 @@ use App\Modules\Health\Requests\CompleteTrainingRequest;
 use App\Modules\Health\Requests\SelectSportRequest;
 use App\Modules\Health\Requests\UpdateSportRequest;
 use App\Modules\Health\Requests\UserTrainingRequest;
-use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -86,7 +85,7 @@ class SportController extends Controller
     /**
      * @OA\Post(
      *     path="/api/sports/select-user-sport",
-     *     summary="Выбрать вид спорта и цель",
+     *     summary="Выбрать вид спорта",
      *     tags={"Sport"},
      *     @OA\RequestBody(
      *         required=true,
