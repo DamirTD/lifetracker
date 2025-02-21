@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DietEntry extends Model
 {
@@ -13,23 +14,13 @@ class DietEntry extends Model
         'user_id', 'food_id', 'quantity', 'date'
     ];
 
-    public function food()
+    public function food(): BelongsTo
     {
         return $this->belongsTo(Food::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function calculateNutrients(): array
-    {
-        return [
-            'calories'      => ($this->quantity / 100) * $this->food->calories,
-            'protein'       => ($this->quantity / 100) * $this->food->protein,
-            'fat'           => ($this->quantity / 100) * $this->food->fat,
-            'carbohydrates' => ($this->quantity / 100) * $this->food->carbohydrates,
-        ];
     }
 }
