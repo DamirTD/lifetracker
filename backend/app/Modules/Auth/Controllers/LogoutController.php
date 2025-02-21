@@ -32,7 +32,6 @@ class LogoutController extends Controller
     {
         return $this->wrap(request(), function () {
             $this->authService->logout();
-            return [ 'message' => 'Вы вышли из системы.' ];
         });
     }
 }

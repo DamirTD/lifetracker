@@ -8,6 +8,7 @@ use App\Modules\Auth\Repository\UserRepository;
 use App\Modules\Auth\RepositoryInterface\UserRepositoryInterface;
 use App\Modules\Auth\ServiceInterfaces\AuthServiceInterface;
 use App\Utils\Constants\HttpStatusCodes;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,14 +41,14 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function login(string $login, string $password): array
     {
         $user = $this->userQuery->findByLogin($login);
 
         if (!$user) {
-            throw new \Exception('Пользователь с таким логином не найден.');
+            throw new Exception('Пользователь с таким логином не найден.');
         }
 
         $user->tokens()

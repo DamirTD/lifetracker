@@ -10,7 +10,6 @@ use OpenApi\Annotations as OA;
  *     schema="RegisterRequest",
  *     type="object",
  *     required={"name", "surname", "login", "email", "password", "password_confirmation"},
- *
  *     @OA\Property(property="name", type="string", example="Damir"),
  *     @OA\Property(property="surname", type="string", example="Toriya"),
  *     @OA\Property(property="login", type="string", example="damir"),

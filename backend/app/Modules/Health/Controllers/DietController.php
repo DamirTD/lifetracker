@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Health\Requests\AddFoodRequest;
 use App\Modules\Health\Requests\GetDietRequest;
 use App\Modules\Health\ServiceInterfaces\DietServiceInterface;
+use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -61,7 +62,7 @@ class DietController extends Controller
     {
         $dietEntry = $this->dietService->addFood($request->validated());
 
-        return response()->json($dietEntry, 201);
+        return response()->json($dietEntry, HttpStatusCodes::CREATED);
     }
 
     /**
