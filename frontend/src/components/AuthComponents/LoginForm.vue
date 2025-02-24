@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useAuthStore } from "../../store/authStore.ts";
 import { useRouter } from "vue-router";
@@ -6,38 +6,61 @@ import type { LoginRequest } from "../../types/auth.ts";
 
 const authStore = useAuthStore();
 const router = useRouter();
-const loginData = ref<LoginRequest>({ login: "", password: "" });
+const isLoading = ref(false);
+const errors = ref<{ [key: string]: string }>({});
+
+const loginData = ref<LoginRequest>({
+  login: "",
+  password: "",
+});
+
+const validateForm = () => {
+  errors.value = {};
+
+  if (!loginData.value.login) errors.value.login = "Введите логин";
+  if (!loginData.value.password) errors.value.password = "Введите пароль";
+
+  return Object.keys(errors.value).length === 0;
+};
 
 const handleLogin = async () => {
+  if (!validateForm()) return;
+
   try {
+    isLoading.value = true;
     await authStore.login(loginData.value);
-    await router.push("/");
+    await router.push("/dashboard");
   } catch (error) {
     console.error("Ошибка входа:", (error as any).response?.data);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
 
 <template>
-  <div class="max-w-md mx-auto mt-8 p-8 bg-[#F8F9FA] rounded-lg shadow-md">
+  <div class="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
+    <h2 class="text-2xl font-semibold text-center mb-6">Вход в аккаунт</h2>
+
     <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
-      <input
-          v-model="loginData.login"
-          placeholder="Логин"
-          class="p-3 border border-[#E3F2FD] rounded-md text-lg transition focus:outline-none focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20"
-      />
-      <input
-          v-model="loginData.password"
-          type="password"
-          placeholder="Пароль"
-          class="p-3 border border-[#E3F2FD] rounded-md text-lg transition focus:outline-none focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20"
-      />
-      <button
-          type="submit"
-          class="bg-[#1E88E5] text-white p-3 rounded-md text-lg cursor-pointer transition hover:bg-[#0D47A1]"
-      >
-        Войти
+      <div class="input-group">
+        <input v-model="loginData.login" placeholder="Логин *" class="input-field" />
+        <span v-if="errors.login" class="error-text">{{ errors.login }}</span>
+      </div>
+
+      <div class="input-group">
+        <input v-model="loginData.password" type="password" placeholder="Пароль *" class="input-field" />
+        <span v-if="errors.password" class="error-text">{{ errors.password }}</span>
+      </div>
+
+      <button type="submit" class="btn-primary" :disabled="isLoading">
+        {{ isLoading ? "Загрузка..." : "Войти" }}
       </button>
+
+      <p class="text-center text-gray-600">
+        Нет аккаунта?
+        <router-link to="/register" class="text-blue-600 hover:underline">Зарегистрироваться</router-link>
+      </p>
     </form>
   </div>
 </template>
