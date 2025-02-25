@@ -18,6 +18,11 @@
 - **Tailwind CSS** — для стилизации
 - **WebStorm** — для разработки
 
+### Mobile
+- **Flutter**
+- **Dart**
+- **Visual studio code** with **Flutter Extension**
+
 ### Принципы разработки
 - **DRY** (Don't Repeat Yourself)
 - **SOLID**
@@ -35,6 +40,7 @@
 
 - **`backend/`** — серверная часть на Laravel
 - **`frontend/`** — клиентская часть на Vue.js
+- **`mobile/`** — мобильная часть на Flutter
 - **`docker/`** — конфигурации для Docker
 
 ## Функциональность
