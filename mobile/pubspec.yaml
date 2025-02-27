@@ -19,5 +19,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: DancingScript
+      fonts:
+        - asset: assets/fonts/DancingScript-Regular.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
   assets:
-    - assets/.env
+    - assets/img/background.jpg
+    - assets/fonts/DancingScript-Regular.ttf
+    - assets/fonts/Poppins-Regular.ttf
