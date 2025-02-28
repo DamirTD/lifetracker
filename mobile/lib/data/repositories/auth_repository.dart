@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user_model.dart';
 import '../../core/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   Future<UserModel?> login(String login, String password) async {
@@ -46,4 +47,27 @@ class AuthRepository {
     }
     return null;
   }
+
+  Future<void> logout() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    final response = await http.post(
+      Uri.parse("${Config.apiUrl}/logout"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      await prefs.remove('auth_token');
+    } else {
+      throw Exception("Ошибка при выходе: ${response.statusCode}");
+    }
+  } catch (e) {
+    throw Exception("Ошибка выхода: $e");
+  }
+}
 }

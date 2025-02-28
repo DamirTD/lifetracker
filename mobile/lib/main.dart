@@ -4,7 +4,7 @@ import 'package:mobile/presentation/screens/welcome_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "./assets/.env"); 
+  await dotenv.load(fileName: "assets/.env"); 
 
   runApp(const MainApp());
 }
