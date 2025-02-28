@@ -6,71 +6,54 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
+          // Фоновое изображение с затемнением
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
+            decoration: BoxDecoration(
+              image: const DecorationImage(
                 image: AssetImage('assets/img/background.jpg'),
                 fit: BoxFit.cover,
               ),
+              color: Colors.black.withOpacity(0.3),
+              backgroundBlendMode: BlendMode.darken,
             ),
           ),
+
+          // Основной контент
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(height: 50),
-                TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: 1),
-                  duration: const Duration(seconds: 1),
-                  builder: (context, double value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: child,
-                    );
-                  },
+                SizedBox(height: screenHeight * 0.12),
+                
+                // Анимированный логотип
+                AnimatedScale(
+                  duration: const Duration(milliseconds: 500),
+                  scale: 1,
                   child: const Text(
                     "LifeTracker",
-                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 42,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
-                      fontFamily: 'DancingScript',
-                      shadows: [
-                        Shadow(
-                          blurRadius: 3.0,
-                          color: Colors.black54,
-                          offset: Offset(2, 2),
-                        ),
-                      ],
+                      fontFamily: 'Poppins',
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ),
+
                 const Spacer(),
+
+                // Кнопки действий
                 Column(
                   children: [
-                    _buildButton(
-                      context,
-                      text: "Что умеет LifeTracker?",
-                      color: Colors.white,
-                      textColor: Colors.black,
-                      onPressed: () => _showFeatureDialog(context),
-                    ),
-                    const SizedBox(height: 15),
-                    _buildButton(
-                      context,
-                      text: "Войти / Зарегистрироваться",
-                      color: Colors.black,
-                      textColor: Colors.white,
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AuthScreen()),
-                      ),
-                    ),
+                    _buildFeatureButton(context),
+                    const SizedBox(height: 20),
+                    _buildAuthButton(context),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -82,25 +65,63 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(BuildContext context, {required String text, required Color color, required Color textColor, required VoidCallback onPressed}) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: textColor,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
-          ),
+  Widget _buildFeatureButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _showFeatureDialog(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withOpacity(0.95),
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(text),
+        elevation: 3,
+        shadowColor: Colors.black.withOpacity(0.3),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.quiz_outlined, size: 24),
+          const SizedBox(width: 12),
+          const Text("Возможности"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthScreen()),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        elevation: 5,
+        shadowColor: Colors.blueAccent.withOpacity(0.4),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+        ),
+      ),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.login_rounded, size: 24),
+          SizedBox(width: 12),
+          Text("Начать использовать"),
+        ],
       ),
     );
   }
@@ -109,36 +130,107 @@ class WelcomeScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Что умеет LifeTracker?"),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.fitness_center, color: Colors.blue),
-                title: Text("Фитнес-трекер"),
-                subtitle: Text("Следите за тренировками и расходом калорий."),
-              ),
-              ListTile(
-                leading: Icon(Icons.attach_money, color: Colors.green),
-                title: Text("Финансовый контроль"),
-                subtitle: Text("Управляйте своими расходами и доходами."),
-              ),
-              ListTile(
-                leading: Icon(Icons.favorite, color: Colors.red),
-                title: Text("Мониторинг здоровья"),
-                subtitle: Text("Отслеживайте сон, сердцебиение и водный баланс."),
-              ),
-            ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Закрыть"),
+          backgroundColor: Colors.white.withOpacity(0.95),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Возможности LifeTracker",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildFeatureTile(
+                  icon: Icons.fitness_center,
+                  title: "Фитнес-трекер",
+                  description: "Анализ тренировок и расхода калорий",
+                  color: Colors.blueAccent,
+                ),
+                _buildFeatureTile(
+                  icon: Icons.auto_graph_rounded,
+                  title: "Финансы",
+                  description: "Управление бюджетом и статистика",
+                  color: Colors.green,
+                ),
+                _buildFeatureTile(
+                  icon: Icons.health_and_safety,
+                  title: "Здоровье",
+                  description: "Мониторинг сна и показателей здоровья",
+                  color: Colors.orange,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text("Понятно", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
+    );
+  }
+
+  Widget _buildFeatureTile({
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
