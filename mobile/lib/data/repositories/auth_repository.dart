@@ -16,58 +16,42 @@ class AuthRepository {
     );
 
     if (response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
+      final data = jsonDecode(response.body);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', data['token']);
+      return UserModel.fromJson(data);
     }
     return null;
   }
 
-  Future<UserModel?> register({
-    required String name,
-    required String surname,
-    required String login,
-    required String email,
-    required String password,
-    required String passwordConfirmation,
-  }) async {
+  Future<Map<String, dynamic>> register(Map<String, String> userData) async {
     final response = await http.post(
       Uri.parse("${Config.apiUrl}/register"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "name":                  name,
-        "surname":               surname,
-        "login":                 login,
-        "email":                 email,
-        "password":              password,
-        "password_confirmation": passwordConfirmation,
-      }),
+      body: jsonEncode(userData),
     );
 
-    if (response.statusCode == 201) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    }
-    return null;
+    return {
+      "status": response.statusCode,
+      "body": jsonDecode(response.body),
+    };
   }
 
   Future<void> logout() async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('auth_token');
+
+  if (token == null) return;
 
     final response = await http.post(
       Uri.parse("${Config.apiUrl}/logout"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
+      headers: {"Authorization": "Bearer $token"},
     );
 
     if (response.statusCode == 200) {
       await prefs.remove('auth_token');
     } else {
-      throw Exception("Ошибка при выходе: ${response.statusCode}");
+      throw Exception("Ошибка выхода: ${response.statusCode}");
     }
-  } catch (e) {
-    throw Exception("Ошибка выхода: $e");
-  }
-}
+  } 
 }
