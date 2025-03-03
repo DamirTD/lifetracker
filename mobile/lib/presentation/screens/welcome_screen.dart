@@ -18,6 +18,7 @@ class WelcomeScreen extends StatelessWidget {
                 image: AssetImage('assets/img/background.jpg'),
                 fit: BoxFit.cover,
               ),
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.3),
               backgroundBlendMode: BlendMode.darken,
             ),
@@ -69,6 +70,7 @@ class WelcomeScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => _showFeatureDialog(context),
       style: ElevatedButton.styleFrom(
+        // ignore: deprecated_member_use
         backgroundColor: Colors.white.withOpacity(0.95),
         foregroundColor: Colors.black,
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
@@ -76,6 +78,7 @@ class WelcomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         elevation: 3,
+        // ignore: deprecated_member_use
         shadowColor: Colors.black.withOpacity(0.3),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -108,6 +111,7 @@ class WelcomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         elevation: 5,
+        // ignore: deprecated_member_use
         shadowColor: Colors.blueAccent.withOpacity(0.4),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -134,6 +138,7 @@ class WelcomeScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
+          // ignore: deprecated_member_use
           backgroundColor: Colors.white.withOpacity(0.95),
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -201,6 +206,7 @@ class WelcomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
             ),
