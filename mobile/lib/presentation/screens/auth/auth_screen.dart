@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../data/repositories/auth_repository.dart';
-import 'home_screen.dart';
+import '../../../data/repositories/auth_repository.dart';
+import '../home/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

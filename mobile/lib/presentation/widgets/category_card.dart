@@ -28,7 +28,7 @@ class CategoryCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: color.withAlpha(25), // Вместо устаревшего .withOpacity()
+            color: color.withAlpha(25),
           ),
           padding: const EdgeInsets.all(20),
           child: Column(

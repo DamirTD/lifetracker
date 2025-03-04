@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mobile/presentation/screens/auth_screen.dart';
-import 'package:mobile/presentation/screens/home_screen.dart';
-import 'package:mobile/presentation/screens/logout_screen.dart';
-import 'package:mobile/presentation/screens/profile_screen.dart';
-import 'package:mobile/presentation/screens/welcome_screen.dart';
+import 'package:mobile/presentation/screens/auth/auth_screen.dart';
+import 'package:mobile/presentation/screens/home/home_screen.dart';
+import 'package:mobile/presentation/screens/auth/logout_screen.dart';
+import 'package:mobile/presentation/screens/home/profile_screen.dart';
+import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
