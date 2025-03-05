@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
+import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:mobile/presentation/widgets/category_card.dart';
 import 'package:mobile/presentation/screens/trackers/diet_screen.dart';
 import 'package:mobile/presentation/screens/trackers/sleep_screen.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String userName = "Гость";
   String avatarUrl = "";
   int notificationCount = 0;
+  bool _isLoading = true;
   final UserRepository _userRepository = UserRepository();
 
   @override
@@ -31,9 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadUserData() async {
     final user = await _userRepository.getUser();
-    if (user != null) {
+    if (mounted) {
       setState(() {
-        userName = user.name;
+        _isLoading = false;
+        if (user != null) {
+          userName = user.name;
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          );
+        }
       });
     }
   }
@@ -52,6 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()), // ⏳ Показываем загрузку
+      );
+    }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
