@@ -11,10 +11,12 @@ class UserRepository {
 
     if (token.isEmpty) return null;
 
-    final response = await http.get(
-      Uri.parse("${Config.apiUrl}/user"),
-      headers: {"Authorization": "Bearer $token"},
-    );
+      final response = await http.get(
+        Uri.parse("${Config.apiUrl}/user"),
+        headers: {"Authorization": "Bearer $token"},
+      ).timeout(const Duration(seconds: 10), onTimeout: () {
+        throw Exception("Превышено время ожидания ответа от сервера.");
+      });
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
