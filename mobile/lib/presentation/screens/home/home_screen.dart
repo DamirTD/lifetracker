@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
-import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:mobile/presentation/widgets/category_card.dart';
 import 'package:mobile/presentation/screens/trackers/diet_screen.dart';
 import 'package:mobile/presentation/screens/trackers/sleep_screen.dart';
@@ -32,18 +31,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadUserData() async {
-    final user = await _userRepository.getUser();
-    if (mounted) {
+    try {
+      final user = await _userRepository.getUser();
+      if (user != null) {
+        if (mounted) {
+          setState(() {
+            userName = user.name;
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print("Ошибка загрузки пользователя: $e");
       setState(() {
         _isLoading = false;
-        if (user != null) {
-          userName = user.name;
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-          );
-        }
       });
     }
   }
