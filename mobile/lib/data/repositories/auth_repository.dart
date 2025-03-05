@@ -19,6 +19,10 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', data['token']);
+      final storedToken = prefs.getString('auth_token');
+      if (storedToken != data['token']) {
+        throw Exception("Токен не сохранился в SharedPreferences");
+      }
       return UserModel.fromJson(data);
     }
     return null;
@@ -38,20 +42,28 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('auth_token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
 
-  if (token == null) return;
+    if (token == null) return;
 
-    final response = await http.post(
-      Uri.parse("${Config.apiUrl}/logout"),
-      headers: {"Authorization": "Bearer $token"},
-    );
+    try {
+      final response = await http.post(
+        Uri.parse("${Config.apiUrl}/logout"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    if (response.statusCode == 200) {
-      await prefs.remove('auth_token');
-    } else {
-      throw Exception("Ошибка выхода: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        await prefs.remove('auth_token');
+      } else {
+        throw Exception("Ошибка выхода: ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print("Ошибка сети при выходе: $e");
     }
-  } 
+  }
 }
