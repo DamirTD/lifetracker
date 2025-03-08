@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/data/models/user_model.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
 import 'package:mobile/presentation/widgets/category_card.dart';
 import 'package:mobile/presentation/screens/trackers/diet_screen.dart';
@@ -18,37 +19,53 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userName = "Гость";
-  String avatarUrl = "";
-  int notificationCount = 0;
-  bool _isLoading = true;
   final UserRepository _userRepository = UserRepository();
+  UserModel? _user;
+  bool _isLoading = true;
+  String? _error;
+  bool _disposed = false;
+  
+  // Лучше установить значения по умолчанию
+  int notificationCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUser();
   }
 
-  Future<void> _loadUserData() async {
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  void _safeSetState(VoidCallback fn) {
+    if (!_disposed && mounted) {
+      setState(fn);
+    }
+  }
+
+  Future<void> _loadUser() async {
+    _safeSetState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
     try {
       final user = await _userRepository.getUser();
-      if (user != null) {
-        if (mounted) {
-          setState(() {
-            userName = user.name;
-            _isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      
+      if (!mounted) return;
+      
+      _safeSetState(() {
+        _user = user;
+        _isLoading = false;
+      });
     } catch (e) {
-      // ignore: avoid_print
-      print("Ошибка загрузки пользователя: $e");
-      setState(() {
+      if (!mounted) return;
+      
+      _safeSetState(() {
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -73,6 +90,50 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Center(child: CircularProgressIndicator()), // ⏳ Показываем загрузку
       );
     }
+    
+    // Если произошла ошибка при загрузке пользователя
+    if (_error != null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Ошибка: $_error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadUser,
+                child: const Text('Попробовать снова'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    // Если пользователь не загружен
+    if (_user == null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Ошибка загрузки пользователя'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.pushReplacementNamed(context, '/welcome'),
+                child: const Text('Вернуться на экран входа'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    // Получаем имя пользователя из _user
+    final userName = _user!.name;
+    // По умолчанию аватар пустой, можно настроить в будущем
+    final avatarUrl = '';
+    
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(

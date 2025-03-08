@@ -5,10 +5,15 @@ import 'package:mobile/presentation/screens/home/home_screen.dart';
 import 'package:mobile/presentation/screens/auth/logout_screen.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
 import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
+import 'package:mobile/presentation/screens/trackers/tasks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  await initializeDateFormatting('ru_RU');
+  
   await dotenv.load(fileName: ".env");
 
   final prefs = await SharedPreferences.getInstance();
@@ -34,6 +39,7 @@ class MainApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/logout': (context) => const LogoutScreen(),
+        '/tasks': (context) => const TasksScreen(),
       },
     );
   }
