@@ -13,7 +13,7 @@ use OpenApi\Annotations as OA;
  *     required={"title", "priority", "category"},
  *     @OA\Property(property="title", type="string", example="Сделать тест"),
  *     @OA\Property(property="description", type="string", nullable=true, example="Подготовить отчет"),
- *     @OA\Property(property="priority", type="string", enum={"low", "medium", "high"}, example="high"),
+ *     @OA\Property(property="priority", type="integer", example=1),
  *     @OA\Property(property="category", type="string", example="study"),
  *     @OA\Property(property="due_date", type="string", format="date-time", nullable=true, example="2024-01-30 12:00:00"),
  *     @OA\Property(property="is_completed", type="boolean", example=false),
@@ -22,11 +22,11 @@ use OpenApi\Annotations as OA;
 class TaskRequest extends FormRequest {
     public function rules(): array {
         return [
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority'    => 'required|string|in:low,medium,high',
-            'category'    => 'required|string|max:255',
-            'due_date'    => 'sometimes|nullable|date_format:Y-m-d H:i:s',
+            'title'        => 'required|string|max:255',
+            'description'  => 'nullable|string',
+            'priority'     => 'required|integer|in:1,2,3',
+            'category_id'  => 'required|integer|exists:task_categories,id',
+            'due_date'     => 'sometimes|nullable|date_format:Y-m-d H:i:s',
             'is_completed' => 'sometimes|boolean',
         ];
     }

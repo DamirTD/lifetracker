@@ -26,9 +26,8 @@ class TaskService implements TaskServiceInterface
     public function createTask(array $data): Task {
         $userId = Auth::id();
 
-        // Найти или создать категорию
         $category = TaskCategory::firstOrCreate([
-            'name'    => $data['category'],
+            'name'    => $data['category_name'] ?? $data['category'],
             'user_id' => $userId,
         ]);
 
@@ -37,7 +36,7 @@ class TaskService implements TaskServiceInterface
             'title'        => $data['title'],
             'description'  => $data['description'] ?? null,
             'priority'     => $data['priority'],
-            'category_id'  => $category->id, // Привязываем ID категории
+            'category_id'  => $data['category_id'],
             'due_date'     => $data['due_date'],
             'is_completed' => $data['is_completed'] ?? false,
         ]);
