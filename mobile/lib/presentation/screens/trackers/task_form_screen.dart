@@ -40,7 +40,18 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     _descriptionController = TextEditingController(text: widget.task?.description ?? '');
     _selectedDate = widget.task?.dueDate ?? DateTime.now();
     _priority = widget.task?.priority ?? 1;
-    _selectedCategoryId = widget.task?.categoryId ?? (widget.categories.isNotEmpty ? widget.categories.first.id : null);
+    
+    if (widget.task?.categoryId != null) {
+      final categoryExists = widget.categories.any((category) => category.id == widget.task!.categoryId);
+      if (categoryExists) {
+        _selectedCategoryId = widget.task!.categoryId;
+      }
+    }
+    
+    if (_selectedCategoryId == null && widget.categories.isNotEmpty) {
+      _selectedCategoryId = widget.categories.first.id;
+    }
+    
     _isCompleted = widget.task?.isCompleted ?? false;
   }
 
@@ -147,30 +158,32 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<int>(
-                value: _selectedCategoryId,
-                decoration: const InputDecoration(
-                  labelText: 'Категория',
-                  border: OutlineInputBorder(),
+              widget.categories.isEmpty
+                ? const Text('Нет доступных категорий. Пожалуйста, создайте категорию сначала.')
+                : DropdownButtonFormField<int>(
+                  value: _selectedCategoryId,
+                  decoration: const InputDecoration(
+                    labelText: 'Категория',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: widget.categories.map((category) {
+                    return DropdownMenuItem<int>(
+                      value: category.id,
+                      child: Text(category.name),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    _safeSetState(() {
+                      _selectedCategoryId = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Пожалуйста, выберите категорию';
+                    }
+                    return null;
+                  },
                 ),
-                items: widget.categories.map((category) {
-                  return DropdownMenuItem<int>(
-                    value: category.id,
-                    child: Text(category.name),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  _safeSetState(() {
-                    _selectedCategoryId = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Пожалуйста, выберите категорию';
-                  }
-                  return null;
-                },
-              ),
               const SizedBox(height: 16),
               ListTile(
                 title: const Text('Срок выполнения'),
@@ -221,7 +234,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
-                      onPressed: _saveTask,
+                      onPressed: widget.categories.isEmpty ? null : _saveTask,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
                       ),
