@@ -10,17 +10,15 @@ class AuthRepository {
       Uri.parse("${Config.apiUrl}/login"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "login":    login,
+        "login": login,
         "password": password,
       }),
     );
 
     if (response.statusCode == 200) {
-      final data  = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
       final prefs = await SharedPreferences.getInstance();
-
       await prefs.setString('auth_token', data['token']);
-
       final storedToken = prefs.getString('auth_token');
       if (storedToken != data['token']) {
         throw Exception("Токен не сохранился в SharedPreferences");
@@ -53,7 +51,7 @@ class AuthRepository {
       final response = await http.post(
         Uri.parse("${Config.apiUrl}/logout"),
         headers: {
-          "Content-Type":  "application/json",
+          "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
       );
