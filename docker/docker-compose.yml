@@ -15,6 +15,12 @@ services:
             - db
         networks:
             - app-network
+        ports:
+            - "8000:8000"
+        command: >
+            sh -c "chmod -R 777 storage bootstrap/cache &&
+                   chown -R www-data:www-data storage bootstrap/cache &&
+                   php-fpm"
 
     nginx:
         image: nginx:latest
