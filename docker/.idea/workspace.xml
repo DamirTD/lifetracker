@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="[FT-16] Docker little optimize.">
+    <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="docker permissions fix. add ports for backend container">
+      <change beforePath="$PROJECT_DIR$/../backend/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../backend/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/config/cors.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx/conf.d/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx/conf.d/default.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile/lib/core/config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/core/config.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../mobile/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../mobile/lib/presentation/screens/auth/welcome_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/presentation/screens/auth/welcome_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../mobile/lib/presentation/screens/home/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/presentation/screens/home/home_screen.dart" afterDir="false" />
@@ -19,6 +25,11 @@
     <execution />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -27,12 +38,12 @@
     &quot;assignee&quot;: &quot;DamirTD&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/DamirTD/lifetracker.git",
-    "accountId": "533eb19a-14a6-4170-bbb8-7f5b6319462a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DamirTD/lifetracker.git&quot;,
+    &quot;accountId&quot;: &quot;533eb19a-14a6-4170-bbb8-7f5b6319462a&quot;
   }
-}]]></component>
+}</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -42,20 +53,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/damir/Документы/code/lifetracker/docker/php/Dockerfile",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;docker-update&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/damir/Документы/code/lifetracker/docker/nginx/conf.d/default.conf&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\toriy\PhpstormProjects\lifetracker\docker\nginx\conf.d" />
@@ -85,6 +96,10 @@
       <workItem from="1738579831102" duration="5034000" />
       <workItem from="1739876595430" duration="649000" />
       <workItem from="1742387662949" duration="32000" />
+      <workItem from="1742387938449" duration="1948000" />
+      <workItem from="1742394195262" duration="750000" />
+      <workItem from="1742395142834" duration="1950000" />
+      <workItem from="1742398235484" duration="55000" />
     </task>
     <task id="LOCAL-00001" summary="[FT-16] Docker little optimize.">
       <option name="closed" value="true" />
@@ -94,7 +109,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738587163914</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="docker permissions fix. add ports for backend container">
+      <option name="closed" value="true" />
+      <created>1742390708064</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742390708064</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -103,6 +126,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[FT-16] Auth fix with localstorage." />
     <MESSAGE value="[FT-16] Docker little optimize." />
-    <option name="LAST_COMMIT_MESSAGE" value="[FT-16] Docker little optimize." />
+    <MESSAGE value="docker permissions fix. add ports for backend container" />
+    <option name="LAST_COMMIT_MESSAGE" value="docker permissions fix. add ports for backend container" />
   </component>
 </project>

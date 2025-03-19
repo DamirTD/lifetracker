@@ -11,7 +11,6 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Фоновое изображение с затемнением
           Container(
             decoration: BoxDecoration(
               image: const DecorationImage(
@@ -24,14 +23,12 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
 
-          // Основной контент
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
                 SizedBox(height: screenHeight * 0.12),
                 
-                // Анимированный логотип
                 AnimatedScale(
                   duration: const Duration(milliseconds: 500),
                   scale: 1,
@@ -49,7 +46,6 @@ class WelcomeScreen extends StatelessWidget {
 
                 const Spacer(),
 
-                // Кнопки действий
                 Column(
                   children: [
                     _buildFeatureButton(context),
