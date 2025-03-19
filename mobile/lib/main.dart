@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/presentation/screens/auth/auth_screen.dart';
 import 'package:mobile/presentation/screens/home/home_screen.dart';
 import 'package:mobile/presentation/screens/auth/logout_screen.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
 import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:mobile/presentation/screens/trackers/tasks_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  await initializeDateFormatting('ru_RU');
-  
-  await dotenv.load(fileName: ".env");
 
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('auth_token') ?? '';
+  await initializeDateFormatting('ru_RU');
+  await dotenv.load(fileName: "assets/.env");
+
+  const storage = FlutterSecureStorage();
+  final token = await storage.read(key: 'auth_token') ?? '';
   final initialRoute = token.isNotEmpty ? '/home' : '/welcome';
 
   runApp(MainApp(initialRoute: initialRoute));

@@ -25,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _error;
   bool _disposed = false;
   
-  // Лучше установить значения по умолчанию
   int notificationCount = 0;
 
   @override
@@ -87,11 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()), // ⏳ Показываем загрузку
+        body: Center(child: CircularProgressIndicator()),
       );
     }
     
-    // Если произошла ошибка при загрузке пользователя
     if (_error != null) {
       return Scaffold(
         body: Center(
@@ -110,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
     
-    // Если пользователь не загружен
     if (_user == null) {
       return Scaffold(
         body: Center(
@@ -129,9 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
     
-    // Получаем имя пользователя из _user
     final userName = _user!.name;
-    // По умолчанию аватар пустой, можно настроить в будущем
     final avatarUrl = '';
     
     return Scaffold(
