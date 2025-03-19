@@ -11,15 +11,14 @@ class TaskRepository {
     final token = prefs.getString('auth_token') ?? '';
     
     return {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      'Content-Type':  'application/json',
+      'Accept':        'application/json',
       'Authorization': 'Bearer $token',
     };
   }
 
   Future<List<GroupedTasks>> getTasks() async {
-    final headers = await _getHeaders();
-    
+    final headers  = await _getHeaders();
     final response = await http.get(
       Uri.parse('${Config.apiUrl}/tasks'),
       headers: headers,
@@ -39,8 +38,7 @@ class TaskRepository {
   }
 
   Future<Task> createTask(Task task) async {
-    final headers = await _getHeaders();
-    
+    final headers  = await _getHeaders();
     final response = await http.post(
       Uri.parse('${Config.apiUrl}/tasks'),
       headers: headers,
@@ -56,8 +54,7 @@ class TaskRepository {
   }
 
   Future<Task> updateTask(Task task) async {
-    final headers = await _getHeaders();
-    
+    final headers  = await _getHeaders();
     final response = await http.put(
       Uri.parse('${Config.apiUrl}/tasks/${task.id}'),
       headers: headers,
@@ -73,8 +70,7 @@ class TaskRepository {
   }
 
   Future<void> deleteTask(int taskId) async {
-    final headers = await _getHeaders();
-    
+    final headers  = await _getHeaders();
     final response = await http.delete(
       Uri.parse('${Config.apiUrl}/tasks/$taskId'),
       headers: headers,
@@ -86,8 +82,7 @@ class TaskRepository {
   }
 
   Future<Task> markTaskAsCompleted(int taskId) async {
-    final headers = await _getHeaders();
-    
+    final headers  = await _getHeaders();
     final response = await http.patch(
       Uri.parse('${Config.apiUrl}/tasks/$taskId/complete'),
       headers: headers,

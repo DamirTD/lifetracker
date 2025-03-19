@@ -9,14 +9,14 @@ class TaskCategory {
 
   factory TaskCategory.fromJson(Map<String, dynamic> json) {
     return TaskCategory(
-      id: json['id'],
+      id:   json['id'],
       name: json['name'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id':   id,
       'name': name,
     };
   }
