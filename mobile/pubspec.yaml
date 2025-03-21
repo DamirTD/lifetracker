@@ -36,7 +36,7 @@ flutter:
       fonts:
         - asset: assets/fonts/Montserrat-Bold.ttf
   assets:
-    - assets/.env
+    - .env
     - assets/img/background.jpg
     - assets/fonts/DancingScript-Regular.ttf
     - assets/fonts/Poppins-Regular.ttf
