@@ -26,7 +26,9 @@ use App\Modules\Health\Services\SleepService;
 use App\Modules\Health\Services\WaterService;
 use App\Modules\Task\Query\TaskQuery;
 use App\Modules\Task\QueryInterfaces\TaskQueryInterface;
-use App\Modules\Task\Repository\TaskRepository;
+use App\Modules\Task\Repositories\TaskCategoryRepository;
+use App\Modules\Task\Repositories\TaskRepository;
+use App\Modules\Task\RepositoryInterfaces\TaskCategoryRepositoryInterface;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
 use App\Modules\Task\ServiceInterfaces\TaskCategoryServiceInterface;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
@@ -53,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(SleepRepositoryInterface::class, SleepRepository::class);
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+        $this->app->bind(TaskCategoryRepositoryInterface::class, TaskCategoryRepository::class);
         $this->app->bind(DietRepositoryInterface::class, DietRepository::class);
 
         // Query
