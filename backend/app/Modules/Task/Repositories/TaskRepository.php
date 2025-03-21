@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Task\Repository;
+namespace App\Modules\Task\Repositories;
 
 use App\Models\Task;
 use App\Modules\Task\RepositoryInterfaces\TaskRepositoryInterface;
