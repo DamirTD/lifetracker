@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting('ru_RU');
-  await dotenv.load(fileName: "assets/.env");
+  await dotenv.load(fileName: ".env");
 
   const storage = FlutterSecureStorage();
   final token = await storage.read(key: 'auth_token') ?? '';
