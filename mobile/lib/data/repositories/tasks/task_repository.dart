@@ -8,8 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TaskRepository {
   Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token') ?? '';
-    
+    final token = prefs.getString('auth_token');
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Токен авторизации отсутствует. Пожалуйста, войдите в систему.');
+    }
+
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -18,86 +22,164 @@ class TaskRepository {
   }
 
   Future<List<GroupedTasks>> getTasks() async {
-    final headers = await _getHeaders();
-    
-    final response = await http.get(
-      Uri.parse('${Config.apiUrl}/tasks'),
-      headers: headers,
-    );
+    try {
+      final headers = await _getHeaders();
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['data'] != null) {
-        return (data['data'] as List)
-            .map((taskGroup) => GroupedTasks.fromJson(taskGroup))
-            .toList();
+      final response = await http.get(
+        Uri.parse('${Config.apiUrl}/tasks'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['data'] != null) {
+          return (data['data'] as List)
+              .map((taskGroup) => GroupedTasks.fromJson(taskGroup))
+              .toList();
+        }
+        return [];
+      } else if (response.statusCode == 401) {
+        // Обработка устаревшего токена
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else {
+        throw Exception('Ошибка загрузки задач: ${response.statusCode}');
       }
-      return [];
-    } else {
-      throw Exception('Ошибка загрузки задач: ${response.statusCode}');
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future<Task> createTask(Task task) async {
-    final headers = await _getHeaders();
-    
-    final response = await http.post(
-      Uri.parse('${Config.apiUrl}/tasks'),
-      headers: headers,
-      body: jsonEncode(task.toJson()),
-    );
+    try {
+      final headers = await _getHeaders();
 
-    if (response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      return Task.fromJson(data['data']);
-    } else {
-      throw Exception('Ошибка создания задачи: ${response.statusCode}');
+      final response = await http.post(
+        Uri.parse('${Config.apiUrl}/tasks'),
+        headers: headers,
+        body: jsonEncode(task.toJson()),
+      );
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return Task.fromJson(data['data']);
+      } else if (response.statusCode == 401) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else {
+        throw Exception('Ошибка создания задачи: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future<Task> updateTask(Task task) async {
-    final headers = await _getHeaders();
-    
-    final response = await http.put(
-      Uri.parse('${Config.apiUrl}/tasks/${task.id}'),
-      headers: headers,
-      body: jsonEncode(task.toJson()),
-    );
+  Future<Task> updateTask(int taskId, Map<String, dynamic> data) async {
+    try {
+      final headers = await _getHeaders();
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return Task.fromJson(data['data']);
-    } else {
-      throw Exception('Ошибка обновления задачи: ${response.statusCode}');
+      // Преобразование пустой строки в null для поля due_date
+      if (data['due_date'] == '') {
+        data['due_date'] = null;
+      }
+
+      // Отладочное сообщение
+      print('Отправка данных на сервер: ${jsonEncode(data)}');
+
+      final response = await http.put(
+        Uri.parse('${Config.apiUrl}/tasks/$taskId'),
+        headers: headers,
+        body: jsonEncode(data),
+      );
+
+      // Отладочное сообщение с кодом ответа
+      print('Код ответа: ${response.statusCode}');
+
+      if (response.statusCode >= 400) {
+        print('Ошибка ответа: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return Task.fromJson(responseData['data']);
+      } else if (response.statusCode == 401) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else if (response.statusCode == 422) {
+        // Разбор ошибок валидации
+        final errorData = jsonDecode(response.body);
+        String errorMessage = 'Ошибка валидации';
+
+        if (errorData['errors'] != null) {
+          // Формируем сообщение об ошибке из полей валидации
+          final errors = <String>[];
+          (errorData['errors'] as Map<String, dynamic>).forEach((key, value) {
+            if (value is List) {
+              errors.addAll(value.map((e) => e.toString()));
+            } else {
+              errors.add('$key: $value');
+            }
+          });
+          errorMessage = errors.join('\n');
+        } else if (errorData['message'] != null) {
+          errorMessage = errorData['message'];
+        }
+
+        throw Exception('Ошибка валидации: $errorMessage');
+      } else {
+        throw Exception('Ошибка обновления задачи: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Исключение при обновлении задачи: $e');
+      rethrow;
     }
   }
 
   Future<void> deleteTask(int taskId) async {
-    final headers = await _getHeaders();
-    
-    final response = await http.delete(
-      Uri.parse('${Config.apiUrl}/tasks/$taskId'),
-      headers: headers,
-    );
+    try {
+      final headers = await _getHeaders();
 
-    if (response.statusCode != 204) {
-      throw Exception('Ошибка удаления задачи: ${response.statusCode}');
+      final response = await http.delete(
+        Uri.parse('${Config.apiUrl}/tasks/$taskId'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 401) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else if (response.statusCode != 204) {
+        throw Exception('Ошибка удаления задачи: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future<Task> markTaskAsCompleted(int taskId) async {
-    final headers = await _getHeaders();
-    
-    final response = await http.patch(
-      Uri.parse('${Config.apiUrl}/tasks/$taskId/complete'),
-      headers: headers,
-    );
+    try {
+      final headers = await _getHeaders();
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return Task.fromJson(data['data']);
-    } else {
-      throw Exception('Ошибка отметки задачи: ${response.statusCode}');
+      final response = await http.patch(
+        Uri.parse('${Config.apiUrl}/tasks/$taskId/complete'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Task.fromJson(data['data']);
+      } else if (response.statusCode == 401) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else {
+        throw Exception('Ошибка отметки задачи: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

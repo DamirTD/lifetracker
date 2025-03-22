@@ -1,5 +1,5 @@
-import 'task.dart';
-import 'task_category.dart';
+import 'package:mobile/data/models/task.dart';
+import 'package:mobile/data/models/task_category.dart';
 
 class GroupedTasks {
   final String date;
@@ -16,7 +16,9 @@ class GroupedTasks {
     return GroupedTasks(
       date: json['date'],
       category: TaskCategory.fromJson(json['category']),
-      tasks: (json['tasks'] as List).map((task) => Task.fromJson(task)).toList(),
+      tasks: (json['tasks'] as List)
+          .map((task) => Task.fromJson(task))
+          .toList(),
     );
   }
 }

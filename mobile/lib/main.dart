@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/presentation/screens/auth/auth_screen.dart';
 import 'package:mobile/presentation/screens/home/home_screen.dart';
@@ -19,7 +20,11 @@ void main() async {
   final token = await storage.read(key: 'auth_token') ?? '';
   final initialRoute = token.isNotEmpty ? '/home' : '/welcome';
 
-  runApp(MainApp(initialRoute: initialRoute));
+  runApp(
+    ProviderScope(
+      child: MainApp(initialRoute: initialRoute),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -32,6 +37,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/auth': (context) => const AuthScreen(),
