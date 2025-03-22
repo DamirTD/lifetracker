@@ -5,23 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="af8b44b2-0336-47cc-9969-ef190353239a" name="Changes" comment="docker permissions fix. add ports for backend container">
-      <change beforePath="$PROJECT_DIR$/../backend/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/config/cors.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nginx/conf.d/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx/conf.d/default.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/lib/core/config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/core/config.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/lib/presentation/screens/auth/welcome_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/presentation/screens/auth/welcome_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/lib/presentation/screens/home/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/presentation/screens/home/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile/lib/presentation/screens/trackers/diet_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/lib/presentation/screens/trackers/diet_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings">
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
   <component name="Git.Settings">
@@ -44,7 +36,12 @@
     &quot;accountId&quot;: &quot;533eb19a-14a6-4170-bbb8-7f5b6319462a&quot;
   }
 }</component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php" />
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/setasign/fpdf" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -53,20 +50,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;docker-update&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/damir/Документы/code/lifetracker/docker/nginx/conf.d/default.conf&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "FT-53",
+    "last_opened_file_path": "/home/damir/Документы/code/lifetracker/docker/php/Dockerfile",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\toriy\PhpstormProjects\lifetracker\docker\nginx\conf.d" />
@@ -100,6 +97,7 @@
       <workItem from="1742394195262" duration="750000" />
       <workItem from="1742395142834" duration="1950000" />
       <workItem from="1742398235484" duration="55000" />
+      <workItem from="1742664708392" duration="1377000" />
     </task>
     <task id="LOCAL-00001" summary="[FT-16] Docker little optimize.">
       <option name="closed" value="true" />
