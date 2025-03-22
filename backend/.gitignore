@@ -16,3 +16,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+docker/vendor/
+docker/.idea/
+docker/composer.lock
