@@ -26,10 +26,12 @@ class TaskService implements TaskServiceInterface
     public function createTask(array $data): Task {
         $userId = Auth::id();
 
-        $category = TaskCategory::firstOrCreate([
-            'name'    => $data['category_name'] ?? $data['category'],
-            'user_id' => $userId,
-        ]);
+        if (isset($data['category'])) {
+            TaskCategory::firstOrCreate([
+                'name'    => $data['category'],
+                'user_id' => $userId,
+            ]);
+        }
 
         return $this->taskRepository->create([
             'user_id'      => $userId,
@@ -37,7 +39,7 @@ class TaskService implements TaskServiceInterface
             'description'  => $data['description'] ?? null,
             'priority'     => $data['priority'],
             'category_id'  => $data['category_id'],
-            'due_date'     => $data['due_date'],
+            'due_date'     => $data['due_date'] ?? null,
             'is_completed' => $data['is_completed'] ?? false,
         ]);
     }
@@ -55,9 +57,13 @@ class TaskService implements TaskServiceInterface
     public function getTasks($userId): Collection
     {
         return Task::where('user_id', $userId)
-        ->with('category')
-        ->latest()
-        ->get()
-        ->groupBy(fn($task) => "{$task->due_date->format('d.m.Y')}|{$task->category->id}");
+            ->with('category')
+            ->latest()
+            ->get()
+            ->groupBy(function($task) {
+                $formattedDate = $task->due_date ? $task->due_date->format('d.m.Y') : 'No Date';
+
+                return "{$formattedDate}|{$task->category->id}";
+            });
     }
 }
