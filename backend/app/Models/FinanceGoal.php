@@ -6,26 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FinanceRecord extends Model
+class FinanceGoal extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'category_id',
-        'amount',
-        'type',
-        'period',
+        'name',
+        'target_amount',
+        'current_amount',
+        'target_date',
         'description',
-        'date',
-        'is_recurring',
-        'recurring_frequency',
+        'priority',
+        'status',
     ];
 
     protected $casts = [
-        'amount' => 'float',
-        'date' => 'date',
-        'is_recurring' => 'boolean',
+        'target_amount' => 'float',
+        'current_amount' => 'float',
+        'target_date' => 'date',
     ];
 
     public $timestamps = true;
@@ -33,10 +32,5 @@ class FinanceRecord extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(FinanceCategory::class);
     }
 }
