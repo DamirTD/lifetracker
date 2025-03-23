@@ -6,33 +6,39 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserWaterProgress extends Model
+class UserWaterProgressHistory extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'date',
+        'action',
+        'volume_ml',
+        'container_id',
+        'timestamp',
         'daily_goal_ml',
-        'consumed_ml',
-        'remaining_ml',
-        'glasses_today',
         'glass_volume_ml',
-        'last_added_at',
+        'calculation_factors',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'volume_ml' => 'integer',
+        'container_id' => 'integer',
+        'timestamp' => 'datetime',
         'daily_goal_ml' => 'integer',
-        'consumed_ml' => 'integer',
-        'remaining_ml' => 'integer',
-        'glasses_today' => 'integer',
         'glass_volume_ml' => 'integer',
-        'last_added_at' => 'datetime',
+        'calculation_factors' => 'json',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function container(): BelongsTo
+    {
+        return $this->belongsTo(UserWaterContainer::class, 'container_id');
     }
 }
