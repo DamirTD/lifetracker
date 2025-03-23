@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/data/models/task.dart';
 import 'package:mobile/data/models/task_category.dart';
 import 'package:mobile/presentation/providers/tasks.dart';
 
-class TaskFormScreen extends ConsumerStatefulWidget {
+class TaskFormScreen extends StatefulWidget {
   final Task? task;
   final List<TaskCategory> categories;
   final Function onSave;
@@ -18,10 +18,10 @@ class TaskFormScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TaskFormScreen> createState() => _TaskFormScreenState();
+  State<TaskFormScreen> createState() => _TaskFormScreenState();
 }
 
-class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
+class _TaskFormScreenState extends State<TaskFormScreen> {
   final _formKey               = GlobalKey<FormState>();
   final _titleController       = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -105,7 +105,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
       try {
         final formattedDate = _selectedDate != null
-            ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(_selectedDate!)
             : null;
 
         final task = Task(
@@ -118,10 +118,21 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
           isCompleted: widget.task?.isCompleted ?? false,
         );
 
+        final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
         if (widget.task == null) {
-          await ref.read(tasksProvider.notifier).createTask(task);
+          await tasksProvider.createTask(task);
         } else {
-          await ref.read(tasksProvider.notifier).updateTask(task);
+          if (task.id != null) {
+            final data = {
+              'title': task.title,
+              'description': task.description,
+              'priority': task.priority,
+              'category_id': task.categoryId,
+              'due_date': task.dueDate,
+            };
+            await tasksProvider.updateTask(task.id!, data);
+          }
         }
 
         widget.onSave();
