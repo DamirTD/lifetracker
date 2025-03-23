@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile/data/models/task.dart';
 import 'package:mobile/data/models/task_category.dart';
 import 'package:mobile/presentation/screens/trackers/task_form_screen.dart';
 import 'package:mobile/presentation/providers/tasks.dart';
 
-class TasksScreen extends ConsumerStatefulWidget {
+class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
 
   @override
-  ConsumerState<TasksScreen> createState() => _TasksScreenState();
+  State<TasksScreen> createState() => _TasksScreenState();
 }
 
-class _TasksScreenState extends ConsumerState<TasksScreen> {
+class _TasksScreenState extends State<TasksScreen> {
   bool _showCategories = false;
 
   @override
   void initState() {
     super.initState();
-    // Load data when screen is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(tasksProvider.notifier).loadData();
+      Provider.of<TasksProvider>(context, listen: false).loadData();
     });
   }
 
@@ -48,11 +47,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             onPressed: () async {
               if (textController.text.isNotEmpty) {
                 try {
-                  // Close dialog before async operation
                   Navigator.of(dialogContext).pop();
 
-                  // Create category through provider
-                  await ref.read(tasksProvider.notifier).createCategory(textController.text);
+                  await Provider.of<TasksProvider>(context, listen: false).createCategory(textController.text);
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -96,11 +93,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             onPressed: () async {
               if (textController.text.isNotEmpty) {
                 try {
-                  // Close dialog before async operation
                   Navigator.of(dialogContext).pop();
 
-                  // Update category through provider
-                  await ref.read(tasksProvider.notifier).updateCategory(category.id!, textController.text);
+                  await Provider.of<TasksProvider>(context, listen: false).updateCategory(category.id!, textController.text);
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -136,7 +131,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             onPressed: () async {
               try {
                 Navigator.of(dialogContext).pop();
-                await ref.read(tasksProvider.notifier).deleteCategory(category.id!);
+                await Provider.of<TasksProvider>(context, listen: false).deleteCategory(category.id!);
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +181,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           categories: categories,
           onSave: () {
             if (mounted) {
-              ref.read(tasksProvider.notifier).loadData();
+              Provider.of<TasksProvider>(context, listen: false).loadData();
             }
           },
         ),
@@ -209,7 +204,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             child: const Text('Удалить'),
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              ref.read(tasksProvider.notifier).deleteTask(taskId);
+              Provider.of<TasksProvider>(context, listen: false).deleteTask(taskId);
             },
           ),
         ],
@@ -224,7 +219,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
       builder: (context) {
-        final tasksState = ref.read(tasksProvider);
+        final tasksProvider = Provider.of<TasksProvider>(context);
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -250,12 +245,12 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 onTap: () {
                   Navigator.pop(context);
 
-                  if (tasksState.categories == null || tasksState.categories!.isEmpty) {
+                  if (tasksProvider.categories == null || tasksProvider.categories!.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Сначала создайте категорию')),
                     );
                   } else {
-                    _navigateToTaskForm(null, tasksState.categories!);
+                    _navigateToTaskForm(null, tasksProvider.categories!);
                   }
                 },
               ),
@@ -277,7 +272,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     );
   }
 
-  // Replace this method in your TasksScreen class
   Widget _buildTaskItem(Task task) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -290,12 +284,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               value: task.isCompleted,
               onChanged: (value) {
                 if (!task.isCompleted && task.id != null) {
-                  ref.read(tasksProvider.notifier).markTaskAsCompleted(task.id!);
+                  Provider.of<TasksProvider>(context, listen: false).markTaskAsCompleted(task.id!);
                 }
               },
             ),
 
-            // Title and description
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,7 +311,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               ),
             ),
 
-            // Priority icon and action buttons
             _getPriorityIcon(task.priority),
             const SizedBox(width: 4),
             IconButton(
@@ -326,7 +318,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               constraints: const BoxConstraints(),
               padding: const EdgeInsets.all(8),
               onPressed: () {
-                final categories = ref.read(tasksProvider).categories;
+                final categories = Provider.of<TasksProvider>(context, listen: false).categories;
                 if (categories != null && categories.isNotEmpty) {
                   _navigateToTaskForm(task, categories);
                 }
@@ -383,14 +375,18 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tasksState = ref.watch(tasksProvider);
+    final tasksProvider = Provider.of<TasksProvider>(context);
+    final categories = tasksProvider.categories;
+    final groupedTasks = tasksProvider.groupedTasks;
+    final isLoading = tasksProvider.isLoading;
+    final error = tasksProvider.error;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Задачи'),
         actions: [
           // Categories toggle button
-          if (tasksState.categories != null && tasksState.categories!.isNotEmpty)
+          if (categories != null && categories.isNotEmpty)
             IconButton(
               icon: Icon(
                 _showCategories ? Icons.category : Icons.category_outlined,
@@ -405,27 +401,27 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(tasksProvider.notifier).loadData(),
+            onPressed: () => Provider.of<TasksProvider>(context, listen: false).loadData(),
             tooltip: 'Обновить',
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddOptionsBottomSheet,
-        child: const Icon(Icons.add),
         tooltip: 'Добавить',
+        child: const Icon(Icons.add),
       ),
-      body: tasksState.isLoading
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : tasksState.error != null
+          : error != null
           ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Ошибка: ${tasksState.error}'),
+            Text('Ошибка: $error'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.read(tasksProvider.notifier).loadData(),
+              onPressed: () => Provider.of<TasksProvider>(context, listen: false).loadData(),
               child: const Text('Попробовать снова'),
             ),
           ],
@@ -433,8 +429,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       )
           : Column(
         children: [
-          // Collapsible categories section
-          if (_showCategories && tasksState.categories != null && tasksState.categories!.isNotEmpty)
+          if (_showCategories && categories != null && categories.isNotEmpty)
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
@@ -471,7 +466,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: tasksState.categories!
+                        children: categories
                             .map((category) => _buildCategoryChip(category))
                             .toList(),
                       ),
@@ -481,9 +476,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               ),
             ),
 
-          // Tasks section
           Expanded(
-            child: tasksState.groupedTasks == null || tasksState.groupedTasks!.isEmpty
+            child: groupedTasks == null || groupedTasks.isEmpty
                 ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -499,13 +493,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     icon: const Icon(Icons.add),
                     label: const Text('Добавить задачу'),
                     onPressed: () {
-                      if (tasksState.categories == null || tasksState.categories!.isEmpty) {
+                      if (categories == null || categories.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Сначала создайте категорию')),
                         );
                         _showAddCategoryDialog();
                       } else {
-                        _navigateToTaskForm(null, tasksState.categories!);
+                        _navigateToTaskForm(null, categories);
                       }
                     },
                   ),
@@ -513,9 +507,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               ),
             )
                 : ListView.builder(
-              itemCount: tasksState.groupedTasks!.length,
+              itemCount: groupedTasks.length,
               itemBuilder: (context, index) {
-                final group = tasksState.groupedTasks![index];
+                final group = groupedTasks[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

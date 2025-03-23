@@ -21,7 +21,7 @@ class GetBudgetRequest extends FormRequest
     {
         return [
             'period'      => 'nullable|string|in:week,month,year',
-            'category_id' => 'required|integer|exists:finance_categories,id',
+            'category_id' => 'nullable|integer|exists:finance_categories,id',
         ];
     }
 }

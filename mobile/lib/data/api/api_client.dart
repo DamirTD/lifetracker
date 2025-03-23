@@ -27,11 +27,16 @@ class ApiClient {
     };
   }
 
-  Future<dynamic> get(String path) async {
+  Future<dynamic> get(String path, {required Map<String, dynamic> queryParams}) async {
     try {
-      final headers  = await _getHeaders();
+      final headers = await _getHeaders();
+
+      final uri = Uri.parse('$baseUrl/$path').replace(
+          queryParameters: queryParams.map((key, value) => MapEntry(key, value.toString()))
+      );
+
       final response = await _httpClient.get(
-        Uri.parse('$baseUrl/$path'),
+        uri,
         headers: headers,
       );
       return _processResponse(response);
@@ -112,5 +117,23 @@ class ApiClient {
         throw Exception('Ошибка сервера: ${response.statusCode}');
       }
     }
+  }
+
+  Future<dynamic> uploadFile(String endpoint, String filePath) async {
+    final token = await _getToken();
+    final uri = Uri.parse('$baseUrl$endpoint');
+
+    var request = http.MultipartRequest('POST', uri);
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    request.files.add(await http.MultipartFile.fromPath('file', filePath));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    return _processResponse(response);
   }
 }

@@ -1,186 +1,204 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/data/models/grouped_tasks.dart';
 import 'package:mobile/data/models/task.dart';
 import 'package:mobile/data/models/task_category.dart';
-import 'package:mobile/data/models/grouped_tasks.dart';
-import 'package:mobile/data/repositories/tasks/task_repository.dart';
 import 'package:mobile/data/repositories/tasks/category/category_repository.dart';
-import 'package:mobile/domain/usecases/category_usecases.dart';
-import 'package:mobile/domain/usecases/task_usecases.dart';
+import 'package:mobile/data/repositories/tasks/task_repository.dart';
 
-class TasksState {
+final tasksProvider = ChangeNotifierProvider<TasksProvider>((ref) {
+  throw UnimplementedError('tasksProvider was not initialized');
+});
+
+class TaskState {
+  final List<TaskCategory>? categories;
+  final List<TaskGroup>? groupedTasks;
   final bool isLoading;
   final String? error;
-  final List<TaskCategory>? categories;
-  final List<GroupedTasks>? groupedTasks;
 
-  TasksState({
-    this.isLoading = false,
-    this.error,
+  TaskState({
     this.categories,
     this.groupedTasks,
+    this.isLoading = false,
+    this.error,
   });
 
-  TasksState copyWith({
+  TaskState copyWith({
+    List<TaskCategory>? categories,
+    List<TaskGroup>? groupedTasks,
     bool? isLoading,
     String? error,
-    List<TaskCategory>? categories,
-    List<GroupedTasks>? groupedTasks,
   }) {
-    return TasksState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+    return TaskState(
       categories: categories ?? this.categories,
       groupedTasks: groupedTasks ?? this.groupedTasks,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
     );
   }
 }
 
-class TasksNotifier extends StateNotifier<TasksState> {
-  final TaskUseCases _taskUseCases;
-  final CategoryUseCases _categoryUseCases;
+class TaskGroup {
+  final String date;
+  final TaskCategory category;
+  final List<Task> tasks;
 
-  TasksNotifier(this._taskUseCases, this._categoryUseCases) : super(TasksState());
+  TaskGroup({
+    required this.date,
+    required this.category,
+    required this.tasks,
+  });
+}
+
+class TasksProvider extends ChangeNotifier {
+  final TaskRepository _taskRepository;
+  final TaskCategoryRepository _categoryRepository;
+  TaskState _state = TaskState(isLoading: true);
+
+  TasksProvider(this._taskRepository, this._categoryRepository) {
+    loadData();
+  }
+
+  TaskState get state => _state;
+
+  List<TaskCategory>? get categories => _state.categories;
+  List<TaskGroup>? get groupedTasks => _state.groupedTasks;
+  bool get isLoading => _state.isLoading;
+  String? get error => _state.error;
 
   Future<void> loadData() async {
-    state = state.copyWith(isLoading: true, error: null);
+    _state = _state.copyWith(isLoading: true, error: null);
+    notifyListeners();
 
     try {
-      final categories = await _categoryUseCases.getCategories();
-      final groupedTasks = await _taskUseCases.getTasks();
+      final categories = await _categoryRepository.getCategories();
+      final groupedTasks = await _taskRepository.getTasks();
 
-      state = state.copyWith(
-        isLoading: false,
+      final taskGroups = _processGroupedTasks(groupedTasks, categories);
+
+      _state = _state.copyWith(
         categories: categories,
-        groupedTasks: groupedTasks,
+        groupedTasks: taskGroups,
+        isLoading: false,
       );
+      notifyListeners();
     } catch (e) {
-      state = state.copyWith(
+      _state = _state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
+      notifyListeners();
+    }
+  }
+
+  List<TaskGroup> _processGroupedTasks(List<GroupedTasks> groupedTasks, List<TaskCategory> categories) {
+    final List<TaskGroup> result = [];
+
+    for (var groupedTask in groupedTasks) {
+      final category = groupedTask.category;
+
+      final taskGroup = TaskGroup(
+        date: groupedTask.date,
+        category: category,
+        tasks: groupedTask.tasks,
+      );
+
+      result.add(taskGroup);
+    }
+
+    return result;
+  }
+
+  Future<void> createCategory(String name) async {
+    try {
+      await _categoryRepository.createCategory(name);
+      await loadData();
+    } catch (e) {
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> updateCategory(int id, String name) async {
+    try {
+      await _categoryRepository.updateCategory(id, name);
+      await loadData();
+    } catch (e) {
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> deleteCategory(int id) async {
+    try {
+      await _categoryRepository.deleteCategory(id);
+      await loadData();
+    } catch (e) {
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
+      rethrow;
     }
   }
 
   Future<void> createTask(Task task) async {
-    state = state.copyWith(isLoading: true, error: null);
-
     try {
-      await _taskUseCases.createTask(task);
+      await _taskRepository.createTask(task);
       await loadData();
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
       rethrow;
     }
   }
 
-  Future<void> updateTask(Task task) async {
-    state = state.copyWith(isLoading: true, error: null);
-
+  Future<void> updateTask(int id, Map<String, dynamic> data) async {
     try {
-      await _taskUseCases.updateTask(task);
+      await _taskRepository.updateTask(id, data);
       await loadData();
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
       rethrow;
     }
   }
 
-  Future<void> deleteTask(int taskId) async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      await _taskUseCases.deleteTask(taskId);
-      await loadData();
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+  Future<void> updateTaskObject(Task task) async {
+    if (task.id == null) {
+      throw Exception('Невозможно обновить задачу без ID');
     }
+
+    final data = {
+      'title': task.title,
+      'description': task.description,
+      'priority': task.priority,
+      'category_id': task.categoryId,
+      'due_date': task.dueDate,
+    };
+
+    await updateTask(task.id!, data);
   }
 
-  Future<void> markTaskAsCompleted(int taskId) async {
-    state = state.copyWith(isLoading: true, error: null);
-
+  Future<void> markTaskAsCompleted(int id) async {
     try {
-      await _taskUseCases.markTaskAsCompleted(taskId);
+      await _taskRepository.markTaskAsCompleted(id);
       await loadData();
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
-  }
-
-  Future<void> createCategory(String name) async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      await _categoryUseCases.createCategory(name);
-      await loadData();
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
       rethrow;
     }
   }
 
-  Future<void> updateCategory(int categoryId, String name) async {
-    state = state.copyWith(isLoading: true, error: null);
-
+  Future<void> deleteTask(int id) async {
     try {
-      await _categoryUseCases.updateCategory(categoryId, name);
+      await _taskRepository.deleteTask(id);
       await loadData();
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-      rethrow;
-    }
-  }
-
-  Future<void> deleteCategory(int categoryId) async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      await _categoryUseCases.deleteCategory(categoryId);
-      await loadData();
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
       rethrow;
     }
   }
 }
-
-// Repository providers
-final taskRepositoryProvider = Provider((ref) => TaskRepository());
-final categoryRepositoryProvider = Provider((ref) => TaskCategoryRepository());
-
-// UseCase providers
-final taskUseCasesProvider = Provider((ref) =>
-    TaskUseCases(ref.watch(taskRepositoryProvider))
-);
-
-final categoryUseCasesProvider = Provider((ref) =>
-    CategoryUseCases(ref.watch(categoryRepositoryProvider))
-);
-
-// State provider
-final tasksProvider = StateNotifierProvider<TasksNotifier, TasksState>((ref) {
-  final taskUseCases = ref.watch(taskUseCasesProvider);
-  final categoryUseCases = ref.watch(categoryUseCasesProvider);
-  return TasksNotifier(taskUseCases, categoryUseCases);
-});
