@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile/data/repositories/water/water_repository.dart';
+import 'package:mobile/presentation/providers/water_providers.dart';
+import 'package:mobile/presentation/screens/trackers/water_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/data/repositories/tasks/category/category_repository.dart';
@@ -30,6 +33,7 @@ void main() async {
   final apiClient = ApiClient(baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:80/api');
   final financeRepository = FinanceRepository(apiClient);
   final taskRepository = TaskRepository();
+  final waterRepository = WaterRepository();
   final categoryRepository = TaskCategoryRepository();
 
   runApp(
@@ -40,6 +44,9 @@ void main() async {
         ),
         ChangeNotifierProvider<TasksProvider>(
           create: (_) => TasksProvider(taskRepository, categoryRepository),
+        ),
+        ChangeNotifierProvider<WaterProvider>(
+          create: (_) => WaterProvider(waterRepository),
         ),
       ],
       child: MainApp(initialRoute: initialRoute),
@@ -68,6 +75,7 @@ class MainApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/logout': (context) => const LogoutScreen(),
         '/tasks': (context) => const TasksScreen(),
+        '/water': (context) => const WaterScreen(),
       },
     );
   }
