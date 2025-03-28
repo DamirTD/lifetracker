@@ -18,21 +18,15 @@ class TaskUseCases {
   }
 
   Future<Task> updateTask(Task task) {
-    // Убедимся, что у задачи есть ID
     if (task.id == null) {
       throw Exception('Невозможно обновить задачу без ID');
     }
 
-    // Преобразуем данные перед отправкой
     Task preparedTask = _prepareTaskForApi(task);
 
-    // Извлекаем ID и преобразуем задачу в Map для отправки
     final taskId = preparedTask.id!;
     final taskData = preparedTask.toJson();
 
-    print('Отправка задачи ID $taskId: $taskData');
-
-    // Вызываем метод репозитория с двумя аргументами
     return _repository.updateTask(taskId, taskData);
   }
 
@@ -44,16 +38,12 @@ class TaskUseCases {
     return _repository.markTaskAsCompleted(taskId);
   }
 
-  // Вспомогательный метод для подготовки задачи перед отправкой
   Task _prepareTaskForApi(Task task) {
-    // Здесь мы обрабатываем пустую строку даты как null
-    // и добавляем время к дате, если его нет
     String? formattedDueDate;
 
     if (task.dueDate == null || task.dueDate!.isEmpty) {
       formattedDueDate = null;
     } else if (!task.dueDate!.contains(':')) {
-      // Если в дате нет двоеточия, значит нет времени
       formattedDueDate = '${task.dueDate} 00:00:00';
     } else {
       formattedDueDate = task.dueDate;

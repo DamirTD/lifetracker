@@ -214,9 +214,14 @@ class GoalsWidget extends StatelessWidget {
                 if (amount != null && amount > 0) {
                   // Check for null ID and handle appropriately
                   if (goal.id != null) {
+                    final navigator = Navigator.of(context);
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
                     await provider.updateGoalProgress(goal.id!, amount);
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
+
+                    navigator.pop();
+
+                    scaffoldMessenger.showSnackBar(
                       SnackBar(
                         content: Text('Progress updated for ${goal.name}'),
                         backgroundColor: Colors.green,

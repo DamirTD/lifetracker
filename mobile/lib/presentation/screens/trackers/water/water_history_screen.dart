@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../providers/water_providers.dart';
 
 class WaterHistoryScreen extends StatefulWidget {
-  const WaterHistoryScreen({Key? key}) : super(key: key);
+  const WaterHistoryScreen({super.key});
 
   @override
   WaterHistoryScreenState createState() => WaterHistoryScreenState();
@@ -26,6 +26,7 @@ class WaterHistoryScreenState extends State<WaterHistoryScreen> with SingleTicke
     _selectedMonth = DateFormat('yyyy-MM').format(now);
 
     Future.microtask(() {
+      if (!mounted) return;
       final provider = Provider.of<WaterProvider>(context, listen: false);
       provider.loadWeeklyConsumption(startDate: _selectedWeekStart);
       provider.loadMonthlyConsumption(yearMonth: _selectedMonth);
@@ -435,7 +436,7 @@ class WaterHistoryScreenState extends State<WaterHistoryScreen> with SingleTicke
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1 * 255),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color),
@@ -618,7 +619,7 @@ class WaterHistoryScreenState extends State<WaterHistoryScreen> with SingleTicke
                 ),
                 if (consumed > 0)
                   Text(
-                    '${consumed}мл',
+                    '$consumed мл',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
               ],

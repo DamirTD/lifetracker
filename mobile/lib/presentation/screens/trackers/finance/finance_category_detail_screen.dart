@@ -365,9 +365,9 @@ class _FinanceCategoryDetailScreenState extends State<FinanceCategoryDetailScree
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1 * 255),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3 * 255),),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,7 +576,7 @@ class _FinanceCategoryDetailScreenState extends State<FinanceCategoryDetailScree
                         dotData: FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: _getCategoryColor().withOpacity(0.2),
+                          color: _getCategoryColor().withValues(alpha: 0.2 * 255),
                         ),
                       ),
                     ],
@@ -629,7 +629,7 @@ class _FinanceCategoryDetailScreenState extends State<FinanceCategoryDetailScree
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
-                    backgroundColor: _getCategoryColor().withOpacity(0.2),
+                    backgroundColor: _getCategoryColor().withValues(alpha: 0.2 * 255),
                     child: Icon(
                       _getCategoryIcon(),
                       color: _getCategoryColor(),
@@ -721,7 +721,7 @@ class _FinanceCategoryDetailScreenState extends State<FinanceCategoryDetailScree
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: _getCategoryColor().withOpacity(0.2),
+                              backgroundColor: _getCategoryColor().withValues(alpha: 0.2 * 255),
                               child: Icon(
                                 _getCategoryIcon(),
                                 color: _getCategoryColor(),

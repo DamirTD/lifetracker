@@ -17,7 +17,8 @@ class WaterRemindersScreenState extends State<WaterRemindersScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      final provider = Provider.of<WaterProvider>(context, listen: false);
+      if (!mounted) return;
+      final provider = context.read<WaterProvider>();
       provider.loadReminders();
     });
   }
@@ -208,7 +209,7 @@ class WaterRemindersScreenState extends State<WaterRemindersScreen> {
                       min: 15,
                       max: 240,
                       divisions: 15,
-                      label: '${intervalMinutes} мин',
+                      label: '$intervalMinutes мин',
                       onChanged: (value) {
                         setState(() {
                           intervalMinutes = value.toInt();
@@ -217,7 +218,7 @@ class WaterRemindersScreenState extends State<WaterRemindersScreen> {
                     ),
                     Center(
                       child: Text(
-                        '${intervalMinutes} минут',
+                        '$intervalMinutes минут',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
@@ -362,7 +363,7 @@ class WaterRemindersScreenState extends State<WaterRemindersScreen> {
                       min: 15,
                       max: 240,
                       divisions: 15,
-                      label: '${intervalMinutes} мин',
+                      label: '$intervalMinutes мин',
                       onChanged: (value) {
                         setState(() {
                           intervalMinutes = value.toInt();
@@ -371,7 +372,7 @@ class WaterRemindersScreenState extends State<WaterRemindersScreen> {
                     ),
                     Center(
                       child: Text(
-                        '${intervalMinutes} минут',
+                        '$intervalMinutes минут',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),

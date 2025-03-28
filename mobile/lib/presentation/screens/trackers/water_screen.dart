@@ -26,6 +26,7 @@ class _WaterScreenState extends State<WaterScreen> {
           setState(() {
             _currentIndex = 2; // Navigate to settings tab
           });
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Пожалуйста, настройте дневную норму сначала'),

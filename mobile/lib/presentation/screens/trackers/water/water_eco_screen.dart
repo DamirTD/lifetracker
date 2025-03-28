@@ -14,6 +14,7 @@ class WaterEcoScreenState extends State<WaterEcoScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
+      if (!mounted) return;
       final provider = Provider.of<WaterProvider>(context, listen: false);
       provider.loadEcoReport();
     });
@@ -207,7 +208,7 @@ class WaterEcoScreenState extends State<WaterEcoScreen> {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3 * 255),
         ),
         child: Row(
           children: [
