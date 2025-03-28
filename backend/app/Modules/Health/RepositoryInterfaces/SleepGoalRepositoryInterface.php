@@ -2,14 +2,11 @@
 
 namespace App\Modules\Health\RepositoryInterfaces;
 
-interface SleepRepositoryInterface
+interface SleepGoalRepositoryInterface
 {
-
     public function create(array $data): array;
     public function findById(int $id): ?array;
     public function update(int $id, array $data): array;
     public function delete(int $id): bool;
-    public function getAllForUser(int $userId): array;
-    public function getSleepDataForPeriod(int $userId, \Carbon\Carbon $startDate): array;
-    public function getRecentSleepData(int $userId, int $limit): array;
+    public function getGoalsForUser(int $userId): ?array;
 }
