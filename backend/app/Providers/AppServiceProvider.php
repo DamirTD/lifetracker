@@ -29,8 +29,10 @@ use App\Modules\Finance\Services\FinancialGoalService;
 use App\Modules\Finance\Services\KaspiPDFAnalyzerService;
 use App\Modules\Finance\Services\KaspiPDFService;
 use App\Modules\Health\Repository\DietRepository;
+use App\Modules\Health\Repository\SleepGoalRepository;
 use App\Modules\Health\Repository\SleepRepository;
 use App\Modules\Health\RepositoryInterfaces\DietRepositoryInterface;
+use App\Modules\Health\RepositoryInterfaces\SleepGoalRepositoryInterface;
 use App\Modules\Health\RepositoryInterfaces\SleepRepositoryInterface;
 use App\Modules\Health\ServiceInterfaces\SleepServiceInterface;
 use App\Modules\Health\ServiceInterfaces\WaterServiceInterface;
@@ -75,6 +77,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
         $this->app->bind(TaskCategoryRepositoryInterface::class, TaskCategoryRepository::class);
         $this->app->bind(DietRepositoryInterface::class, DietRepository::class);
+        $this->app->bind(SleepGoalRepositoryInterface::class, SleepGoalRepository::class);
 
         // Query
         $this->app->bind(UserQueryInterface::class, UserQuery::class);
