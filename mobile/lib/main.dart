@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile/data/repositories/sport/sport_repository.dart';
+import 'package:mobile/presentation/providers/sport_provider.dart';
+import 'package:mobile/presentation/screens/sport/training_history_screen.dart';
+import 'package:mobile/presentation/screens/sport/user_sports_screen.dart';
 import 'package:mobile/presentation/screens/trackers/sleep_screen.dart';
+import 'package:mobile/presentation/screens/trackers/sport_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/data/api/api_client.dart';
@@ -34,6 +39,7 @@ void main() async {
   final taskRepository = TaskRepository();
   final categoryRepository = TaskCategoryRepository();
   final sleepRepository = SleepRepository(apiClient);
+  final sportRepository = SportRepository(apiClient); // Добавлен репозиторий спорта
 
   runApp(
     MultiProvider(
@@ -46,6 +52,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SleepProvider>(
           create: (_) => SleepProvider(sleepRepository),
+        ),
+        ChangeNotifierProvider<SportProvider>( // Добавлен провайдер спорта
+          create: (_) => SportProvider(sportRepository),
         ),
       ],
       child: MainApp(initialRoute: initialRoute),
@@ -75,6 +84,9 @@ class MainApp extends StatelessWidget {
         '/logout': (context) => const LogoutScreen(),
         '/tasks': (context) => const TasksScreen(),
         '/sleep': (context) => const SleepScreen(),
+        '/sport': (context) => const SportScreen(),
+        '/sport/my': (context) => const UserSportsScreen(),
+        '/sport/history': (context) => const TrainingHistoryScreen(),
       },
     );
   }
