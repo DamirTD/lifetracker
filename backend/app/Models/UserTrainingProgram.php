@@ -20,6 +20,6 @@ class UserTrainingProgram extends Model
 
     public function sections(): HasMany
     {
-        return $this->hasMany(TrainingSection::class);
+        return $this->hasMany(TrainingSection::class, 'user_training_program_id');
     }
 }

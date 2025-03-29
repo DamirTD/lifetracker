@@ -11,11 +11,11 @@ class TrainingSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['training_program_id', 'name'];
+    protected $fillable = ['user_training_program_id', 'name'];
 
     public function trainingProgram(): BelongsTo
     {
-        return $this->belongsTo(UserTrainingProgram::class);
+        return $this->belongsTo(UserTrainingProgram::class, 'user_training_program_id');
     }
 
     public function exercises(): HasMany
