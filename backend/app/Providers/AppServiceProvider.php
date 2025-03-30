@@ -34,8 +34,10 @@ use App\Modules\Health\Repository\SleepRepository;
 use App\Modules\Health\RepositoryInterfaces\DietRepositoryInterface;
 use App\Modules\Health\RepositoryInterfaces\SleepGoalRepositoryInterface;
 use App\Modules\Health\RepositoryInterfaces\SleepRepositoryInterface;
+use App\Modules\Health\ServiceInterfaces\DietServiceInterface;
 use App\Modules\Health\ServiceInterfaces\SleepServiceInterface;
 use App\Modules\Health\ServiceInterfaces\WaterServiceInterface;
+use App\Modules\Health\Services\DietService;
 use App\Modules\Health\Services\SleepService;
 use App\Modules\Health\Services\WaterService;
 use App\Modules\Task\Query\TaskQuery;
@@ -70,6 +72,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FinancialGoalServiceInterface::class,     FinancialGoalService::class);
         $this->app->bind(CategoryServiceInterface::class,          CategoryService::class);
         $this->app->bind(BudgetServiceInterface::class,            BudgetService::class);
+        $this->app->bind(DietServiceInterface::class,              DietService::class);
 
         // Repositories
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
