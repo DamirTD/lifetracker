@@ -6,7 +6,9 @@ import 'package:mobile/presentation/screens/trackers/water_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/data/repositories/tasks/category/category_repository.dart';
+import 'package:mobile/data/repositories/tasks/task_repository.dart';
 import 'package:mobile/presentation/providers/finance_provider.dart';
+import 'package:mobile/presentation/providers/sleep_provider.dart';
 import 'package:mobile/presentation/providers/tasks.dart';
 import 'package:mobile/presentation/screens/auth/auth_screen.dart';
 import 'package:mobile/presentation/screens/home/home_screen.dart';
@@ -15,9 +17,6 @@ import 'package:mobile/presentation/screens/home/profile_screen.dart';
 import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:mobile/presentation/screens/trackers/tasks_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:mobile/data/api/api_client.dart';
-import 'package:mobile/data/repositories/finance/finance_repository.dart';
-import 'package:mobile/data/repositories/tasks/task_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +34,7 @@ void main() async {
   final taskRepository = TaskRepository();
   final waterRepository = WaterRepository();
   final categoryRepository = TaskCategoryRepository();
+  final sleepRepository = SleepRepository(apiClient);
 
   runApp(
     MultiProvider(
@@ -44,6 +44,9 @@ void main() async {
         ),
         ChangeNotifierProvider<TasksProvider>(
           create: (_) => TasksProvider(taskRepository, categoryRepository),
+        ),
+        ChangeNotifierProvider<SleepProvider>(
+          create: (_) => SleepProvider(sleepRepository),
         ),
         ChangeNotifierProvider<WaterProvider>(
           create: (_) => WaterProvider(waterRepository),
@@ -75,6 +78,7 @@ class MainApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/logout': (context) => const LogoutScreen(),
         '/tasks': (context) => const TasksScreen(),
+        '/sleep': (context) => const SleepScreen(),
         '/water': (context) => const WaterScreen(),
       },
     );

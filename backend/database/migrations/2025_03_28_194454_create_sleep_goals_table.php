@@ -11,20 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sleeps', function (Blueprint $table) {
+        Schema::create('sleep_goals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->time('bedtime');
-            $table->time('wake_up_time');
-            $table->json('interruptions')->nullable();
-            $table->integer('duration');
-            $table->string('quality');
+            $table->integer('target_hours');
+            $table->string('target_bedtime');
+            $table->string('target_wake_time');
+            $table->integer('max_interruptions')->default(0);
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('sleeps');
+        Schema::dropIfExists('sleep_goals');
     }
 };

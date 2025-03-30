@@ -32,20 +32,26 @@ class DietHelper extends Controller
 
         foreach ($entries as $entry) {
             $nutrients = $entry->calculateNutrients();
-            if (!isset($weeklySummary[$entry->date])) {
-                $weeklySummary[$entry->date] = [
+            // Преобразуем объект даты в строку Y-m-d
+            $dateKey = $entry->date->format('Y-m-d');
+
+            if (!isset($weeklySummary[$dateKey])) {
+                $weeklySummary[$dateKey] = [
+                    'date' => $dateKey,
                     'calories' => 0,
                     'protein' => 0,
                     'fat' => 0,
                     'carbohydrates' => 0,
                 ];
             }
-            $weeklySummary[$entry->date]['calories'] += $nutrients['calories'];
-            $weeklySummary[$entry->date]['protein'] += $nutrients['protein'];
-            $weeklySummary[$entry->date]['fat'] += $nutrients['fat'];
-            $weeklySummary[$entry->date]['carbohydrates'] += $nutrients['carbohydrates'];
+
+            $weeklySummary[$dateKey]['calories'] += $nutrients['calories'];
+            $weeklySummary[$dateKey]['protein'] += $nutrients['protein'];
+            $weeklySummary[$dateKey]['fat'] += $nutrients['fat'];
+            $weeklySummary[$dateKey]['carbohydrates'] += $nutrients['carbohydrates'];
         }
 
-        return $weeklySummary;
+        // Преобразуем ассоциативный массив в обычный массив
+        return array_values($weeklySummary);
     }
 }

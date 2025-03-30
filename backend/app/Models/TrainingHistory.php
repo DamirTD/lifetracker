@@ -16,4 +16,14 @@ class TrainingHistory extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function trainingProgram(): BelongsTo
+    {
+        return $this->belongsTo(TrainingProgram::class);
+    }
+
+    public function sport(): BelongsTo
+    {
+        return $this->belongsTo(Sport::class);
+    }
 }
