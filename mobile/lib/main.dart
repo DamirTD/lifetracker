@@ -24,6 +24,10 @@ import 'package:mobile/presentation/screens/auth/welcome_screen.dart';
 import 'package:mobile/presentation/screens/trackers/tasks_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'data/api/api_client.dart';
+import 'data/repositories/finance/finance_repository.dart';
+import 'data/repositories/sleep/sleep_repository.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -40,7 +44,7 @@ void main() async {
   final waterRepository = WaterRepository();
   final categoryRepository = TaskCategoryRepository();
   final sleepRepository = SleepRepository(apiClient);
-  final sportRepository = SportRepository(apiClient); // Добавлен репозиторий спорта
+  final sportRepository = SportRepository(apiClient);
 
   runApp(
     MultiProvider(
@@ -57,7 +61,7 @@ void main() async {
         ChangeNotifierProvider<WaterProvider>(
           create: (_) => WaterProvider(waterRepository),
         ),
-        ChangeNotifierProvider<SportProvider>( // Добавлен провайдер спорта
+        ChangeNotifierProvider<SportProvider>(
           create: (_) => SportProvider(sportRepository),
         ),
       ],
