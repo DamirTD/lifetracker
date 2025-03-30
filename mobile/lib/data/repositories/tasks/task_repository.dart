@@ -80,26 +80,15 @@ class TaskRepository {
     try {
       final headers = await _getHeaders();
 
-      // Преобразование пустой строки в null для поля due_date
       if (data['due_date'] == '') {
         data['due_date'] = null;
       }
-
-      // Отладочное сообщение
-      print('Отправка данных на сервер: ${jsonEncode(data)}');
 
       final response = await http.put(
         Uri.parse('${Config.apiUrl}/tasks/$taskId'),
         headers: headers,
         body: jsonEncode(data),
       );
-
-      // Отладочное сообщение с кодом ответа
-      print('Код ответа: ${response.statusCode}');
-
-      if (response.statusCode >= 400) {
-        print('Ошибка ответа: ${response.body}');
-      }
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -109,12 +98,10 @@ class TaskRepository {
         await prefs.remove('auth_token');
         throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
       } else if (response.statusCode == 422) {
-        // Разбор ошибок валидации
         final errorData = jsonDecode(response.body);
         String errorMessage = 'Ошибка валидации';
 
         if (errorData['errors'] != null) {
-          // Формируем сообщение об ошибке из полей валидации
           final errors = <String>[];
           (errorData['errors'] as Map<String, dynamic>).forEach((key, value) {
             if (value is List) {
@@ -133,7 +120,6 @@ class TaskRepository {
         throw Exception('Ошибка обновления задачи: ${response.statusCode}');
       }
     } catch (e) {
-      print('Исключение при обновлении задачи: $e');
       rethrow;
     }
   }

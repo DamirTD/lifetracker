@@ -534,7 +534,7 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
             dotData: FlDotData(show: true),
             belowBarData: BarAreaData(
               show: true,
-              color: _getChartColor().withOpacity(0.2),
+              color: _getChartColor().withValues(alpha: 0.2 * 255),
             ),
           ),
         ],

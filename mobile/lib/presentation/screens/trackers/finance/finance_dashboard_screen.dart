@@ -130,7 +130,7 @@ class FinanceDashboardWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1 * 255),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -201,7 +201,8 @@ class FinanceDashboardWidget extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: cardColor.withOpacity(0.3)),
+        side: BorderSide(color: cardColor.withValues(alpha: 0.3 * 255)),
+
       ),
       elevation: 1,
       child: Padding(
@@ -212,7 +213,7 @@ class FinanceDashboardWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: cardColor.withOpacity(0.1),
+                color: cardColor.withValues(alpha: 0.1 * 255),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(cardIcon, color: cardColor),

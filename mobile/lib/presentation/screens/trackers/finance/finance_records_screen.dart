@@ -434,7 +434,7 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: color.withOpacity(0.2),
+            backgroundColor: color.withValues(alpha: 0.2 * 255),
             child: Icon(
               icon,
               size: 16,
@@ -501,7 +501,7 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: _getTypeColor(record.type).withOpacity(0.2),
+          backgroundColor: _getTypeColor(record.type).withValues(alpha: 0.2 * 255),
           child: Icon(
             _getTypeIcon(record.type),
             color: _getTypeColor(record.type),
