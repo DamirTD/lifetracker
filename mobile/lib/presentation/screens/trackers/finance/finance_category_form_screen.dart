@@ -140,7 +140,7 @@ class _FinanceCategoryFormScreenState extends State<FinanceCategoryFormScreen> {
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+                      color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1 * 255) : null,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade300,
@@ -230,6 +230,7 @@ class _FinanceCategoryFormScreenState extends State<FinanceCategoryFormScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),
