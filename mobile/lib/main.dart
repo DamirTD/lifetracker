@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/presentation/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile/data/repositories/water/water_repository.dart';
 import 'package:mobile/presentation/providers/water_providers.dart';
@@ -49,6 +50,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
         ChangeNotifierProvider<FinanceProvider>(
           create: (_) => FinanceProvider(financeRepository),
         ),
@@ -65,25 +69,43 @@ void main() async {
           create: (_) => SportProvider(sportRepository),
         ),
       ],
-      child: MainApp(initialRoute: initialRoute),
+      child: AppTheme(initialRoute: initialRoute),
     ),
   );
 }
 
-class MainApp extends StatelessWidget {
+class AppTheme extends StatelessWidget {
   final String initialRoute;
 
-  const MainApp({super.key, required this.initialRoute});
+  const AppTheme({super.key, required this.initialRoute});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return MainApp(
+      initialRoute: initialRoute,
+      theme: themeProvider.themeData,
+    );
+  }
+}
+
+class MainApp extends StatelessWidget {
+  final String initialRoute;
+  final ThemeData theme;
+
+  const MainApp({
+    super.key,
+    required this.initialRoute,
+    required this.theme,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      theme: theme,
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/auth': (context) => const AuthScreen(),
