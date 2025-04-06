@@ -15,7 +15,8 @@ class DietEntry extends Model
     ];
 
     protected $casts = [
-        'date' => 'date',
+        'date'     => 'date',
+        'quantity' => 'float',
     ];
 
     public function food(): BelongsTo
@@ -34,10 +35,16 @@ class DietEntry extends Model
         $ratio = $this->quantity / 100;
 
         return [
+            'id'            => $this->id,
+            'food_id'       => $this->food_id,
+            'food_name'     => $food->name,
+            'quantity'      => $this->quantity,
+            'date'          => $this->date->format('Y-m-d'),
+            'meal_type'     => $this->meal_type,
             'calories'      => round($food->calories * $ratio),
-            'protein'       => round($food->protein * $ratio),
-            'fat'           => round($food->fat * $ratio),
-            'carbohydrates' => round($food->carbohydrates * $ratio)
+            'protein'       => round($food->protein * $ratio, 1),
+            'fat'           => round($food->fat * $ratio, 1),
+            'carbohydrates' => round($food->carbohydrates * $ratio, 1)
         ];
     }
 }

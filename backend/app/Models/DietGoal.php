@@ -4,19 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @method static when(array|string|null $search, \Closure $param)
- */
-class Food extends Model
+class DietGoal extends Model
 {
     use HasFactory;
 
-    protected $table = 'food';
-
     protected $fillable = [
-        'name', 'calories', 'protein', 'fat', 'carbohydrates'
+        'user_id', 'calories', 'protein', 'fat', 'carbohydrates', 'is_active'
     ];
 
     protected $casts = [
@@ -24,10 +19,11 @@ class Food extends Model
         'protein'       => 'float',
         'fat'           => 'float',
         'carbohydrates' => 'float',
+        'is_active'     => 'boolean',
     ];
 
-    public function dietEntries(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(DietEntry::class);
+        return $this->belongsTo(User::class);
     }
 }
