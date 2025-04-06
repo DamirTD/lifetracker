@@ -1,8 +1,13 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:mobile/presentation/providers/diet_provider.dart';
 import 'package:mobile/presentation/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile/data/repositories/water/water_repository.dart';
 import 'package:mobile/presentation/providers/water_providers.dart';
+import 'package:mobile/presentation/screens/trackers/diet/diet_goals_screen.dart';
+import 'package:mobile/presentation/screens/trackers/diet/diet_statistics_screen.dart';
+import 'package:mobile/presentation/screens/trackers/diet_screen.dart';
 import 'package:mobile/presentation/screens/trackers/water_screen.dart';
 import 'package:mobile/data/repositories/sport/sport_repository.dart';
 import 'package:mobile/presentation/providers/sport_provider.dart';
@@ -28,6 +33,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'data/api/api_client.dart';
 import 'data/repositories/finance/finance_repository.dart';
 import 'data/repositories/sleep/sleep_repository.dart';
+import 'data/repositories/diet/diet_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +52,7 @@ void main() async {
   final categoryRepository = TaskCategoryRepository();
   final sleepRepository = SleepRepository(apiClient);
   final sportRepository = SportRepository(apiClient);
+  final dietRepository = DietRepository(apiClient);
 
   runApp(
     MultiProvider(
@@ -67,6 +74,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SportProvider>(
           create: (_) => SportProvider(sportRepository),
+        ),
+        ChangeNotifierProvider<DietProvider>(
+          create: (_) => DietProvider(dietRepository),
         ),
       ],
       child: AppTheme(initialRoute: initialRoute),
@@ -118,6 +128,9 @@ class MainApp extends StatelessWidget {
         '/sport': (context) => const SportScreen(),
         '/sport/my': (context) => const UserSportsScreen(),
         '/sport/history': (context) => const TrainingHistoryScreen(),
+        '/diet': (context) => const DietScreen(),
+        '/diet/goals': (context) => const DietGoalsScreen(),
+        '/diet/statistics': (context) => const DietStatisticsScreen(),
       },
     );
   }
