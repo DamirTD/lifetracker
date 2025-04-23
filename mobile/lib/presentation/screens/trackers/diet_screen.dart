@@ -19,7 +19,8 @@ class DietScreen extends StatefulWidget {
   State<DietScreen> createState() => _DietScreenState();
 }
 
-class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateMixin {
+class _DietScreenState extends State<DietScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   late DateTime _selectedDate;
@@ -43,19 +44,25 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  void _selectDate(BuildContext context) async {
+  void _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
+
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
-      Provider.of<DietProvider>(context, listen: false)
-          .setDate(DateFormat('yyyy-MM-dd').format(picked));
+
+      if (!mounted) return;
+
+      Provider.of<DietProvider>(
+        context,
+        listen: false,
+      ).setDate(DateFormat('yyyy-MM-dd').format(picked));
     }
   }
 
@@ -64,23 +71,24 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
 
     showDialog(
       context: context,
-      builder: (context) => AddFoodDialog(
-        onAdd: (Food food, double quantity, String mealType) {
-          final entry = DietEntry(
-            foodId: food.id,
-            foodName: food.name,
-            quantity: quantity,
-            date: DateFormat('yyyy-MM-dd').format(_selectedDate),
-            mealType: mealType,
-            calories: 0, // Будут рассчитаны на сервере
-            protein: 0,
-            fat: 0,
-            carbohydrates: 0,
-          );
-          dietProvider.addFood(entry);
-          Navigator.of(context).pop();
-        },
-      ),
+      builder:
+          (context) => AddFoodDialog(
+            onAdd: (Food food, double quantity, String mealType) {
+              final entry = DietEntry(
+                foodId: food.id,
+                foodName: food.name,
+                quantity: quantity,
+                date: DateFormat('yyyy-MM-dd').format(_selectedDate),
+                mealType: mealType,
+                calories: 0, // Будут рассчитаны на сервере
+                protein: 0,
+                fat: 0,
+                carbohydrates: 0,
+              );
+              dietProvider.addFood(entry);
+              Navigator.of(context).pop();
+            },
+          ),
     );
   }
 
@@ -99,7 +107,9 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
                   Navigator.pop(context);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const DietGoalsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const DietGoalsScreen(),
+                    ),
                   );
                 },
               ),
@@ -110,7 +120,9 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
                   Navigator.pop(context);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const DietStatisticsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const DietStatisticsScreen(),
+                    ),
                   );
                 },
               ),
@@ -119,7 +131,10 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
                 title: const Text('Обновить данные'),
                 onTap: () {
                   Navigator.pop(context);
-                  Provider.of<DietProvider>(context, listen: false).loadInitialData();
+                  Provider.of<DietProvider>(
+                    context,
+                    listen: false,
+                  ).loadInitialData();
                 },
               ),
               const Divider(),
@@ -161,12 +176,9 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            onPressed: () => _selectDate(context),
+            onPressed: _selectDate,
           ),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: _openMenu,
-          ),
+          IconButton(icon: const Icon(Icons.more_vert), onPressed: _openMenu),
         ],
         bottom: TabBar(
           controller: _tabController,
@@ -178,78 +190,84 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
           ],
         ),
       ),
-      body: hasError
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Ошибка: ${dietState.error}'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Provider.of<DietProvider>(context, listen: false).loadDailyDiet(),
-              child: const Text('Попробовать снова'),
-            ),
-          ],
-        ),
-      )
-          : isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-        controller: _tabController,
-        children: [
-          // Вкладка с итогами
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body:
+          hasError
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Ошибка: ${dietState.error}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed:
+                          () =>
+                              Provider.of<DietProvider>(
+                                context,
+                                listen: false,
+                              ).loadDailyDiet(),
+                      child: const Text('Попробовать снова'),
+                    ),
+                  ],
+                ),
+              )
+              : isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
+                controller: _tabController,
                 children: [
-                  DailySummaryCard(dailyDiet: dailyDiet),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Прогресс по нутриентам',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  // Вкладка с итогами
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DailySummaryCard(dailyDiet: dailyDiet),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Прогресс по нутриентам',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          NutrientsProgress(dailyDiet: dailyDiet),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Приемы пищи',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: _showAddFoodDialog,
+                                child: const Text('+ Добавить'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _buildMealSection('breakfast', 'Завтрак'),
+                          _buildMealSection('lunch', 'Обед'),
+                          _buildMealSection('dinner', 'Ужин'),
+                          _buildMealSection('snack', 'Перекус'),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  NutrientsProgress(dailyDiet: dailyDiet),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Приемы пищи',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: _showAddFoodDialog,
-                        child: const Text('+ Добавить'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  _buildMealSection('breakfast', 'Завтрак'),
-                  _buildMealSection('lunch', 'Обед'),
-                  _buildMealSection('dinner', 'Ужин'),
-                  _buildMealSection('snack', 'Перекус'),
+                  // Вкладка с завтраком
+                  _buildMealTypeTab('breakfast'),
+                  // Вкладка с обедом
+                  _buildMealTypeTab('lunch'),
+                  // Вкладка с ужином
+                  _buildMealTypeTab('dinner'),
                 ],
               ),
-            ),
-          ),
-          // Вкладка с завтраком
-          _buildMealTypeTab('breakfast'),
-          // Вкладка с обедом
-          _buildMealTypeTab('lunch'),
-          // Вкладка с ужином
-          _buildMealTypeTab('dinner'),
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddFoodDialog,
         child: const Icon(Icons.add),
@@ -270,22 +288,25 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             mealTitle,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
-        ...entries.map((entry) => DietEntryCard(
-          entry: entry,
-          onDelete: () => Provider.of<DietProvider>(context, listen: false).deleteFood(entry.id!),
-          onEdit: (quantity) {
-            Provider.of<DietProvider>(context, listen: false).updateFood(
-              entry.id!,
-              {'quantity': quantity},
-            );
-          },
-        )),
+        ...entries.map(
+          (entry) => DietEntryCard(
+            entry: entry,
+            onDelete:
+                () => Provider.of<DietProvider>(
+                  context,
+                  listen: false,
+                ).deleteFood(entry.id!),
+            onEdit: (quantity) {
+              Provider.of<DietProvider>(
+                context,
+                listen: false,
+              ).updateFood(entry.id!, {'quantity': quantity});
+            },
+          ),
+        ),
         const SizedBox(height: 8),
       ],
     );
@@ -323,43 +344,40 @@ class _DietScreenState extends State<DietScreen> with SingleTickerProviderStateM
           const SizedBox(height: 16),
           entries.isEmpty
               ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.no_food,
-                  size: 64,
-                  color: Colors.grey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.no_food, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Нет записей о питании',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Нет записей о питании',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          )
+              )
               : Expanded(
-            child: ListView.builder(
-              itemCount: entries.length,
-              itemBuilder: (context, index) {
-                final entry = entries[index];
-                return DietEntryCard(
-                  entry: entry,
-                  onDelete: () => Provider.of<DietProvider>(context, listen: false).deleteFood(entry.id!),
-                  onEdit: (quantity) {
-                    Provider.of<DietProvider>(context, listen: false).updateFood(
-                      entry.id!,
-                      {'quantity': quantity},
+                child: ListView.builder(
+                  itemCount: entries.length,
+                  itemBuilder: (context, index) {
+                    final entry = entries[index];
+                    return DietEntryCard(
+                      entry: entry,
+                      onDelete:
+                          () => Provider.of<DietProvider>(
+                            context,
+                            listen: false,
+                          ).deleteFood(entry.id!),
+                      onEdit: (quantity) {
+                        Provider.of<DietProvider>(
+                          context,
+                          listen: false,
+                        ).updateFood(entry.id!, {'quantity': quantity});
+                      },
                     );
                   },
-                );
-              },
-            ),
-          ),
+                ),
+              ),
         ],
       ),
     );

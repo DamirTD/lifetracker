@@ -37,7 +37,9 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
 
     try {
       final dietProvider = Provider.of<DietProvider>(context, listen: false);
-      final response = await dietProvider.loadStatisticsForPeriod(_selectedPeriod);
+      final response = await dietProvider.loadStatisticsForPeriod(
+        _selectedPeriod,
+      );
 
       setState(() {
         _statistics = response;
@@ -54,16 +56,15 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Статистика питания'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-          ? _buildErrorView()
-          : _statistics == null
-          ? _buildEmptyView()
-          : _buildStatisticsView(),
+      appBar: AppBar(title: const Text('Статистика питания')),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+              ? _buildErrorView()
+              : _statistics == null
+              ? _buildEmptyView()
+              : _buildStatisticsView(),
     );
   }
 
@@ -72,11 +73,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 60,
-          ),
+          const Icon(Icons.error_outline, color: Colors.red, size: 60),
           const SizedBox(height: 16),
           Text(
             'Ошибка загрузки данных',
@@ -86,9 +83,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
           Text(
             _error ?? 'Неизвестная ошибка',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(color: Colors.grey[600]),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -105,11 +100,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.bar_chart,
-            color: Colors.grey,
-            size: 60,
-          ),
+          const Icon(Icons.bar_chart, color: Colors.grey, size: 60),
           const SizedBox(height: 16),
           Text(
             'Нет данных о питании',
@@ -119,9 +110,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
           Text(
             'Начните добавлять продукты в рацион, чтобы увидеть статистику',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(color: Colors.grey[600]),
           ),
         ],
       ),
@@ -150,10 +139,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                 children: [
                   const Text(
                     'Достижение целей',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -164,9 +150,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                         children: [
                           Text(
                             'Успешных дней',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -183,9 +167,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                         children: [
                           Text(
                             'Процент успеха',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -205,7 +187,9 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                   LinearProgressIndicator(
                     value: successRate / 100,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(_getSuccessColor(successRate)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _getSuccessColor(successRate),
+                    ),
                     minHeight: 10,
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -224,10 +208,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                 children: [
                   const Text(
                     'Средние значения',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   _buildNutrientRow(
@@ -285,7 +266,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                     const SizedBox(height: 16),
                     ...List.generate(
                       mostFrequentFoods.length,
-                          (index) => Padding(
+                      (index) => Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: [
@@ -293,7 +274,8 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                color: Theme.of(context).colorScheme.primary
+                                    .withAlpha((255 * 0.1).round()),
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
@@ -301,7 +283,8 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                                   '${index + 1}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -317,9 +300,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                             ),
                             Text(
                               '${mostFrequentFoods[index]['count'] ?? 0} раз',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                              ),
+                              style: TextStyle(color: Colors.grey[600]),
                             ),
                           ],
                         ),
@@ -343,10 +324,7 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
           children: [
             const Text(
               'Выберите период',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -355,14 +333,18 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
-              items: _periodOptions.map((period) {
-                return DropdownMenuItem<String>(
-                  value: period['value'],
-                  child: Text(period['label'] ?? ''),
-                );
-              }).toList(),
+              items:
+                  _periodOptions.map((period) {
+                    return DropdownMenuItem<String>(
+                      value: period['value'],
+                      child: Text(period['label'] ?? ''),
+                    );
+                  }).toList(),
               onChanged: (value) {
                 if (value != null && value != _selectedPeriod) {
                   setState(() {
@@ -379,31 +361,23 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
   }
 
   Widget _buildNutrientRow(
-      String title,
-      dynamic value,
-      IconData icon,
-      Color color,
-      String unit,
-      ) {
+    String title,
+    dynamic value,
+    IconData icon,
+    Color color,
+    String unit,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
           const Spacer(),
           Text(
             '$value $unit',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ],
       ),

@@ -6,10 +6,7 @@ import 'package:mobile/presentation/providers/sport_provider.dart';
 class CompleteTrainingScreen extends StatefulWidget {
   final TrainingProgram program;
 
-  const CompleteTrainingScreen({
-    super.key,
-    required this.program,
-  });
+  const CompleteTrainingScreen({super.key, required this.program});
 
   @override
   CompleteTrainingScreenState createState() => CompleteTrainingScreenState();
@@ -28,7 +25,8 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
   void initState() {
     super.initState();
     // Инициализируем список отслеживания завершенных упражнений
-    if (widget.program.sections != null && widget.program.sections!.isNotEmpty) {
+    if (widget.program.sections != null &&
+        widget.program.sections!.isNotEmpty) {
       for (var section in widget.program.sections!) {
         for (var _ in section.exercises) {
           _completedExercises.add(false);
@@ -47,12 +45,11 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Тренировка'),
-      ),
-      body: widget.program.sections == null || widget.program.sections!.isEmpty
-          ? _buildNoSectionsView()
-          : _buildTrainingView(),
+      appBar: AppBar(title: const Text('Тренировка')),
+      body:
+          widget.program.sections == null || widget.program.sections!.isEmpty
+              ? _buildNoSectionsView()
+              : _buildTrainingView(),
     );
   }
 
@@ -87,7 +84,7 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
                   const SizedBox(height: 24),
                   const Text(
                     'В этой программе нет секций с упражнениями. '
-                        'Вы можете выполнять свою тренировку и ввести данные по её завершении.',
+                    'Вы можете выполнять свою тренировку и ввести данные по её завершении.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -131,19 +128,22 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
                       child: Row(
                         children: List.generate(
                           sections.length,
-                              (index) => Container(
+                          (index) => Container(
                             margin: const EdgeInsets.only(right: 8),
                             child: Chip(
                               label: Text('${index + 1}'),
-                              backgroundColor: index == _currentSection
-                                  ? Theme.of(context).primaryColor
-                                  : index < _currentSection
-                                  ? Colors.green
-                                  : Colors.grey[300],
+                              backgroundColor:
+                                  index == _currentSection
+                                      ? Theme.of(context).primaryColor
+                                      : index < _currentSection
+                                      ? Colors.green
+                                      : Colors.grey[300],
                               labelStyle: TextStyle(
-                                color: index == _currentSection || index < _currentSection
-                                    ? Colors.white
-                                    : Colors.black,
+                                color:
+                                    index == _currentSection ||
+                                            index < _currentSection
+                                        ? Colors.white
+                                        : Colors.black,
                               ),
                             ),
                           ),
@@ -221,7 +221,7 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   );
-                }).toList(),
+                }),
                 const SizedBox(height: 16),
 
                 // Кнопки навигации
@@ -258,26 +258,29 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
                           if (_completedExercises.contains(false)) {
                             showDialog(
                               context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Не все упражнения выполнены'),
-                                content: const Text(
-                                    'Вы не отметили некоторые упражнения как выполненные. '
-                                        'Хотите продолжить?'
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Отмена'),
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text(
+                                      'Не все упражнения выполнены',
+                                    ),
+                                    content: const Text(
+                                      'Вы не отметили некоторые упражнения как выполненные. '
+                                      'Хотите продолжить?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Отмена'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          _showCompleteTrainingForm();
+                                        },
+                                        child: const Text('Завершить'),
+                                      ),
+                                    ],
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      _showCompleteTrainingForm();
-                                    },
-                                    child: const Text('Завершить'),
-                                  ),
-                                ],
-                              ),
                             );
                           } else {
                             _showCompleteTrainingForm();
@@ -300,15 +303,16 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 16,
-          left: 16,
-          right: 16,
-        ),
-        child: _buildCompleteForm(),
-      ),
+      builder:
+          (context) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 16,
+              left: 16,
+              right: 16,
+            ),
+            child: _buildCompleteForm(),
+          ),
     );
   }
 
@@ -321,10 +325,7 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
         children: [
           const Text(
             'Завершение тренировки',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -370,9 +371,10 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: _isSubmitting
-                  ? const CircularProgressIndicator()
-                  : const Text('Записать тренировку'),
+              child:
+                  _isSubmitting
+                      ? const CircularProgressIndicator()
+                      : const Text('Записать тренировку'),
             ),
           ),
           const SizedBox(height: 16),
