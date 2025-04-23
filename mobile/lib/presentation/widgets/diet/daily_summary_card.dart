@@ -15,14 +15,11 @@ class DailySummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .colorScheme
-            .surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha((255 * 0.05).round()),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -33,10 +30,7 @@ class DailySummaryCard extends StatelessWidget {
         children: [
           const Text(
             'Итоги дня',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(
@@ -99,27 +93,26 @@ class DailySummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNutrientSummary(BuildContext context,
-      String title,
-      dynamic consumed,
-      dynamic goal,
-      dynamic remaining,
-      dynamic progress,
-      Color color,) {
+  Widget _buildNutrientSummary(
+    BuildContext context,
+    String title,
+    dynamic consumed,
+    dynamic goal,
+    dynamic remaining,
+    dynamic progress,
+    Color color,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: (progress / 100).clamp(0.0, 1.0),
-          backgroundColor: color.withOpacity(0.2),
+          backgroundColor: color.withAlpha((255 * 0.05).round()),
           valueColor: AlwaysStoppedAnimation<Color>(color),
           borderRadius: BorderRadius.circular(8),
           minHeight: 8,
@@ -131,11 +124,9 @@ class DailySummaryCard extends StatelessWidget {
               '$consumed/$goal',
               style: TextStyle(
                 fontSize: 14,
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withAlpha((255 * 0.7).round()),
               ),
             ),
             const Spacer(),
@@ -143,11 +134,9 @@ class DailySummaryCard extends StatelessWidget {
               'Ост: $remaining',
               style: TextStyle(
                 fontSize: 14,
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withAlpha((255 * 0.7).round()),
               ),
             ),
           ],

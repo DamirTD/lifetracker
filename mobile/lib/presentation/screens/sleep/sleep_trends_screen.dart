@@ -23,7 +23,10 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<SleepProvider>(context, listen: false).loadTrends(_selectedMonths);
+      Provider.of<SleepProvider>(
+        context,
+        listen: false,
+      ).loadTrends(_selectedMonths);
     });
   }
 
@@ -47,7 +50,10 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                     children: [
                       const Text(
                         'Период анализа',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<int>(
@@ -56,12 +62,15 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                           border: OutlineInputBorder(),
                         ),
                         value: _selectedMonths,
-                        items: _monthOptions.map((int months) {
-                          return DropdownMenuItem<int>(
-                            value: months,
-                            child: Text('$months ${_getMonthsString(months)}'),
-                          );
-                        }).toList(),
+                        items:
+                            _monthOptions.map((int months) {
+                              return DropdownMenuItem<int>(
+                                value: months,
+                                child: Text(
+                                  '$months ${_getMonthsString(months)}',
+                                ),
+                              );
+                            }).toList(),
                         onChanged: (value) {
                           if (value != null && value != _selectedMonths) {
                             setState(() {
@@ -89,7 +98,10 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                       children: [
                         const Text(
                           'Общие тенденции',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -113,9 +125,15 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
 
                         _buildTrendTile(
                           'Прерывания сна',
-                          _getTrendDescription(trend.interruptionsTrend, isInterruption: true),
+                          _getTrendDescription(
+                            trend.interruptionsTrend,
+                            isInterruption: true,
+                          ),
                           trend.interruptionsIcon,
-                          _getTrendColor(trend.interruptionsTrend, isInterruption: true),
+                          _getTrendColor(
+                            trend.interruptionsTrend,
+                            isInterruption: true,
+                          ),
                         ),
                       ],
                     ),
@@ -134,7 +152,10 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                       children: [
                         const Text(
                           'Динамика сна',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -197,7 +218,10 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                         children: [
                           const Text(
                             'Инсайты',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                           const SizedBox(height: 16),
 
@@ -207,15 +231,16 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.lightbulb, color: Colors.amber),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(insight),
+                                  const Icon(
+                                    Icons.lightbulb,
+                                    color: Colors.amber,
                                   ),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Text(insight)),
                                 ],
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
@@ -266,7 +291,12 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
   }
 
   // Плитка с информацией о тенденции
-  Widget _buildTrendTile(String title, String description, String icon, Color color) {
+  Widget _buildTrendTile(
+    String title,
+    String description,
+    String icon,
+    Color color,
+  ) {
     return ListTile(
       title: Row(
         children: [
@@ -316,12 +346,14 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
     }
 
     if (values.isEmpty || values.length != labels.length) {
-      return const Center(child: Text('Недостаточно данных для построения графика'));
+      return const Center(
+        child: Text('Недостаточно данных для построения графика'),
+      );
     }
 
     final spots = List.generate(
       values.length,
-          (index) => FlSpot(index.toDouble(), values[index]),
+      (index) => FlSpot(index.toDouble(), values[index]),
     );
 
     return LineChart(
@@ -331,24 +363,20 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
           drawVerticalLine: true,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withAlpha((255 * 0.1).round()),
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withAlpha((255 * 0.3).round()),
               strokeWidth: 1,
             );
           },
         ),
         titlesData: FlTitlesData(
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -359,9 +387,7 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       labels[index],
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
+                      style: const TextStyle(fontSize: 10),
                     ),
                   );
                 }
@@ -373,20 +399,18 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
           leftTitles: AxisTitles(
             axisNameWidget: Text(
               yAxisLabel,
-              style: const TextStyle(
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontSize: 12),
             ),
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                if (value == meta.max || value == meta.min || value == (meta.max + meta.min) / 2) {
+                if (value == meta.max ||
+                    value == meta.min ||
+                    value == (meta.max + meta.min) / 2) {
                   return Text(
                     value.toInt().toString(),
-                    style: const TextStyle(
-                      fontSize: 10,
-                    ),
+                    style: const TextStyle(fontSize: 10),
                   );
                 }
                 return const SizedBox();
@@ -396,7 +420,7 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+          border: Border.all(color: Colors.grey.withAlpha((255 * 0.3).round())),
         ),
         minX: 0,
         maxX: (values.length - 1).toDouble(),
@@ -422,7 +446,7 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: lineColor.withOpacity(0.2),
+              color: lineColor.withAlpha((255 * 0.2).round()),
             ),
           ),
         ],
@@ -442,7 +466,8 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
   String _getMonthsString(int months) {
     if (months % 10 == 1 && months % 100 != 11) {
       return 'месяц';
-    } else if ([2, 3, 4].contains(months % 10) && ![12, 13, 14].contains(months % 100)) {
+    } else if ([2, 3, 4].contains(months % 10) &&
+        ![12, 13, 14].contains(months % 100)) {
       return 'месяца';
     } else {
       return 'месяцев';

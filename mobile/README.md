@@ -8,7 +8,7 @@ setup-avd.ps1
 
 # === 1. Указываем путь к Android SDK ===
 
-$env:ANDROID_SDK_ROOT = "C:\Users\toriy\Documents\android-sdk"
+$env:ANDROID_SDK_ROOT = "path\android-sdk"
 $tools = "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin"
 $emulator = "$env:ANDROID_SDK_ROOT\emulator"
 
@@ -47,13 +47,13 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 После первого запуска ты уже можешь просто запускать эмулятор в один клик:
 
 powershell
-& "C:\Users\toriy\Documents\android-sdk\emulator\emulator.exe" -avd PixelAPI30
+& "path\android-sdk\emulator\emulator.exe" -avd PixelAPI30
 Хочешь — сохрани это как .bat файл:
 
 📄 run-emulator.bat:
 bat
 @echo off
-start "" "C:\Users\toriy\Documents\android-sdk\emulator\emulator.exe" -avd PixelAPI30
+start "" "path\android-sdk\emulator\emulator.exe" -avd PixelAPI30
 И просто дважды кликай по нему — эмулятор откроется
 
 ---
@@ -66,7 +66,7 @@ remove-avd.ps1 — скрипт для удаления эмулятора
 
 # === 1. Указываем путь к Android SDK ===
 
-$env:ANDROID_SDK_ROOT = "C:\Users\toriy\Documents\android-sdk"
+$env:ANDROID_SDK_ROOT = "path\android-sdk"
 $tools = "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin"
 
 # Добавляем в PATH

@@ -18,7 +18,9 @@ class NutrientsProgress extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(
+            context,
+          ).colorScheme.outline.withAlpha((255 * 0.2).round()),
         ),
       ),
       child: Padding(
@@ -71,14 +73,14 @@ class NutrientsProgress extends StatelessWidget {
   }
 
   Widget _buildProgressItem(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required dynamic value,
-        required dynamic maxValue,
-        required Color color,
-        required String unit,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required dynamic value,
+    required dynamic maxValue,
+    required Color color,
+    required String unit,
+  }) {
     final progress = maxValue > 0 ? (value / maxValue).clamp(0.0, 1.0) : 0.0;
     final percentage = (progress * 100).round();
 
@@ -95,15 +97,15 @@ class NutrientsProgress extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
                     '$value $unit / $maxValue $unit',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha((255 * 0.7).round()),
                     ),
                   ),
                 ],
@@ -114,7 +116,7 @@ class NutrientsProgress extends StatelessWidget {
                   Container(
                     height: 8,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withAlpha((255 * 0.2).round()),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -135,7 +137,9 @@ class NutrientsProgress extends StatelessWidget {
                 '$percentage%',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withAlpha((255 * 0.7).round()),
                 ),
               ),
             ],

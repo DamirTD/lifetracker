@@ -8,7 +8,8 @@ class SleepCorrelationsScreen extends StatefulWidget {
   const SleepCorrelationsScreen({super.key});
 
   @override
-  State<SleepCorrelationsScreen> createState() => _SleepCorrelationsScreenState();
+  State<SleepCorrelationsScreen> createState() =>
+      _SleepCorrelationsScreenState();
 }
 
 class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
@@ -42,12 +43,15 @@ class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
                     children: const [
                       Text(
                         'Что влияет на ваш сон?',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'Здесь вы можете увидеть факторы, которые влияют на качество вашего сна, '
-                            'основанные на анализе ваших данных.',
+                        'основанные на анализе ваших данных.',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -157,7 +161,7 @@ class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
                 Expanded(
                   child: LinearProgressIndicator(
                     value: correlation.correlationPercentage / 100,
-                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    backgroundColor: Colors.grey.withAlpha((255 * 0.2).round()),
                     color: color,
                     minHeight: 8,
                   ),
@@ -165,10 +169,7 @@ class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
                 const SizedBox(width: 8),
                 Text(
                   '${correlation.correlationPercentage}%',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: color),
                 ),
               ],
             ),
@@ -176,10 +177,7 @@ class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
             const SizedBox(height: 16),
 
             // Описание корреляции
-            Text(
-              correlation.description,
-              style: const TextStyle(fontSize: 14),
-            ),
+            Text(correlation.description, style: const TextStyle(fontSize: 14)),
 
             const SizedBox(height: 8),
 
@@ -187,7 +185,7 @@ class _SleepCorrelationsScreenState extends State<SleepCorrelationsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withAlpha((255 * 0.2).round()),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(

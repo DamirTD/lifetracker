@@ -77,7 +77,10 @@ class _SleepGoalsScreenState extends State<SleepGoalsScreen> {
                         children: [
                           const Text(
                             'Ваши цели по сну',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                           if (!_isEditing)
                             TextButton.icon(
@@ -138,7 +141,10 @@ class _SleepGoalsScreenState extends State<SleepGoalsScreen> {
                       children: [
                         const Text(
                           'Ваш прогресс',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -206,7 +212,9 @@ class _SleepGoalsScreenState extends State<SleepGoalsScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor.withOpacity(0.1),
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withAlpha((255 * 0.2).round()),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -413,10 +421,7 @@ class _SleepGoalsScreenState extends State<SleepGoalsScreen> {
           ],
         ),
         const SizedBox(height: 4),
-        LinearProgressIndicator(
-          value: progress / 100,
-          minHeight: 6,
-        ),
+        LinearProgressIndicator(value: progress / 100, minHeight: 6),
       ],
     );
   }
@@ -432,7 +437,8 @@ class _SleepGoalsScreenState extends State<SleepGoalsScreen> {
   String _getDaysString(int days) {
     if (days % 10 == 1 && days % 100 != 11) {
       return 'день';
-    } else if ([2, 3, 4].contains(days % 10) && ![12, 13, 14].contains(days % 100)) {
+    } else if ([2, 3, 4].contains(days % 10) &&
+        ![12, 13, 14].contains(days % 100)) {
       return 'дня';
     } else {
       return 'дней';
