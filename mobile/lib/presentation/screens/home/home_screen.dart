@@ -69,32 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _quickAddWater() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Вода добавлена!"),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _quickAddTask() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Новая задача добавлена!"),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_error != null) {
@@ -124,7 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const Text('Ошибка загрузки пользователя'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/welcome'),
+                onPressed:
+                    () => Navigator.pushReplacementNamed(context, '/welcome'),
                 child: const Text('Вернуться на экран входа'),
               ),
             ],
@@ -148,7 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
               expandedHeight: 120,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
                   color: Theme.of(context).colorScheme.surface,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -163,18 +145,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 "Добро пожаловать,",
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(
-                                    (0.7 * 255).round(),
-                                  ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withAlpha((0.7 * 255).round()),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 userName,
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -182,16 +164,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             alignment: Alignment.topRight,
                             children: [
                               GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                                ),
+                                onTap:
+                                    () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => const ProfileScreen(),
+                                      ),
+                                    ),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withAlpha((0.1 * 255).round()),
+                                        color: Colors.black.withAlpha(
+                                          (0.1 * 255).round(),
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -199,11 +187,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: CircleAvatar(
                                     radius: 24,
-                                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                                    foregroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
-                                    child: avatarUrl.isEmpty
-                                        ? Icon(Icons.person, color: Theme.of(context).colorScheme.primary)
-                                        : null,
+                                    backgroundColor:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.primaryContainer,
+                                    foregroundImage:
+                                        avatarUrl.isNotEmpty
+                                            ? NetworkImage(avatarUrl)
+                                            : null,
+                                    child:
+                                        avatarUrl.isEmpty
+                                            ? Icon(
+                                              Icons.person,
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                            )
+                                            : null,
                                   ),
                                 ),
                               ),
@@ -247,25 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "На сегодня",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDailyProgressSection(context),
-                  ],
-                ),
-              ),
-            ),
-
-            SliverToBoxAdapter(
-              child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,30 +267,26 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(20),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                  crossAxisCount:
+                      MediaQuery.of(context).size.width > 600 ? 3 : 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                   childAspectRatio: 1.3,
                 ),
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final category = _categories[index];
-                    return _buildCategoryCard(
-                      context,
-                      icon: category['icon'],
-                      label: category['label'],
-                      color: category['color'],
-                      screen: category['screen'],
-                    );
-                  },
-                  childCount: _categories.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final category = _categories[index];
+                  return _buildCategoryCard(
+                    context,
+                    icon: category['icon'],
+                    label: category['label'],
+                    color: category['color'],
+                    screen: category['screen'],
+                  );
+                }, childCount: _categories.length),
               ),
             ),
 
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 80),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
       ),
@@ -338,9 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              child: const Text("Добавить воду", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            onTap: _quickAddWater,
           ),
           SpeedDialChild(
             child: const Icon(Icons.task_alt, color: Colors.white),
@@ -359,123 +335,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              child: const Text("Новая задача", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            onTap: _quickAddTask,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDailyProgressSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha((0.05 * 255).round()),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildProgressItem(
-                  context,
-                  icon: Icons.local_drink,
-                  color: Colors.blue,
-                  title: "Вода",
-                  progress: 0.6,
-                  label: "1.2/2 л",
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: _buildProgressItem(
-                  context,
-                  icon: Icons.task_alt,
-                  color: Colors.purple,
-                  title: "Задачи",
-                  progress: 0.4,
-                  label: "2/5",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text("Просмотреть все"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressItem(
-      BuildContext context, {
-        required IconData icon,
-        required Color color,
-        required String title,
-        required double progress,
-        required String label,
-      }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: color.withAlpha((0.2 * 255).round()),
-          valueColor: AlwaysStoppedAnimation<Color>(color),
-          borderRadius: BorderRadius.circular(8),
-          minHeight: 8,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface.withAlpha((0.7 * 255).round()),
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildCategoryCard(
-      BuildContext context, {
-        required IconData icon,
-        required String label,
-        required Color color,
-        required Widget screen,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required Widget screen,
+  }) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -510,10 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ],
         ),
@@ -523,10 +393,40 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 final List<Map<String, dynamic>> _categories = [
-  {'icon': Icons.task_alt, 'label': "Задачи", 'color': Colors.purple, 'screen': const TasksScreen()},
-  {'icon': Icons.attach_money, 'label': "Финансы", 'color': Colors.green, 'screen': const FinanceScreen()},
-  {'icon': Icons.bedtime_rounded, 'label': "Сон", 'color': Colors.indigo, 'screen': const SleepScreen()},
-  {'icon': Icons.opacity, 'label': "Вода", 'color': Colors.blue, 'screen': const WaterScreen()},
-  {'icon': Icons.directions_run, 'label': "Спорт", 'color': Colors.orange, 'screen': const SportScreen()},
-  {'icon': Icons.local_dining, 'label': "Диета", 'color': Colors.red, 'screen': const DietScreen()},
+  {
+    'icon': Icons.task_alt,
+    'label': "Задачи",
+    'color': Colors.purple,
+    'screen': const TasksScreen(),
+  },
+  {
+    'icon': Icons.attach_money,
+    'label': "Финансы",
+    'color': Colors.green,
+    'screen': const FinanceScreen(),
+  },
+  {
+    'icon': Icons.bedtime_rounded,
+    'label': "Сон",
+    'color': Colors.indigo,
+    'screen': const SleepScreen(),
+  },
+  {
+    'icon': Icons.opacity,
+    'label': "Вода",
+    'color': Colors.blue,
+    'screen': const WaterScreen(),
+  },
+  {
+    'icon': Icons.directions_run,
+    'label': "Спорт",
+    'color': Colors.orange,
+    'screen': const SportScreen(),
+  },
+  {
+    'icon': Icons.local_dining,
+    'label': "Диета",
+    'color': Colors.red,
+    'screen': const DietScreen(),
+  },
 ];

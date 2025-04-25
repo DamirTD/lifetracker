@@ -31,9 +31,7 @@ class SportScreenState extends State<SportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Спорт'),
-      ),
+      appBar: AppBar(title: const Text('Спорт')),
       body: Consumer<SportProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
@@ -65,13 +63,14 @@ class SportScreenState extends State<SportScreen> {
           _buildSection(
             title: 'Мои виды спорта',
             onSeeAll: () => _navigateToUserSports(context),
-            child: userSports == null || userSports.isEmpty
-                ? _buildEmptyStateCard(
-              message: 'У вас пока нет выбранных видов спорта',
-              actionText: 'Выбрать спорт',
-              onAction: () => _navigateToSportList(context),
-            )
-                : _buildSportsGrid(context, userSports),
+            child:
+                userSports == null || userSports.isEmpty
+                    ? _buildEmptyStateCard(
+                      message: 'У вас пока нет выбранных видов спорта',
+                      actionText: 'Выбрать спорт',
+                      onAction: () => _navigateToSportList(context),
+                    )
+                    : _buildSportsGrid(context, userSports),
           ),
 
           const SizedBox(height: 24),
@@ -79,15 +78,21 @@ class SportScreenState extends State<SportScreen> {
           _buildSection(
             title: 'Недавние тренировки',
             onSeeAll: () => _navigateToTrainingHistory(context),
-            child: trainingHistory == null || trainingHistory.isEmpty
-                ? _buildEmptyStateCard(
-              message: 'У вас пока нет завершенных тренировок',
-              actionText: trainingHistory == null ? null : 'Начать тренировку',
-              onAction: userSports != null && userSports.isNotEmpty
-                  ? () => _navigateToUserSports(context)
-                  : null,
-            )
-                : _buildRecentTrainings(context, trainingHistory.take(3).toList()),
+            child:
+                trainingHistory == null || trainingHistory.isEmpty
+                    ? _buildEmptyStateCard(
+                      message: 'У вас пока нет завершенных тренировок',
+                      actionText:
+                          trainingHistory == null ? null : 'Начать тренировку',
+                      onAction:
+                          userSports != null && userSports.isNotEmpty
+                              ? () => _navigateToUserSports(context)
+                              : null,
+                    )
+                    : _buildRecentTrainings(
+                      context,
+                      trainingHistory.take(3).toList(),
+                    ),
           ),
 
           const SizedBox(height: 24),
@@ -105,7 +110,7 @@ class SportScreenState extends State<SportScreen> {
   Widget _buildSection({
     required String title,
     required Widget child,
-    VoidCallback? onSeeAll
+    VoidCallback? onSeeAll,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,10 +120,7 @@ class SportScreenState extends State<SportScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             if (onSeeAll != null)
               TextButton(
@@ -144,25 +146,16 @@ class SportScreenState extends State<SportScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.fitness_center,
-              size: 56,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.fitness_center, size: 56, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontSize: 16),
             ),
             if (actionText != null && onAction != null) ...[
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: onAction,
-                child: Text(actionText),
-              ),
+              ElevatedButton(onPressed: onAction, child: Text(actionText)),
             ],
           ],
         ),
@@ -197,9 +190,7 @@ class SportScreenState extends State<SportScreen> {
                   Text(
                     sport.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -210,7 +201,10 @@ class SportScreenState extends State<SportScreen> {
     );
   }
 
-  Widget _buildRecentTrainings(BuildContext context, List<TrainingHistory> trainings) {
+  Widget _buildRecentTrainings(
+    BuildContext context,
+    List<TrainingHistory> trainings,
+  ) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -222,9 +216,7 @@ class SportScreenState extends State<SportScreen> {
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
-            leading: const CircleAvatar(
-              child: Icon(Icons.fitness_center),
-            ),
+            leading: const CircleAvatar(child: Icon(Icons.fitness_center)),
             title: Text(program?.name ?? 'Тренировка'),
             subtitle: Text(
               'Длительность: ${training.duration} мин, Калории: ${training.caloriesBurned}',
@@ -264,7 +256,10 @@ class SportScreenState extends State<SportScreen> {
 
     int totalWorkouts = history.length;
     int totalMinutes = history.fold(0, (sum, item) => sum + item.duration);
-    int totalCalories = history.fold(0, (sum, item) => sum + item.caloriesBurned);
+    int totalCalories = history.fold(
+      0,
+      (sum, item) => sum + item.caloriesBurned,
+    );
 
     return Card(
       child: Padding(
@@ -290,17 +285,9 @@ class SportScreenState extends State<SportScreen> {
       children: [
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.grey,
-          ),
-        ),
+        Text(label, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }
@@ -330,10 +317,11 @@ class SportScreenState extends State<SportScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TrainingProgramListScreen(
-            sportId: sport.id,
-            sportName: sport.name
-        ),
+        builder:
+            (context) => TrainingProgramListScreen(
+              sportId: sport.id,
+              sportName: sport.name,
+            ),
       ),
     );
   }
@@ -342,13 +330,16 @@ class SportScreenState extends State<SportScreen> {
     final provider = Provider.of<SportProvider>(context, listen: false);
     await provider.loadTrainingProgramById(programId);
 
-    if (mounted && provider.currentProgram != null) {
+    if (!context.mounted) return;
+
+    if (provider.currentProgram != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TrainingProgramDetailScreen(
-            program: provider.currentProgram!,
-          ),
+          builder:
+              (context) => TrainingProgramDetailScreen(
+                program: provider.currentProgram!,
+              ),
         ),
       );
     }
