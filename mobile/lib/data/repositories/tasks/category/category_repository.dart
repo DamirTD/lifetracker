@@ -40,7 +40,9 @@ class TaskCategoryRepository {
       } else if (response.statusCode == 401) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('auth_token');
-        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+        throw Exception(
+          'Сессия истекла. Пожалуйста, войдите в систему повторно.',
+        );
       } else {
         throw Exception('Ошибка загрузки категорий: ${response.statusCode}');
       }
@@ -61,11 +63,20 @@ class TaskCategoryRepository {
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        return TaskCategory.fromJson(data['data']);
+
+        if (data['data'] != null && data['data'] is Map<String, dynamic>) {
+          return TaskCategory.fromJson(data['data']);
+        } else {
+          throw Exception(
+            'Некорректный формат ответа от сервера: отсутствует поле "data"',
+          );
+        }
       } else if (response.statusCode == 401) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('auth_token');
-        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+        throw Exception(
+          'Сессия истекла. Пожалуйста, войдите в систему повторно.',
+        );
       } else {
         throw Exception('Ошибка создания категории: ${response.statusCode}');
       }
@@ -90,9 +101,13 @@ class TaskCategoryRepository {
       } else if (response.statusCode == 401) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('auth_token');
-        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+        throw Exception(
+          'Сессия истекла. Пожалуйста, войдите в систему повторно.',
+        );
       } else if (response.statusCode == 404) {
-        throw Exception('Категория не найдена или у вас нет прав для её изменения');
+        throw Exception(
+          'Категория не найдена или у вас нет прав для её изменения',
+        );
       } else {
         throw Exception('Ошибка обновления категории: ${response.statusCode}');
       }
@@ -115,9 +130,13 @@ class TaskCategoryRepository {
       } else if (response.statusCode == 401) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('auth_token');
-        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+        throw Exception(
+          'Сессия истекла. Пожалуйста, войдите в систему повторно.',
+        );
       } else if (response.statusCode == 404) {
-        throw Exception('Категория не найдена или у вас нет прав для её удаления');
+        throw Exception(
+          'Категория не найдена или у вас нет прав для её удаления',
+        );
       } else {
         throw Exception('Ошибка удаления категории: ${response.statusCode}');
       }
