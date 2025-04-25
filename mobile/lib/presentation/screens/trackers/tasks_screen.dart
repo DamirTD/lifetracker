@@ -28,44 +28,48 @@ class _TasksScreenState extends State<TasksScreen> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Новая категория'),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(
-            labelText: 'Название категории',
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Отмена'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-          ),
-          TextButton(
-            child: const Text('Добавить'),
-            onPressed: () async {
-              if (textController.text.isNotEmpty) {
-                try {
-                  Navigator.of(dialogContext).pop();
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Новая категория'),
+            content: TextField(
+              controller: textController,
+              decoration: const InputDecoration(
+                labelText: 'Название категории',
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Отмена'),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+              ),
+              TextButton(
+                child: const Text('Добавить'),
+                onPressed: () async {
+                  if (textController.text.isNotEmpty) {
+                    try {
+                      Navigator.of(dialogContext).pop();
 
-                  await Provider.of<TasksProvider>(context, listen: false).createCategory(textController.text);
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Ошибка: ${e.toString()}')),
-                    );
+                      await Provider.of<TasksProvider>(
+                        context,
+                        listen: false,
+                      ).createCategory(textController.text);
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                        );
+                      }
+                    } finally {
+                      textController.dispose();
+                    }
+                  } else {
+                    Navigator.of(dialogContext).pop();
                   }
-                } finally {
-                  textController.dispose();
-                }
-              } else {
-                Navigator.of(dialogContext).pop();
-              }
-            },
+                },
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -74,117 +78,154 @@ class _TasksScreenState extends State<TasksScreen> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Редактирование категории'),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(
-            labelText: 'Название категории',
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Отмена'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-          ),
-          TextButton(
-            child: const Text('Сохранить'),
-            onPressed: () async {
-              if (textController.text.isNotEmpty) {
-                try {
-                  Navigator.of(dialogContext).pop();
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Редактирование категории'),
+            content: TextField(
+              controller: textController,
+              decoration: const InputDecoration(
+                labelText: 'Название категории',
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Отмена'),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+              ),
+              TextButton(
+                child: const Text('Сохранить'),
+                onPressed: () async {
+                  if (textController.text.isNotEmpty) {
+                    try {
+                      Navigator.of(dialogContext).pop();
 
-                  await Provider.of<TasksProvider>(context, listen: false).updateCategory(category.id!, textController.text);
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Ошибка: ${e.toString()}')),
-                    );
+                      await Provider.of<TasksProvider>(
+                        context,
+                        listen: false,
+                      ).updateCategory(category.id!, textController.text);
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                        );
+                      }
+                    } finally {
+                      textController.dispose();
+                    }
+                  } else {
+                    Navigator.of(dialogContext).pop();
                   }
-                } finally {
-                  textController.dispose();
-                }
-              } else {
-                Navigator.of(dialogContext).pop();
-              }
-            },
+                },
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _confirmDeleteCategory(TaskCategory category) {
+    final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Удаление категории'),
-        content: Text('Вы уверены, что хотите удалить категорию "${category.name}"? Все связанные задачи также будут удалены.'),
-        actions: [
-          TextButton(
-            child: const Text('Отмена'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Удаление категории'),
+            content: Text(
+              'Вы уверены, что хотите удалить категорию "${category.name}"? Все связанные задачи также будут удалены.',
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Отмена'),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+              ),
+              TextButton(
+                child: const Text('Удалить'),
+                onPressed: () async {
+                  if (tasksProvider.categories!.length <= 1) {
+                    Navigator.of(
+                      dialogContext,
+                    ).pop(); // Закрываем окно подтверждения удаления
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                            title: const Text('Удаление невозможно'),
+                            content: const Text(
+                              'Вы не можете удалить последнюю категорию. Сначала создайте новую.',
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text('ОК'),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ],
+                          ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    Navigator.of(dialogContext).pop();
+                    await tasksProvider.deleteCategory(category.id!);
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                      );
+                    }
+                  }
+                },
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Удалить'),
-            onPressed: () async {
-              try {
-                Navigator.of(dialogContext).pop();
-                await Provider.of<TasksProvider>(context, listen: false).deleteCategory(category.id!);
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ошибка: ${e.toString()}')),
-                  );
-                }
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _showCategoryOptionsBottomSheet(TaskCategory category) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Редактировать'),
-            onTap: () {
-              Navigator.pop(context);
-              _showEditCategoryDialog(category);
-            },
+      builder:
+          (context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Редактировать'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showEditCategoryDialog(category);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text(
+                  'Удалить',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _confirmDeleteCategory(category);
+                },
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text('Удалить', style: TextStyle(color: Colors.red)),
-            onTap: () {
-              Navigator.pop(context);
-              _confirmDeleteCategory(category);
-            },
-          ),
-        ],
-      ),
     );
   }
 
   void _navigateToTaskForm(Task? task, List<TaskCategory> categories) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => TaskFormScreen(
-          task: task,
-          categories: categories,
-          onSave: () {
-            if (mounted) {
-              Provider.of<TasksProvider>(context, listen: false).loadData();
-            }
-          },
-        ),
+        builder:
+            (context) => TaskFormScreen(
+              task: task,
+              categories: categories,
+              onSave: () {
+                if (mounted) {
+                  Provider.of<TasksProvider>(context, listen: false).loadData();
+                }
+              },
+            ),
       ),
     );
   }
@@ -192,23 +233,27 @@ class _TasksScreenState extends State<TasksScreen> {
   void _confirmDeleteTask(int taskId) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Удаление задачи'),
-        content: const Text('Вы уверены, что хотите удалить эту задачу?'),
-        actions: [
-          TextButton(
-            child: const Text('Отмена'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Удаление задачи'),
+            content: const Text('Вы уверены, что хотите удалить эту задачу?'),
+            actions: [
+              TextButton(
+                child: const Text('Отмена'),
+                onPressed: () => Navigator.of(dialogContext).pop(),
+              ),
+              TextButton(
+                child: const Text('Удалить'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Provider.of<TasksProvider>(
+                    context,
+                    listen: false,
+                  ).deleteTask(taskId);
+                },
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Удалить'),
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              Provider.of<TasksProvider>(context, listen: false).deleteTask(taskId);
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -230,10 +275,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 padding: EdgeInsets.only(bottom: 16.0),
                 child: Text(
                   'Что хотите добавить?',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
               ListTile(
@@ -245,9 +287,12 @@ class _TasksScreenState extends State<TasksScreen> {
                 onTap: () {
                   Navigator.pop(context);
 
-                  if (tasksProvider.categories == null || tasksProvider.categories!.isEmpty) {
+                  if (tasksProvider.categories == null ||
+                      tasksProvider.categories!.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Сначала создайте категорию')),
+                      const SnackBar(
+                        content: Text('Сначала создайте категорию'),
+                      ),
                     );
                   } else {
                     _navigateToTaskForm(null, tasksProvider.categories!);
@@ -284,7 +329,10 @@ class _TasksScreenState extends State<TasksScreen> {
               value: task.isCompleted,
               onChanged: (value) {
                 if (!task.isCompleted && task.id != null) {
-                  Provider.of<TasksProvider>(context, listen: false).markTaskAsCompleted(task.id!);
+                  Provider.of<TasksProvider>(
+                    context,
+                    listen: false,
+                  ).markTaskAsCompleted(task.id!);
                 }
               },
             ),
@@ -296,7 +344,8 @@ class _TasksScreenState extends State<TasksScreen> {
                   Text(
                     task.title,
                     style: TextStyle(
-                      decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                      decoration:
+                          task.isCompleted ? TextDecoration.lineThrough : null,
                       color: task.isCompleted ? Colors.grey : null,
                     ),
                   ),
@@ -318,7 +367,11 @@ class _TasksScreenState extends State<TasksScreen> {
               constraints: const BoxConstraints(),
               padding: const EdgeInsets.all(8),
               onPressed: () {
-                final categories = Provider.of<TasksProvider>(context, listen: false).categories;
+                final categories =
+                    Provider.of<TasksProvider>(
+                      context,
+                      listen: false,
+                    ).categories;
                 if (categories != null && categories.isNotEmpty) {
                   _navigateToTaskForm(task, categories);
                 }
@@ -328,7 +381,8 @@ class _TasksScreenState extends State<TasksScreen> {
               icon: const Icon(Icons.delete, size: 20),
               constraints: const BoxConstraints(),
               padding: const EdgeInsets.all(8),
-              onPressed: () => task.id != null ? _confirmDeleteTask(task.id!) : null,
+              onPressed:
+                  () => task.id != null ? _confirmDeleteTask(task.id!) : null,
             ),
           ],
         ),
@@ -401,7 +455,12 @@ class _TasksScreenState extends State<TasksScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => Provider.of<TasksProvider>(context, listen: false).loadData(),
+            onPressed:
+                () =>
+                    Provider.of<TasksProvider>(
+                      context,
+                      listen: false,
+                    ).loadData(),
             tooltip: 'Обновить',
           ),
         ],
@@ -411,144 +470,182 @@ class _TasksScreenState extends State<TasksScreen> {
         tooltip: 'Добавить',
         child: const Icon(Icons.add),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : error != null
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Ошибка: $error'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Provider.of<TasksProvider>(context, listen: false).loadData(),
-              child: const Text('Попробовать снова'),
-            ),
-          ],
-        ),
-      )
-          : Column(
-        children: [
-          if (_showCategories && categories != null && categories.isNotEmpty)
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: Card(
-                margin: const EdgeInsets.all(8.0),
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Категории',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton.icon(
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Добавить'),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                            ),
-                            onPressed: _showAddCategoryDialog,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: categories
-                            .map((category) => _buildCategoryChip(category))
-                            .toList(),
-                      ),
-                    ],
-                  ),
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : error != null
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Ошибка: $error'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed:
+                          () =>
+                              Provider.of<TasksProvider>(
+                                context,
+                                listen: false,
+                              ).loadData(),
+                      child: const Text('Попробовать снова'),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-
-          Expanded(
-            child: groupedTasks == null || groupedTasks.isEmpty
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              )
+              : Column(
                 children: [
-                  const Icon(Icons.task_alt, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'У вас пока нет задач',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: const Text('Добавить задачу'),
-                    onPressed: () {
-                      if (categories == null || categories.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Сначала создайте категорию')),
-                        );
-                        _showAddCategoryDialog();
-                      } else {
-                        _navigateToTaskForm(null, categories);
-                      }
-                    },
+                  if (_showCategories &&
+                      categories != null &&
+                      categories.isNotEmpty)
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: Card(
+                        margin: const EdgeInsets.all(8.0),
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Категории',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextButton.icon(
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: const Text('Добавить'),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.blue,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                    ),
+                                    onPressed: _showAddCategoryDialog,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children:
+                                    categories
+                                        .map(
+                                          (category) =>
+                                              _buildCategoryChip(category),
+                                        )
+                                        .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  Expanded(
+                    child:
+                        groupedTasks == null || groupedTasks.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.task_alt,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'У вас пока нет задач',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton.icon(
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Добавить задачу'),
+                                    onPressed: () {
+                                      if (categories == null ||
+                                          categories.isEmpty) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Сначала создайте категорию',
+                                            ),
+                                          ),
+                                        );
+                                        _showAddCategoryDialog();
+                                      } else {
+                                        _navigateToTaskForm(null, categories);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                            : ListView.builder(
+                              itemCount: groupedTasks.length,
+                              itemBuilder: (context, index) {
+                                final group = groupedTasks[index];
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            group.date,
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.titleLarge,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: Colors.blue.shade100,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              group.category.name,
+                                              style: TextStyle(
+                                                color: Colors.blue.shade800,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    ...group.tasks.map(
+                                      (task) => _buildTaskItem(task),
+                                    ),
+                                    const Divider(),
+                                  ],
+                                );
+                              },
+                            ),
                   ),
                 ],
               ),
-            )
-                : ListView.builder(
-              itemCount: groupedTasks.length,
-              itemBuilder: (context, index) {
-                final group = groupedTasks[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            group.date,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue.shade100),
-                            ),
-                            child: Text(
-                              group.category.name,
-                              style: TextStyle(
-                                color: Colors.blue.shade800,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ...group.tasks.map((task) => _buildTaskItem(task)),
-                    const Divider(),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
