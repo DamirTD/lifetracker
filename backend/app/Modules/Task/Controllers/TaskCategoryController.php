@@ -14,8 +14,7 @@ class TaskCategoryController extends Controller
 {
     public function __construct(
         protected TaskCategoryServiceInterface $taskCategoryService
-    ) {
-    }
+    ) {}
 
     /**
      * @OA\Get(
@@ -59,7 +58,9 @@ class TaskCategoryController extends Controller
     public function store(TaskCategoryRequest $request): JsonResponse
     {
         $category = $this->taskCategoryService->createCategory($request->validated());
-        return response()->json(new TaskCategoryResource($category), HttpStatusCodes::CREATED);
+        return response()->json([
+            'data' => new TaskCategoryResource($category),
+        ], HttpStatusCodes::CREATED);
     }
 
     /**

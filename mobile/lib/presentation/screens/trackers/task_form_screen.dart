@@ -22,16 +22,15 @@ class TaskFormScreen extends StatefulWidget {
 }
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
-  final _formKey               = GlobalKey<FormState>();
-  final _titleController       = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  DateTime?     _selectedDate;
+  DateTime? _selectedDate;
   TaskCategory? _selectedCategory;
 
   int _selectedPriority = 1;
-  bool _isLoading       = false;
-
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -59,13 +58,14 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
       if (widget.categories.isNotEmpty) {
         _selectedCategory = widget.categories.firstWhere(
-              (category) => category.id == widget.task!.categoryId,
+          (category) => category.id == widget.task!.categoryId,
           orElse: () => widget.categories.first,
         );
       }
     } else {
-      _selectedDate     = null;
-      _selectedCategory = widget.categories.isNotEmpty ? widget.categories.first : null;
+      _selectedDate = null;
+      _selectedCategory =
+          widget.categories.isNotEmpty ? widget.categories.first : null;
     }
   }
 
@@ -104,21 +104,28 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       });
 
       try {
-        final formattedDate = _selectedDate != null
-            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(_selectedDate!)
-            : null;
+        final formattedDate =
+            _selectedDate != null
+                ? DateFormat('yyyy-MM-dd HH:mm:ss').format(_selectedDate!)
+                : null;
 
         final task = Task(
           id: widget.task?.id,
           title: _titleController.text,
-          description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
+          description:
+              _descriptionController.text.isEmpty
+                  ? null
+                  : _descriptionController.text,
           priority: _selectedPriority,
           categoryId: _selectedCategory!.id!,
           dueDate: formattedDate,
           isCompleted: widget.task?.isCompleted ?? false,
         );
 
-        final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+        final tasksProvider = Provider.of<TasksProvider>(
+          context,
+          listen: false,
+        );
 
         if (widget.task == null) {
           await tasksProvider.createTask(task);
@@ -141,9 +148,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка: ${e.toString()}')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ошибка: ${e.toString()}')));
         }
       } finally {
         if (mounted) {
@@ -157,176 +164,194 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task == null ? 'Новая задача' : 'Редактирование задачи'),
+        title: Text(
+          widget.task == null ? 'Новая задача' : 'Редактирование задачи',
+        ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Название задачи',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Введите название задачи';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Описание (опционально)',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<TaskCategory>(
-              decoration: const InputDecoration(
-                labelText: 'Категория',
-                border: OutlineInputBorder(),
-              ),
-              value: _selectedCategory,
-              items: widget.categories.map((category) {
-                return DropdownMenuItem<TaskCategory>(
-                  value: category,
-                  child: Text(category.name),
-                );
-              }).toList(),
-              onChanged: (TaskCategory? newValue) {
-                setState(() {
-                  _selectedCategory = newValue;
-                });
-              },
-              validator: (value) {
-                if (value == null) {
-                  return 'Выберите категорию';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Приоритет'),
-              trailing: DropdownButton<int>(
-                value: _selectedPriority,
-                items: const [
-                  DropdownMenuItem(
-                    value: 1,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.flag, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text('Низкий'),
-                      ],
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 2,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.flag, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text('Средний'),
-                      ],
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 3,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.flag, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Высокий'),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedPriority = newValue;
-                    });
-                  }
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Due date section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 12.0, bottom: 8.0),
-                  child: Row(
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      Text('Срок выполнения'),
-                      SizedBox(width: 4),
-                      Text('(опционально)', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      _buildCard(
+                        child: TextFormField(
+                          controller: _titleController,
+                          decoration: _inputDecoration(
+                            'Название задачи',
+                            Icons.title,
+                          ),
+                          validator:
+                              (value) =>
+                                  (value == null || value.isEmpty)
+                                      ? 'Введите название задачи'
+                                      : null,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCard(
+                        child: TextFormField(
+                          controller: _descriptionController,
+                          decoration: _inputDecoration(
+                            'Описание (опционально)',
+                            Icons.notes,
+                          ),
+                          maxLines: 3,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCard(
+                        child: DropdownButtonFormField<TaskCategory>(
+                          decoration: _inputDecoration(
+                            'Категория',
+                            Icons.category,
+                          ),
+                          value: _selectedCategory,
+                          items:
+                              widget.categories
+                                  .map(
+                                    (category) => DropdownMenuItem(
+                                      value: category,
+                                      child: Text(category.name),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged:
+                              (newValue) => setState(() {
+                                _selectedCategory = newValue;
+                              }),
+                          validator:
+                              (value) =>
+                                  value == null ? 'Выберите категорию' : null,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCard(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Приоритет'),
+                          trailing: DropdownButton<int>(
+                            value: _selectedPriority,
+                            underline: const SizedBox(),
+                            items: [
+                              _priorityItem(1, 'Низкий', Colors.green),
+                              _priorityItem(2, 'Средний', Colors.orange),
+                              _priorityItem(3, 'Высокий', Colors.red),
+                            ],
+                            onChanged:
+                                (newValue) => setState(() {
+                                  if (newValue != null) {
+                                    _selectedPriority = newValue;
+                                  }
+                                }),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCard(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 20),
+                              const SizedBox(width: 8),
+                              const Text('Срок выполнения'),
+                              const SizedBox(width: 4),
+                              Text(
+                                '(опционально)',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _selectedDate == null
+                                        ? 'Не указана'
+                                        : DateFormat(
+                                          'dd.MM.yyyy',
+                                        ).format(_selectedDate!),
+                                  ),
+                                ),
+                                if (_selectedDate != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: _clearDate,
+                                  ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit_calendar),
+                                  onPressed: () => _selectDate(context),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.check),
+                          label: Text(
+                            widget.task == null
+                                ? 'Создать задачу'
+                                : 'Сохранить изменения',
+                          ),
+                          onPressed: _saveTask,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _selectedDate == null
-                              ? const Text('Не указан')
-                              : Text(DateFormat('dd.MM.yyyy').format(_selectedDate!)),
-                        ),
-                        const SizedBox(width: 8),
-                        // Use a more compact layout for buttons
-                        if (_selectedDate != null)
-                          IconButton(
-                            icon: const Icon(Icons.clear, size: 20),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: _clearDate,
-                            tooltip: 'Очистить дату',
-                          ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: const Icon(Icons.calendar_today, size: 20),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () => _selectDate(context),
-                          tooltip: 'Выбрать дату',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _saveTask,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: Text(widget.task == null ? 'Создать задачу' : 'Сохранить изменения'),
-            ),
-          ],
-        ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    );
+  }
+
+  Widget _buildCard({required Widget child}) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      shadowColor: Colors.black26,
+      margin: EdgeInsets.zero,
+      child: Padding(padding: const EdgeInsets.all(12.0), child: child),
+    );
+  }
+
+  DropdownMenuItem<int> _priorityItem(int value, String label, Color color) {
+    return DropdownMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Icon(Icons.flag, color: color),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
       ),
     );
   }
