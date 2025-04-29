@@ -33,18 +33,29 @@ class _TasksScreenState extends State<TasksScreen> {
             title: const Text('Новая категория'),
             content: TextField(
               controller: textController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Название категории',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               autofocus: true,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
             actions: [
               TextButton(
                 child: const Text('Отмена'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              TextButton(
-                child: const Text('Добавить'),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 onPressed: () async {
                   if (textController.text.isNotEmpty) {
                     try {
@@ -57,7 +68,13 @@ class _TasksScreenState extends State<TasksScreen> {
                     } catch (e) {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                          SnackBar(
+                            content: Text('Ошибка: ${e.toString()}'),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         );
                       }
                     } finally {
@@ -67,6 +84,10 @@ class _TasksScreenState extends State<TasksScreen> {
                     Navigator.of(dialogContext).pop();
                   }
                 },
+                child: const Text(
+                  'Добавить',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -83,18 +104,29 @@ class _TasksScreenState extends State<TasksScreen> {
             title: const Text('Редактирование категории'),
             content: TextField(
               controller: textController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Название категории',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               autofocus: true,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
             actions: [
               TextButton(
                 child: const Text('Отмена'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              TextButton(
-                child: const Text('Сохранить'),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 onPressed: () async {
                   if (textController.text.isNotEmpty) {
                     try {
@@ -107,7 +139,13 @@ class _TasksScreenState extends State<TasksScreen> {
                     } catch (e) {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                          SnackBar(
+                            content: Text('Ошибка: ${e.toString()}'),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         );
                       }
                     } finally {
@@ -117,6 +155,10 @@ class _TasksScreenState extends State<TasksScreen> {
                     Navigator.of(dialogContext).pop();
                   }
                 },
+                child: const Text(
+                  'Сохранить',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -134,18 +176,24 @@ class _TasksScreenState extends State<TasksScreen> {
             content: Text(
               'Вы уверены, что хотите удалить категорию "${category.name}"? Все связанные задачи также будут удалены.',
             ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             actions: [
               TextButton(
                 child: const Text('Отмена'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              TextButton(
-                child: const Text('Удалить'),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 onPressed: () async {
                   if (tasksProvider.categories!.length <= 1) {
-                    Navigator.of(
-                      dialogContext,
-                    ).pop(); // Закрываем окно подтверждения удаления
+                    Navigator.of(dialogContext).pop();
                     showDialog(
                       context: context,
                       builder:
@@ -153,6 +201,9 @@ class _TasksScreenState extends State<TasksScreen> {
                             title: const Text('Удаление невозможно'),
                             content: const Text(
                               'Вы не можете удалить последнюю категорию. Сначала создайте новую.',
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             actions: [
                               TextButton(
@@ -171,11 +222,21 @@ class _TasksScreenState extends State<TasksScreen> {
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Ошибка: ${e.toString()}')),
+                        SnackBar(
+                          content: Text('Ошибка: ${e.toString()}'),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       );
                     }
                   }
                 },
+                child: const Text(
+                  'Удалить',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -185,30 +246,65 @@ class _TasksScreenState extends State<TasksScreen> {
   void _showCategoryOptionsBottomSheet(TaskCategory category) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder:
-          (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('Редактировать'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showEditCategoryDialog(category);
-                },
+          (context) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
               ),
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text(
-                  'Удалить',
-                  style: TextStyle(color: Colors.red),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _confirmDeleteCategory(category);
-                },
-              ),
-            ],
+                ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withAlpha((255 * 0.2).round()),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.edit, color: Colors.blue),
+                  ),
+                  title: const Text('Редактировать'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showEditCategoryDialog(category);
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.red.withAlpha((255 * 0.2).round()),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.delete, color: Colors.red),
+                  ),
+                  title: const Text(
+                    'Удалить',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _confirmDeleteCategory(category);
+                  },
+                ),
+              ],
+            ),
           ),
     );
   }
@@ -230,47 +326,31 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  void _confirmDeleteTask(int taskId) {
-    showDialog(
-      context: context,
-      builder:
-          (dialogContext) => AlertDialog(
-            title: const Text('Удаление задачи'),
-            content: const Text('Вы уверены, что хотите удалить эту задачу?'),
-            actions: [
-              TextButton(
-                child: const Text('Отмена'),
-                onPressed: () => Navigator.of(dialogContext).pop(),
-              ),
-              TextButton(
-                child: const Text('Удалить'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  Provider.of<TasksProvider>(
-                    context,
-                    listen: false,
-                  ).deleteTask(taskId);
-                },
-              ),
-            ],
-          ),
-    );
-  }
-
   void _showAddOptionsBottomSheet() {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) {
         final tasksProvider = Provider.of<TasksProvider>(context);
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.only(bottom: 16.0),
                 child: Text(
@@ -279,19 +359,29 @@ class _TasksScreenState extends State<TasksScreen> {
                 ),
               ),
               ListTile(
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.task, color: Colors.white),
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withAlpha((255 * 0.2).round()),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.task, color: Colors.blue),
                 ),
                 title: const Text('Добавить задачу'),
+                subtitle: const Text('Создать новую задачу'),
                 onTap: () {
                   Navigator.pop(context);
 
                   if (tasksProvider.categories == null ||
                       tasksProvider.categories!.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Сначала создайте категорию'),
+                      SnackBar(
+                        content: const Text('Сначала создайте категорию'),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     );
                   } else {
@@ -300,16 +390,23 @@ class _TasksScreenState extends State<TasksScreen> {
                 },
               ),
               ListTile(
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Icon(Icons.category, color: Colors.white),
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withAlpha((255 * 0.2).round()),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.category, color: Colors.green),
                 ),
                 title: const Text('Добавить категорию'),
+                subtitle: const Text('Создать новую категорию задач'),
                 onTap: () {
                   Navigator.pop(context);
                   _showAddCategoryDialog();
                 },
               ),
+              const SizedBox(height: 16),
             ],
           ),
         );
@@ -319,72 +416,100 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Widget _buildTaskItem(Task task) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-        child: Row(
-          children: [
-            // Checkbox
-            Checkbox(
-              value: task.isCompleted,
-              onChanged: (value) {
-                if (!task.isCompleted && task.id != null) {
-                  Provider.of<TasksProvider>(
-                    context,
-                    listen: false,
-                  ).markTaskAsCompleted(task.id!);
-                }
-              },
-            ),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: TextStyle(
-                      decoration:
-                          task.isCompleted ? TextDecoration.lineThrough : null,
-                      color: task.isCompleted ? Colors.grey : null,
-                    ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: Colors.grey.withAlpha((255 * 0.2).round()),
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          final categories =
+              Provider.of<TasksProvider>(context, listen: false).categories;
+          if (categories != null && categories.isNotEmpty) {
+            _navigateToTaskForm(task, categories);
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              // Checkbox
+              Transform.scale(
+                scale: 1.2,
+                child: Checkbox(
+                  value: task.isCompleted,
+                  onChanged: (value) {
+                    if (!task.isCompleted && task.id != null) {
+                      Provider.of<TasksProvider>(
+                        context,
+                        listen: false,
+                      ).markTaskAsCompleted(task.id!);
+                    }
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  if (task.description != null && task.description!.isNotEmpty)
-                    Text(
-                      task.description!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                ],
+                ),
               ),
-            ),
 
-            _getPriorityIcon(task.priority),
-            const SizedBox(width: 4),
-            IconButton(
-              icon: const Icon(Icons.edit, size: 20),
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(8),
-              onPressed: () {
-                final categories =
-                    Provider.of<TasksProvider>(
-                      context,
-                      listen: false,
-                    ).categories;
-                if (categories != null && categories.isNotEmpty) {
-                  _navigateToTaskForm(task, categories);
-                }
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, size: 20),
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(8),
-              onPressed:
-                  () => task.id != null ? _confirmDeleteTask(task.id!) : null,
-            ),
-          ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        decoration:
+                            task.isCompleted
+                                ? TextDecoration.lineThrough
+                                : null,
+                        color: task.isCompleted ? Colors.grey : null,
+                      ),
+                    ),
+                    if (task.description != null &&
+                        task.description!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          task.description!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              _getPriorityIcon(task.priority),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: Icon(Icons.edit, size: 20, color: Colors.grey[600]),
+                constraints: const BoxConstraints(),
+                padding: const EdgeInsets.all(8),
+                onPressed: () {
+                  final categories =
+                      Provider.of<TasksProvider>(
+                        context,
+                        listen: false,
+                      ).categories;
+                  if (categories != null && categories.isNotEmpty) {
+                    _navigateToTaskForm(task, categories);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -412,17 +537,48 @@ class _TasksScreenState extends State<TasksScreen> {
         color = Colors.grey;
     }
 
-    return Icon(iconData, color: color);
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: color.withAlpha((255 * 0.2).round()),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Icon(iconData, color: color, size: 18),
+    );
   }
 
   Widget _buildCategoryChip(TaskCategory category) {
     return InkWell(
       onTap: () => _showCategoryOptionsBottomSheet(category),
-      child: Chip(
-        label: Text(category.name),
-        backgroundColor: Colors.blue.shade100,
-        deleteIcon: const Icon(Icons.more_vert, size: 18),
-        onDeleted: () => _showCategoryOptionsBottomSheet(category),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(
+              context,
+            ).primaryColor.withAlpha((255 * 0.3).round()),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              category.name,
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.more_vert,
+              size: 16,
+              color: Theme.of(context).primaryColor,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -437,14 +593,33 @@ class _TasksScreenState extends State<TasksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Задачи'),
+        title: const Text(
+          'Задачи',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
+        centerTitle: false,
         actions: [
-          // Categories toggle button
           if (categories != null && categories.isNotEmpty)
             IconButton(
-              icon: Icon(
-                _showCategories ? Icons.category : Icons.category_outlined,
-                color: _showCategories ? Colors.blue : null,
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color:
+                      _showCategories
+                          ? Theme.of(
+                            context,
+                          ).primaryColor.withAlpha((255 * 0.2).round())
+                          : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  _showCategories ? Icons.category : Icons.category_outlined,
+                  color:
+                      _showCategories
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[700],
+                ),
               ),
               onPressed: () {
                 setState(() {
@@ -454,7 +629,14 @@ class _TasksScreenState extends State<TasksScreen> {
               tooltip: 'Категории',
             ),
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.grey.withAlpha((255 * 0.1).round()),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.refresh, color: Colors.grey[700]),
+            ),
             onPressed:
                 () =>
                     Provider.of<TasksProvider>(
@@ -468,6 +650,7 @@ class _TasksScreenState extends State<TasksScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddOptionsBottomSheet,
         tooltip: 'Добавить',
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add),
       ),
       body:
@@ -478,16 +661,37 @@ class _TasksScreenState extends State<TasksScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Ошибка: $error'),
+                    Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    Text(
+                      'Ошибка загрузки данных',
+                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      error,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Попробовать снова'),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
                       onPressed:
                           () =>
                               Provider.of<TasksProvider>(
                                 context,
                                 listen: false,
                               ).loadData(),
-                      child: const Text('Попробовать снова'),
                     ),
                   ],
                 ),
@@ -501,10 +705,17 @@ class _TasksScreenState extends State<TasksScreen> {
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       child: Card(
-                        margin: const EdgeInsets.all(8.0),
-                        elevation: 2,
+                        margin: const EdgeInsets.all(16.0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: Colors.grey.withAlpha((255 * 0.2).round()),
+                            width: 1,
+                          ),
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -512,18 +723,27 @@ class _TasksScreenState extends State<TasksScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Категории',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.grey[800],
                                     ),
                                   ),
                                   TextButton.icon(
-                                    icon: const Icon(Icons.add, size: 18),
-                                    label: const Text('Добавить'),
+                                    icon: Icon(
+                                      Icons.add,
+                                      size: 18,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    label: Text(
+                                      'Добавить',
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
                                     style: TextButton.styleFrom(
-                                      foregroundColor: Colors.blue,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 8,
                                       ),
@@ -533,22 +753,33 @@ class _TasksScreenState extends State<TasksScreen> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children:
-                                    categories
-                                        .map(
-                                          (category) =>
-                                              _buildCategoryChip(category),
-                                        )
-                                        .toList(),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children:
+                                      categories
+                                          .map(
+                                            (category) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 8.0,
+                                              ),
+                                              child: _buildCategoryChip(
+                                                category,
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
                     ),
+                  if (_showCategories &&
+                      categories != null &&
+                      categories.isNotEmpty)
+                    const Divider(height: 1, thickness: 1),
 
                   Expanded(
                     child:
@@ -557,29 +788,55 @@ class _TasksScreenState extends State<TasksScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.task_alt,
-                                    size: 64,
-                                    color: Colors.grey,
+                                    size: 72,
+                                    color: Colors.grey[300],
                                   ),
                                   const SizedBox(height: 16),
-                                  const Text(
+                                  Text(
                                     'У вас пока нет задач',
-                                    style: TextStyle(fontSize: 18),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
+                                  Text(
+                                    'Добавьте задачу, нажав на кнопку ниже',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.add),
                                     label: const Text('Добавить задачу'),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 12,
+                                      ),
+                                    ),
                                     onPressed: () {
                                       if (categories == null ||
                                           categories.isEmpty) {
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
+                                          SnackBar(
+                                            content: const Text(
                                               'Сначала создайте категорию',
+                                            ),
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                           ),
                                         );
@@ -592,56 +849,85 @@ class _TasksScreenState extends State<TasksScreen> {
                                 ],
                               ),
                             )
-                            : ListView.builder(
-                              itemCount: groupedTasks.length,
-                              itemBuilder: (context, index) {
-                                final group = groupedTasks[index];
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            group.date,
-                                            style:
-                                                Theme.of(
-                                                  context,
-                                                ).textTheme.titleLarge,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue.shade50,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: Colors.blue.shade100,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              group.category.name,
-                                              style: TextStyle(
-                                                color: Colors.blue.shade800,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ...group.tasks.map(
-                                      (task) => _buildTaskItem(task),
-                                    ),
-                                    const Divider(),
-                                  ],
-                                );
+                            : RefreshIndicator(
+                              onRefresh: () async {
+                                await Provider.of<TasksProvider>(
+                                  context,
+                                  listen: false,
+                                ).loadData();
                               },
+                              child: ListView.builder(
+                                itemCount: groupedTasks.length,
+                                itemBuilder: (context, index) {
+                                  final group = groupedTasks[index];
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          24,
+                                          16,
+                                          24,
+                                          8,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              group.date,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[800],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(
+                                                  context,
+                                                ).primaryColor.withAlpha(
+                                                  (255 * 0.1).round(),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).primaryColor.withAlpha(
+                                                    (255 * 0.3).round(),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                group.category.name,
+                                                style: TextStyle(
+                                                  color:
+                                                      Theme.of(
+                                                        context,
+                                                      ).primaryColor,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ...group.tasks.map(
+                                        (task) => _buildTaskItem(task),
+                                      ),
+                                      if (index < groupedTasks.length - 1)
+                                        const Divider(height: 8, thickness: 1),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                   ),
                 ],

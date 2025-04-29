@@ -12,9 +12,9 @@ use Illuminate\Http\Request;
 
 class SleepController extends Controller
 {
-    public function __construct(protected SleepServiceInterface $sleepService
-    ) {
-    }
+    public function __construct(
+        protected SleepServiceInterface $sleepService
+    ) {}
 
     /**
      * @OA\Post(
