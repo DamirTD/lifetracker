@@ -23,8 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   String? _error;
   bool _disposed = false;
-
-  int notificationCount = 0;
+  int notificationCount = 2; // Пример уведомлений
 
   @override
   void initState() {
@@ -52,16 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final user = await _userRepository.getUser();
-
       if (!mounted) return;
-
       _safeSetState(() {
         _user = user;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
-
       _safeSetState(() {
         _error = e.toString();
         _isLoading = false;
@@ -71,23 +67,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
-    if (_error != null) {
+    if (_isLoading) {
       return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Ошибка: $_error'),
+              CircularProgressIndicator(strokeWidth: 2, color: colors.primary),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _loadUser,
-                child: const Text('Попробовать снова'),
+              Text(
+                'Загружаем ваши данные...',
+                style: theme.textTheme.bodyMedium,
               ),
             ],
+          ),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: colors.error),
+                const SizedBox(height: 16),
+                Text(
+                  'Ошибка загрузки',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colors.error,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: _loadUser,
+                  child: const Text('Попробовать снова'),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -96,298 +125,291 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_user == null) {
       return Scaffold(
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Ошибка загрузки пользователя'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed:
-                    () => Navigator.pushReplacementNamed(context, '/welcome'),
-                child: const Text('Вернуться на экран входа'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.person_off, size: 48, color: colors.error),
+                const SizedBox(height: 16),
+                Text(
+                  'Пользователь не найден',
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed:
+                      () => Navigator.pushReplacementNamed(context, '/welcome'),
+                  child: const Text('Вернуться на экран входа'),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
-    final userName = _user!.name;
-    final avatarUrl = '';
-
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colors.surface,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              elevation: 0,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              expandedHeight: 120,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 10.0,
-                  ),
-                  color: Theme.of(context).colorScheme.surface,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Добро пожаловать,",
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withAlpha((0.7 * 255).round()),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                userName,
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              GestureDetector(
-                                onTap:
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => const ProfileScreen(),
-                                      ),
-                                    ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withAlpha(
-                                          (0.1 * 255).round(),
-                                        ),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 24,
-                                    backgroundColor:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.primaryContainer,
-                                    foregroundImage:
-                                        avatarUrl.isNotEmpty
-                                            ? NetworkImage(avatarUrl)
-                                            : null,
-                                    child:
-                                        avatarUrl.isEmpty
-                                            ? Icon(
-                                              Icons.person,
-                                              color:
-                                                  Theme.of(
-                                                    context,
-                                                  ).colorScheme.primary,
-                                            )
-                                            : null,
-                                  ),
-                                ),
-                              ),
-                              if (notificationCount > 0)
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 20,
-                                      minHeight: 20,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        notificationCount.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      const Divider(height: 1),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Все трекеры",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: RefreshIndicator(
+          onRefresh: _loadUser,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              // Аппбар с приветствием
+              SliverAppBar(
+                pinned: true,
+                elevation: 0,
+                backgroundColor: colors.surface,
+                surfaceTintColor: colors.surfaceTint,
+                expandedHeight: 140,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        _buildWelcomeHeader(context),
+                        const SizedBox(height: 16),
+                        Divider(height: 1, color: colors.outlineVariant),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-            SliverPadding(
-              padding: const EdgeInsets.all(20),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 3 : 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.3,
+              // Секция трекеров
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    "Мои трекеры",
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final category = _categories[index];
-                  return _buildCategoryCard(
-                    context,
-                    icon: category['icon'],
-                    label: category['label'],
-                    color: category['color'],
-                    screen: category['screen'],
-                  );
-                }, childCount: _categories.length),
               ),
-            ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 80)),
-          ],
+              // Грид с трекерами
+              SliverPadding(
+                padding: const EdgeInsets.all(20),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                        MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.1,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        _buildTrackerCard(context, _categories[index]),
+                    childCount: _categories.length,
+                  ),
+                ),
+              ),
+
+              // Отступ для FAB
+              const SliverToBoxAdapter(child: SizedBox(height: 80)),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        spaceBetweenChildren: 12,
-        children: [
-          SpeedDialChild(
-            child: const Icon(Icons.local_drink, color: Colors.white),
-            backgroundColor: Colors.blue,
-            labelWidget: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha((0.1 * 255).round()),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+      floatingActionButton: _buildSpeedDial(context),
+    );
+  }
+
+  Widget _buildWelcomeHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final userName = _user?.name ?? 'Пользователь';
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Привет, ${userName.split(' ').first}",
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.task_alt, color: Colors.white),
-            backgroundColor: Colors.green,
-            labelWidget: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha((0.1 * 255).round()),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+            const SizedBox(height: 4),
+            Text(
+              "Как твои дела сегодня?",
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onSurface.withAlpha((255 * 0.7).round()),
               ),
             ),
+          ],
+        ),
+        _buildProfileAvatar(context),
+      ],
+    );
+  }
+
+  Widget _buildProfileAvatar(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    const avatarUrl = ''; // Здесь должна быть ссылка на аватар
+
+    return GestureDetector(
+      onTap:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfileScreen()),
           ),
-        ],
+      child: Badge(
+        isLabelVisible: notificationCount > 0,
+        label:
+            notificationCount > 0 ? Text(notificationCount.toString()) : null,
+        backgroundColor: colors.error,
+        textColor: colors.onError,
+        alignment: Alignment.topRight,
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: colors.primaryContainer,
+          foregroundImage:
+              avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+          child:
+              avatarUrl.isEmpty
+                  ? Icon(Icons.person, color: colors.primary)
+                  : null,
+        ),
       ),
     );
   }
 
-  Widget _buildCategoryCard(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required Color color,
-    required Widget screen,
-  }) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => screen),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha((0.05 * 255).round()),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+  Widget _buildTrackerCard(
+    BuildContext context,
+    Map<String, dynamic> category,
+  ) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: colors.outlineVariant),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => category['screen']),
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withAlpha((0.1 * 255).round()),
-                shape: BoxShape.circle,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: category['color'].withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  category['icon'],
+                  color: category['color'],
+                  size: 28,
+                ),
               ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                category['label'],
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _getTrackerSubtitle(category['label']),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.onSurface.withAlpha((255 * 0.6).round()),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  String _getTrackerSubtitle(String label) {
+    switch (label) {
+      case "Задачи":
+        return "Задачи на день";
+      case "Финансы":
+        return "Бюджет и расходы";
+      case "Сон":
+        return "Качество и длительность";
+      case "Вода":
+        return "Баланс жидкости";
+      case "Спорт":
+        return "Активность";
+      case "Диета":
+        return "Питание и калории";
+      default:
+        return "";
+    }
+  }
+
+  Widget _buildSpeedDial(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return SpeedDial(
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      backgroundColor: colors.primary,
+      foregroundColor: colors.onPrimary,
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      spaceBetweenChildren: 12,
+      children: [
+        SpeedDialChild(
+          child: const Icon(Icons.local_drink),
+          backgroundColor: Colors.blue,
+          label: 'Добавить воду',
+          labelStyle: TextStyle(color: colors.onSurface),
+          onTap: () => _navigateToTracker(context, 'Вода'),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.task_alt),
+          backgroundColor: Colors.green,
+          label: 'Новая задача',
+          labelStyle: TextStyle(color: colors.onSurface),
+          onTap: () => _navigateToTracker(context, 'Задачи'),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.attach_money),
+          backgroundColor: Colors.teal,
+          label: 'Добавить расход',
+          labelStyle: TextStyle(color: colors.onSurface),
+          onTap: () => _navigateToTracker(context, 'Финансы'),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToTracker(BuildContext context, String trackerName) {
+    final tracker = _categories.firstWhere(
+      (element) => element['label'] == trackerName,
+      orElse: () => _categories[0],
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => tracker['screen']),
     );
   }
 }
