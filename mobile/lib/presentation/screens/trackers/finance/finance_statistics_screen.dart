@@ -4,20 +4,19 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../providers/finance_provider.dart';
 
-
 class FinanceStatisticsScreen extends StatefulWidget {
   const FinanceStatisticsScreen({super.key});
 
   @override
-  State<FinanceStatisticsScreen> createState() => _FinanceStatisticsScreenState();
+  State<FinanceStatisticsScreen> createState() =>
+      _FinanceStatisticsScreenState();
 }
 
 class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
   String _selectedPeriod = 'month';
   String? _selectedType;
   String _selectedGroupBy = 'day';
-  DateTime? _startDate;
-  DateTime? _endDate;
+  bool _isFilterExpanded = false;
 
   @override
   void initState() {
@@ -30,743 +29,688 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
     provider.getFinanceStatistics(
       period: _selectedPeriod,
       type: _selectedType,
-      startDate: _startDate,
-      endDate: _endDate,
       groupBy: _selectedGroupBy,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final provider = Provider.of<FinanceProvider>(context);
     final statistics = provider.statistics;
+    final currencyFormat = NumberFormat.currency(locale: 'ru_RU', symbol: '₽');
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Financial Statistics'),
+        title: const Text('Аналитика'),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list_rounded),
+            onPressed:
+                () => setState(() => _isFilterExpanded = !_isFilterExpanded),
+            tooltip: 'Фильтры',
+          ),
+        ],
       ),
       body: Column(
         children: [
-          _buildFilters(),
+          // Анимированная панель фильтров
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child:
+                _isFilterExpanded ? _buildFilterPanel(theme) : const SizedBox(),
+          ),
+
+          // Основной контент
           Expanded(
-            child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : statistics == null
-                ? const Center(child: Text('No statistics available'))
-                : _buildStatisticsContent(statistics),
+            child: _buildContent(provider, statistics, currencyFormat, theme),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFilters() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Period',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: _selectedPeriod,
-                  items: const [
-                    DropdownMenuItem(value: 'day', child: Text('Day')),
-                    DropdownMenuItem(value: 'week', child: Text('Week')),
-                    DropdownMenuItem(value: 'month', child: Text('Month')),
-                    DropdownMenuItem(value: 'year', child: Text('Year')),
-                    DropdownMenuItem(value: 'custom', child: Text('Custom')),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedPeriod = value!;
-                      if (value != 'custom') {
-                        _startDate = null;
-                        _endDate = null;
-                      }
-                    });
-                    _loadStatistics();
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: DropdownButtonFormField<String?>(
-                  decoration: const InputDecoration(
-                    labelText: 'Type',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: _selectedType,
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('All')),
-                    DropdownMenuItem(value: 'expense', child: Text('Expense')),
-                    DropdownMenuItem(value: 'income', child: Text('Income')),
-                    DropdownMenuItem(value: 'saving', child: Text('Saving')),
-                    DropdownMenuItem(value: 'investment', child: Text('Investment')),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedType = value;
-                    });
-                    _loadStatistics();
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Group By',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: _selectedGroupBy,
-                  items: const [
-                    DropdownMenuItem(value: 'day', child: Text('Day')),
-                    DropdownMenuItem(value: 'week', child: Text('Week')),
-                    DropdownMenuItem(value: 'month', child: Text('Month')),
-                    DropdownMenuItem(value: 'year', child: Text('Year')),
-                    DropdownMenuItem(value: 'category', child: Text('Category')),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGroupBy = value!;
-                    });
-                    _loadStatistics();
-                  },
-                ),
-              ),
-            ],
-          ),
-          if (_selectedPeriod == 'custom') ...[
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    icon: const Icon(Icons.calendar_today),
-                    label: Text(_startDate == null
-                        ? 'Start Date'
-                        : DateFormat('dd/MM/yyyy').format(_startDate!)),
-                    onPressed: () async {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: _startDate ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (date != null) {
-                        setState(() {
-                          _startDate = date;
-                        });
-                        _loadStatistics();
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextButton.icon(
-                    icon: const Icon(Icons.calendar_today),
-                    label: Text(_endDate == null
-                        ? 'End Date'
-                        : DateFormat('dd/MM/yyyy').format(_endDate!)),
-                    onPressed: () async {
-                      if (_startDate == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please select start date first'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: _endDate ?? DateTime.now(),
-                        firstDate: _startDate!,
-                        lastDate: DateTime.now(),
-                      );
-                      if (date != null) {
-                        setState(() {
-                          _endDate = date;
-                        });
-                        _loadStatistics();
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatisticsContent(Map<String, dynamic> statistics) {
-    final summary = statistics['summary'];
-    final data = statistics['data'] as List;
-    final trends = statistics['trends'];
-    final categoryBreakdown = statistics['category_breakdown'] as List;
-
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Summary Card
-        Card(
-          elevation: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Summary',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildSummaryRow('Total Income', summary['total_income'], currencyFormat, Colors.green),
-                const SizedBox(height: 8),
-                _buildSummaryRow('Total Expense', summary['total_expense'], currencyFormat, Colors.red),
-                const SizedBox(height: 8),
-                _buildSummaryRow('Total Saving', summary['total_saving'], currencyFormat, Colors.blue),
-                const SizedBox(height: 8),
-                _buildSummaryRow('Total Investment', summary['total_investment'], currencyFormat, Colors.purple),
-                const Divider(height: 24),
-                _buildSummaryRow('Balance', summary['balance'], currencyFormat, Colors.black, isBold: true),
-                if (summary['saving_rate'] != null) ...[
-                  const SizedBox(height: 8),
-                  _buildSummaryRow('Saving Rate', summary['saving_rate'], NumberFormat('0.0%'), Colors.blue),
-                ],
-                if (summary['expense_rate'] != null) ...[
-                  const SizedBox(height: 8),
-                  _buildSummaryRow('Expense Rate', summary['expense_rate'], NumberFormat('0.0%'), Colors.red),
-                ],
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        if (trends != null)
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Trends',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTrendRow('Income', trends['income_trend'], Colors.green),
-                  const SizedBox(height: 8),
-                  _buildTrendRow('Expense', trends['expense_trend'], Colors.red),
-                  const SizedBox(height: 8),
-                  _buildTrendRow('Saving', trends['saving_trend'], Colors.blue),
-                  const SizedBox(height: 8),
-                  _buildTrendRow('Investment', trends['investment_trend'], Colors.purple),
-                ],
-              ),
-            ),
-          ),
-
-        const SizedBox(height: 16),
-
-        if (data.isNotEmpty)
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _selectedGroupBy == 'category'
-                        ? 'Distribution by Category'
-                        : 'Distribution over Time',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 300,
-                    child: _selectedGroupBy == 'category'
-                        ? _buildCategoryBarChart(data)
-                        : _buildTimeSeriesChart(data),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-        const SizedBox(height: 16),
-
-        if (categoryBreakdown.isNotEmpty && _selectedType != null)
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Category Breakdown for ${_selectedType!.capitalize()}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 200,
-                    child: _buildCategoryPieChart(categoryBreakdown),
-                  ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: categoryBreakdown.length,
-                    itemBuilder: (context, index) {
-                      final category = categoryBreakdown[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                category['category_name'] ?? 'Unknown',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Text(
-                              currencyFormat.format(category['amount']),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '(${category['percentage'].toStringAsFixed(1)}%)',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildSummaryRow(String label, dynamic value, NumberFormat formatter, Color color, {bool isBold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        Text(
-          formatter.format(value),
-          style: TextStyle(
-            color: color,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTrendRow(String label, dynamic trend, Color color) {
-    final isPositive = trend >= 0;
-    final trendValue = trend.abs();
-    final iconData = isPositive ? Icons.arrow_upward : Icons.arrow_downward;
-    final trendColor = label == 'Expense' ? (isPositive ? Colors.red : Colors.green) : (isPositive ? color : Colors.red);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label),
-        Row(
+  Widget _buildFilterPanel(ThemeData theme) {
+    return Card(
+      margin: const EdgeInsets.all(12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(iconData, color: trendColor, size: 16),
-            const SizedBox(width: 4),
-            Text(
-              '${trendValue.toStringAsFixed(1)}%',
-              style: TextStyle(
-                color: trendColor,
-                fontWeight: FontWeight.bold,
-              ),
+            // Период
+            _buildFilterDropdown(
+              label: 'Период',
+              value: _selectedPeriod,
+              items: const [
+                DropdownMenuItem(value: 'day', child: Text('День')),
+                DropdownMenuItem(value: 'week', child: Text('Неделя')),
+                DropdownMenuItem(value: 'month', child: Text('Месяц')),
+                DropdownMenuItem(value: 'year', child: Text('Год')),
+              ],
+              onChanged: (value) {
+                setState(() => _selectedPeriod = value as String);
+                _loadStatistics();
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // Тип операции
+            _buildFilterDropdown(
+              label: 'Тип операции',
+              value: _selectedType,
+              items: const [
+                DropdownMenuItem(value: null, child: Text('Все операции')),
+                DropdownMenuItem(value: 'income', child: Text('Доходы')),
+                DropdownMenuItem(value: 'expense', child: Text('Расходы')),
+              ],
+              onChanged: (value) {
+                setState(() => _selectedType = value as String?);
+                _loadStatistics();
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // Группировка
+            _buildFilterDropdown(
+              label: 'Группировка',
+              value: _selectedGroupBy,
+              items: const [
+                DropdownMenuItem(value: 'day', child: Text('По дням')),
+                DropdownMenuItem(value: 'week', child: Text('По неделям')),
+                DropdownMenuItem(value: 'month', child: Text('По месяцам')),
+                DropdownMenuItem(
+                  value: 'category',
+                  child: Text('По категориям'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() => _selectedGroupBy = value as String);
+                _loadStatistics();
+              },
             ),
           ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildTimeSeriesChart(List data) {
-    if (data.isEmpty) {
-      return const Center(child: Text('No data available for chart'));
-    }
-
-    data.sort((a, b) {
-      if (_selectedGroupBy == 'day') {
-        return DateTime.parse(a['period']).compareTo(DateTime.parse(b['period']));
-      } else {
-        return a['period'].compareTo(b['period']);
-      }
-    });
-
-    final spots = <FlSpot>[];
-    final titles = <String>[];
-
-    for (var i = 0; i < data.length; i++) {
-      spots.add(FlSpot(i.toDouble(), data[i]['amount'].toDouble()));
-
-      String title = data[i]['period'];
-      if (_selectedGroupBy == 'day' && title.contains('-')) {
-        final date = DateTime.parse(title);
-        title = DateFormat('dd/MM').format(date);
-      } else if (_selectedGroupBy == 'month' && title.contains('-')) {
-        final date = DateTime.parse('$title-01');
-        title = DateFormat('MMM').format(date);
-      }
-
-      titles.add(title);
-    }
-
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: true,
-          horizontalInterval: 1,
-          verticalInterval: 1,
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 30,
-              getTitlesWidget: (value, meta) {
-                if (value.toInt() >= 0 && value.toInt() < titles.length) {
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      titles[value.toInt()],
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-              interval: titles.length > 10 ? (titles.length / 5).ceilToDouble() : 1,
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 50,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  child: Text(
-                    '\$${value.toInt()}',
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                );
-              },
-              interval: _calculateInterval(spots),
-            ),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        minX: 0,
-        maxX: spots.length.toDouble() - 1,
-        minY: 0,
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: _getChartColor(),
-            barWidth: 3,
-            isStrokeCapRound: true,
-            dotData: FlDotData(show: true),
-            belowBarData: BarAreaData(
-              show: true,
-              color: _getChartColor().withValues(alpha: 0.2 * 255),
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildCategoryBarChart(List data) {
-    if (data.isEmpty) {
-      return const Center(child: Text('No data available for chart'));
+  Widget _buildContent(
+    FinanceProvider provider,
+    dynamic statistics,
+    NumberFormat currencyFormat,
+    ThemeData theme,
+  ) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    data.sort((a, b) => b['amount'].compareTo(a['amount']));
-
-    if (data.length > 10) {
-      data = data.sublist(0, 10);
-    }
-
-    final barGroups = <BarChartGroupData>[];
-    final titles = <String>[];
-
-    for (var i = 0; i < data.length; i++) {
-      barGroups.add(
-        BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              toY: data[i]['amount'].toDouble(),
-              color: _getChartColor(),
-              width: 16,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(4),
+    if (provider.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Ошибка загрузки', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                provider.error!,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
               ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _loadStatistics,
+              child: const Text('Повторить попытку'),
             ),
           ],
         ),
       );
-
-      titles.add(data[i]['period'] ?? 'Unknown');
     }
+
+    if (statistics == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.bar_chart_rounded, size: 48, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'Нет данных для отображения',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Измените параметры фильтрации',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async => _loadStatistics(),
+      child: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          // График распределения
+          _buildChartSection(statistics, theme),
+
+          const SizedBox(height: 16),
+
+          // Ключевые показатели
+          _buildKeyMetrics(statistics['summary'], currencyFormat, theme),
+
+          if (_selectedType != null &&
+              statistics['category_breakdown'] != null) ...[
+            const SizedBox(height: 16),
+            _buildCategoryBreakdown(
+              statistics['category_breakdown'],
+              currencyFormat,
+              theme,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChartSection(dynamic statistics, ThemeData theme) {
+    final data = statistics['data'] as List;
+    final isCategoryGrouping = _selectedGroupBy == 'category';
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isCategoryGrouping ? 'Распределение по категориям' : 'Динамика',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 250,
+              child:
+                  isCategoryGrouping
+                      ? _buildCategoryChart(data, theme)
+                      : _buildTimeChart(data, theme),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChart(List data, ThemeData theme) {
+    if (data.isEmpty) {
+      return Center(
+        child: Text('Нет данных', style: theme.textTheme.bodyMedium),
+      );
+    }
+
+    // Сортируем по убыванию и берем топ-5
+    data.sort((a, b) => b['amount'].compareTo(a['amount']));
+    final displayData = data.length > 5 ? data.sublist(0, 5) : data;
 
     return BarChart(
       BarChartData(
-        barGroups: barGroups,
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: false,
-          horizontalInterval: _calculateInterval(
-              barGroups.map((e) => FlSpot(0, e.barRods.first.toY)).toList()
-          ),
-        ),
+        barGroups:
+            displayData.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return BarChartGroupData(
+                x: index,
+                barRods: [
+                  BarChartRodData(
+                    toY: item['amount'].toDouble(),
+                    color: _getChartColor(index),
+                    width: 20,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              );
+            }).toList(),
         titlesData: FlTitlesData(
-          show: true,
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 30,
               getTitlesWidget: (value, meta) {
-                if (value.toInt() >= 0 && value.toInt() < titles.length) {
+                if (value.toInt() >= 0 && value.toInt() < displayData.length) {
+                  final name = displayData[value.toInt()]['period'] ?? 'Другое';
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
-                    child: Text(
-                      titles[value.toInt()],
-                      style: const TextStyle(fontSize: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        name,
+                        style: theme.textTheme.labelSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   );
                 }
                 return const SizedBox.shrink();
               },
+              reservedSize: 40,
             ),
           ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 50,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  child: Text(
-                    '\$${value.toInt()}',
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                );
-              },
-              interval: _calculateInterval(
-                  barGroups.map((e) => FlSpot(0, e.barRods.first.toY)).toList()
-              ),
-            ),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+        ),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+        barTouchData: BarTouchData(
+          touchTooltipData: BarTouchTooltipData(
+            tooltipBgColor: theme.colorScheme.surface,
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              return BarTooltipItem(
+                '${rod.toY.toInt()} ₽',
+                theme.textTheme.bodyMedium!.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              );
+            },
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        alignment: BarChartAlignment.spaceAround,
       ),
     );
   }
 
-  Widget _buildCategoryPieChart(List categoryBreakdown) {
-    if (categoryBreakdown.isEmpty) {
-      return const Center(child: Text('No category data available'));
+  Widget _buildTimeChart(List data, ThemeData theme) {
+    if (data.isEmpty) {
+      return Center(
+        child: Text('Нет данных', style: theme.textTheme.bodyMedium),
+      );
     }
 
-    categoryBreakdown.sort((a, b) => b['percentage'].compareTo(a['percentage']));
+    // Сортируем по дате
+    data.sort((a, b) => a['period'].compareTo(b['period']));
 
+    return LineChart(
+      LineChartData(
+        lineBarsData: [
+          LineChartBarData(
+            spots:
+                data.asMap().entries.map((entry) {
+                  return FlSpot(
+                    entry.key.toDouble(),
+                    entry.value['amount'].toDouble(),
+                  );
+                }).toList(),
+            isCurved: true,
+            color: _getTypeColor(_selectedType ?? ''),
+            barWidth: 3,
+            belowBarData: BarAreaData(show: false),
+            dotData: FlDotData(show: true),
+          ),
+        ],
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                if (value.toInt() >= 0 && value.toInt() < data.length) {
+                  final period = data[value.toInt()]['period'];
+                  String label;
+
+                  if (_selectedGroupBy == 'day') {
+                    label = DateFormat('dd.MM').format(DateTime.parse(period));
+                  } else if (_selectedGroupBy == 'week') {
+                    label = 'Неделя ${value.toInt() + 1}';
+                  } else {
+                    label = DateFormat(
+                      'MMM',
+                      'ru_RU',
+                    ).format(DateTime.parse('$period-01'));
+                  }
+
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(label, style: theme.textTheme.labelSmall),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+              reservedSize: 30,
+            ),
+          ),
+        ),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: _calculateInterval(data),
+        ),
+        borderData: FlBorderData(show: false),
+        lineTouchData: LineTouchData(
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: theme.colorScheme.surface,
+            getTooltipItems: (spots) {
+              return spots.map((spot) {
+                return LineTooltipItem(
+                  '${spot.y.toInt()} ₽',
+                  theme.textTheme.bodyMedium!.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKeyMetrics(
+    dynamic summary,
+    NumberFormat currencyFormat,
+    ThemeData theme,
+  ) {
+    final isExpense = _selectedType == 'expense';
+    final isIncome = _selectedType == 'income';
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ключевые показатели',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            if (_selectedType == null || isIncome) ...[
+              _buildMetricItem(
+                'Общий доход',
+                currencyFormat.format(summary['total_income']),
+                Icons.arrow_downward_rounded,
+                Colors.green,
+                theme,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (_selectedType == null || isExpense) ...[
+              _buildMetricItem(
+                'Общий расход',
+                currencyFormat.format(summary['total_expense']),
+                Icons.arrow_upward_rounded,
+                Colors.red,
+                theme,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (_selectedType == null) ...[
+              _buildMetricItem(
+                'Разница',
+                currencyFormat.format(summary['balance']),
+                summary['balance'] >= 0
+                    ? Icons.trending_up_rounded
+                    : Icons.trending_down_rounded,
+                summary['balance'] >= 0 ? Colors.green : Colors.red,
+                theme,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetricItem(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    ThemeData theme,
+  ) {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: color.withAlpha(30),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryBreakdown(
+    List breakdown,
+    NumberFormat currencyFormat,
+    ThemeData theme,
+  ) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Распределение по категориям',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              child: Row(
+                children: [
+                  Expanded(flex: 2, child: _buildPieChart(breakdown, theme)),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 3,
+                    child: _buildCategoryList(breakdown, currencyFormat, theme),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPieChart(List breakdown, ThemeData theme) {
+    // Группируем мелкие категории в "Другие"
     List processedData = [];
-    if (categoryBreakdown.length > 5) {
+    if (breakdown.length > 5) {
       double otherPercentage = 0;
       double otherAmount = 0;
 
-      processedData = categoryBreakdown.sublist(0, 4);
+      processedData = breakdown.sublist(0, 4);
 
-      for (int i = 4; i < categoryBreakdown.length; i++) {
-        otherPercentage += categoryBreakdown[i]['percentage'];
-        otherAmount += categoryBreakdown[i]['amount'];
+      for (int i = 4; i < breakdown.length; i++) {
+        otherPercentage += breakdown[i]['percentage'];
+        otherAmount += breakdown[i]['amount'];
       }
 
       processedData.add({
-        'category_name': 'Other',
+        'category_name': 'Другие',
         'amount': otherAmount,
         'percentage': otherPercentage,
       });
     } else {
-      processedData = categoryBreakdown;
+      processedData = breakdown;
     }
 
-    final sections = <PieChartSectionData>[];
+    return PieChart(
+      PieChartData(
+        sections:
+            processedData.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return PieChartSectionData(
+                value: item['amount'].toDouble(),
+                title: '${item['percentage'].toStringAsFixed(0)}%',
+                color: _getChartColor(index),
+                radius: 24,
+                titleStyle: theme.textTheme.labelSmall!.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }).toList(),
+        sectionsSpace: 2,
+        centerSpaceRadius: 40,
+        pieTouchData: PieTouchData(
+          touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryList(
+    List breakdown,
+    NumberFormat currencyFormat,
+    ThemeData theme,
+  ) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: breakdown.length,
+      itemBuilder: (context, index) {
+        final item = breakdown[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: _getChartColor(index),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  item['category_name'] ?? 'Без категории',
+                  style: theme.textTheme.bodyMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                currencyFormat.format(item['amount']),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterDropdown({
+    required String label,
+    required dynamic value,
+    required List<DropdownMenuItem<dynamic>> items,
+    required ValueChanged<dynamic> onChanged,
+  }) {
+    return DropdownButtonFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+      value: value,
+      items: items,
+      onChanged: onChanged,
+      borderRadius: BorderRadius.circular(12),
+    );
+  }
+
+  Color _getChartColor(int index) {
     final colors = [
       Colors.blue,
-      Colors.red,
       Colors.green,
-      Colors.purple,
       Colors.orange,
+      Colors.purple,
+      Colors.red,
       Colors.teal,
       Colors.amber,
       Colors.indigo,
     ];
-
-    for (var i = 0; i < processedData.length; i++) {
-      final data = processedData[i];
-      sections.add(
-        PieChartSectionData(
-          value: data['amount'].toDouble(),
-          title: '${data['percentage'].toStringAsFixed(1)}%',
-          color: colors[i % colors.length],
-          radius: 80,
-          titleStyle: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-      );
-    }
-
-    return Row(
-      children: [
-        Expanded(
-          child: PieChart(
-            PieChartData(
-              sections: sections,
-              sectionsSpace: 2,
-              centerSpaceRadius: 40,
-              pieTouchData: PieTouchData(enabled: true),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(
-              processedData.length,
-                  (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: colors[index % colors.length],
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        processedData[index]['category_name'] ?? 'Unknown',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return colors[index % colors.length];
   }
 
-  double _calculateInterval(List<FlSpot> spots) {
-    if (spots.isEmpty) return 1;
-
-    double maxY = 0;
-    for (var spot in spots) {
-      if (spot.y > maxY) {
-        maxY = spot.y;
-      }
-    }
-
-    if (maxY <= 10) return 1;
-    if (maxY <= 100) return 10;
-    if (maxY <= 1000) return 100;
-    if (maxY <= 10000) return 1000;
-
-    return 10000;
-  }
-
-  Color _getChartColor() {
-    switch (_selectedType) {
+  Color _getTypeColor(String type) {
+    switch (type) {
       case 'income':
         return Colors.green;
       case 'expense':
@@ -779,10 +723,20 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
         return Colors.blueGrey;
     }
   }
-}
 
-extension StringExtension on String {
-  String capitalize() {
-    return '${this[0].toUpperCase()}${substring(1)}';
+  double _calculateInterval(List data) {
+    if (data.isEmpty) return 1000;
+
+    double maxAmount = 0;
+    for (var item in data) {
+      if (item['amount'] > maxAmount) {
+        maxAmount = item['amount'].toDouble();
+      }
+    }
+
+    if (maxAmount <= 1000) return 100;
+    if (maxAmount <= 10000) return 1000;
+    if (maxAmount <= 100000) return 10000;
+    return 100000;
   }
 }

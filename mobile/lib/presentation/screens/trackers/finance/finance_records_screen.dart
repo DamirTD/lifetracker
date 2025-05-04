@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/data/models/finance/finance_record.dart';
+import 'package:mobile/presentation/providers/finance_provider.dart';
+import 'package:mobile/presentation/screens/trackers/finance/finance_record_form_screen.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../data/models/finance/finance_record.dart';
-import '../../../providers/finance_provider.dart';
-import 'finance_record_form_screen.dart';
 
 class FinanceRecordsScreen extends StatefulWidget {
   const FinanceRecordsScreen({super.key});
@@ -22,20 +21,402 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
   bool _isFilterExpanded = false;
 
   @override
-  void initState() {
-    super.initState();
-    _loadRecords();
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final currencyFormat = NumberFormat.currency(locale: 'ru_RU', symbol: '₽');
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('История операций'),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list_rounded),
+            onPressed:
+                () => setState(() => _isFilterExpanded = !_isFilterExpanded),
+            tooltip: 'Фильтры',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Анимированная панель фильтров
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child:
+                _isFilterExpanded ? _buildFilterPanel(theme) : const SizedBox(),
+          ),
+
+          // Основной контент
+          Expanded(child: _buildContent(theme, currencyFormat)),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _navigateToAddRecord(context),
+        child: const Icon(Icons.add_rounded),
+      ),
+    );
   }
 
+  Widget _buildFilterPanel(ThemeData theme) {
+    return Card(
+      margin: const EdgeInsets.all(12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Период
+            _buildFilterDropdown(
+              label: 'Период',
+              value: _selectedPeriod,
+              items: const [
+                DropdownMenuItem(value: 'day', child: Text('Сегодня')),
+                DropdownMenuItem(value: 'week', child: Text('Неделя')),
+                DropdownMenuItem(value: 'month', child: Text('Месяц')),
+                DropdownMenuItem(value: 'year', child: Text('Год')),
+                DropdownMenuItem(value: 'custom', child: Text('Выбрать даты')),
+              ],
+              onChanged: (value) => _updatePeriod(value as String),
+            ),
+
+            // Диапазон дат (если выбран "Выбрать даты")
+            if (_selectedPeriod == 'custom') ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDatePicker(
+                      'Начало',
+                      _startDate,
+                      (date) => _startDate = date,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildDatePicker(
+                      'Конец',
+                      _endDate,
+                      (date) => _endDate = date,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+
+            const SizedBox(height: 12),
+
+            // Тип операции
+            _buildFilterDropdown(
+              label: 'Тип операции',
+              value: _selectedType,
+              items: const [
+                DropdownMenuItem(value: null, child: Text('Все операции')),
+                DropdownMenuItem(value: 'income', child: Text('Доходы')),
+                DropdownMenuItem(value: 'expense', child: Text('Расходы')),
+              ],
+              onChanged: (value) => _updateType(value as String?),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Кнопки управления фильтрами
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _resetFilters,
+                    child: const Text('Сбросить'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => setState(() => _isFilterExpanded = false),
+                    child: const Text('Применить'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(ThemeData theme, NumberFormat currencyFormat) {
+    final provider = Provider.of<FinanceProvider>(context);
+
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Ошибка загрузки', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                provider.error!,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _loadRecords,
+              child: const Text('Повторить попытку'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (provider.records.isEmpty) {
+      return _buildEmptyState(theme);
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadRecords,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(12),
+        itemCount: provider.records.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (context, index) {
+          final record = provider.records[index];
+          final showDate =
+              index == 0 ||
+              !_isSameDay(provider.records[index - 1].date, record.date);
+
+          return Column(
+            children: [
+              if (showDate) _buildDateHeader(record.date, theme),
+              _buildTransactionCard(record, currencyFormat, theme),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTransactionCard(
+    FinanceRecord record,
+    NumberFormat currencyFormat,
+    ThemeData theme,
+  ) {
+    final isIncome = record.type == 'income';
+    final icon =
+        isIncome ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded;
+    final color = isIncome ? Colors.green : Colors.red;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: color.withAlpha(30),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          record.categoryName ?? 'Без категории',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          record.description?.isNotEmpty == true
+              ? record.description!
+              : DateFormat('HH:mm').format(record.date),
+          style: theme.textTheme.bodySmall,
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              currencyFormat.format(record.amount),
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (record.categoryName != null)
+              Text(record.categoryName!, style: theme.textTheme.bodySmall),
+          ],
+        ),
+        onTap: () => _navigateToEditRecord(context, record),
+      ),
+    );
+  }
+
+  Widget _buildDateHeader(DateTime date, ThemeData theme) {
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(days: 1));
+    String title;
+
+    if (_isSameDay(date, now)) {
+      title = 'Сегодня';
+    } else if (_isSameDay(date, yesterday)) {
+      title = 'Вчера';
+    } else {
+      title = DateFormat('EEEE, d MMMM', 'ru_RU').format(date);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8, left: 16),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.receipt_long_rounded,
+            size: 64,
+            color: theme.colorScheme.outline,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Нет операций',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Измените фильтры или добавьте новую операцию',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 24),
+          FilledButton.icon(
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('Добавить операцию'),
+            onPressed: () => _navigateToAddRecord(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown({
+    required String label,
+    required dynamic value,
+    required List<DropdownMenuItem<dynamic>> items,
+    required ValueChanged<dynamic> onChanged,
+  }) {
+    return DropdownButtonFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+      value: value,
+      items: items,
+      onChanged: onChanged,
+      borderRadius: BorderRadius.circular(12),
+    );
+  }
+
+  Widget _buildDatePicker(
+    String label,
+    DateTime? date,
+    ValueChanged<DateTime> onDateSelected,
+  ) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () async {
+        final selected = await showDatePicker(
+          context: context,
+          initialDate: date ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now(),
+        );
+        if (selected != null) onDateSelected(selected);
+      },
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              date != null ? DateFormat('dd.MM.yyyy').format(date) : 'Выбрать',
+            ),
+            const Icon(Icons.calendar_today_rounded, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Методы для работы с данными
   Future<void> _loadRecords() async {
-    final provider = Provider.of<FinanceProvider>(context, listen: false);
-    await provider.getFinanceRecords(
+    await Provider.of<FinanceProvider>(
+      context,
+      listen: false,
+    ).getFinanceRecords(
       period: _selectedPeriod,
       type: _selectedType,
       categoryId: _selectedCategoryId,
       startDate: _startDate,
       endDate: _endDate,
     );
+  }
+
+  void _updatePeriod(String period) {
+    setState(() {
+      _selectedPeriod = period;
+      if (period != 'custom') {
+        _startDate = null;
+        _endDate = null;
+      }
+    });
+    _loadRecords();
+  }
+
+  void _updateType(String? type) {
+    setState(() {
+      _selectedType = type;
+      _selectedCategoryId = null;
+    });
+    _loadRecords();
   }
 
   void _resetFilters() {
@@ -49,530 +430,15 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
     _loadRecords();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<FinanceProvider>(context);
-    final records = provider.records;
-    final summary = provider.summary;
-
-    return Scaffold(
-      body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-        onRefresh: _loadRecords,
-        child: Column(
-          children: [
-            // Фильтры
-            _buildFilterSection(),
-
-            // Сводка
-            if (summary != null) _buildSummaryCard(summary),
-
-            // Список транзакций
-            Expanded(
-              child: records.isEmpty
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.receipt_long_outlined,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'No transactions found',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Try changing filters or add a new transaction',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: () => _navigateToAddRecord(context),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Transaction'),
-                    ),
-                  ],
-                ),
-              )
-                  : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: records.length,
-                itemBuilder: (context, index) {
-                  final record = records[index];
-
-                  // Группировка по дате (показываем заголовок с датой для новой группы)
-                  final bool showDateHeader = index == 0 ||
-                      !_isSameDay(records[index - 1].date, record.date);
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (showDateHeader) _buildDateHeader(record.date),
-
-                      _buildRecordItem(record),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToAddRecord(context),
-        tooltip: 'Add Transaction',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildFilterSection() {
-    final provider = Provider.of<FinanceProvider>(context);
-
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Заголовок с кнопкой раскрытия/скрытия
-          ListTile(
-            title: const Text('Filters'),
-            trailing: IconButton(
-              icon: Icon(_isFilterExpanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _isFilterExpanded = !_isFilterExpanded;
-                });
-              },
-            ),
-          ),
-
-          // Содержимое фильтров (показывается только если фильтры раскрыты)
-          if (_isFilterExpanded)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                children: [
-                  // Период
-                  DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: 'Period',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: _selectedPeriod,
-                    items: const [
-                      DropdownMenuItem(value: 'day', child: Text('Today')),
-                      DropdownMenuItem(value: 'week', child: Text('This Week')),
-                      DropdownMenuItem(value: 'month', child: Text('This Month')),
-                      DropdownMenuItem(value: 'year', child: Text('This Year')),
-                      DropdownMenuItem(value: 'custom', child: Text('Custom Date Range')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedPeriod = value!;
-                        if (value != 'custom') {
-                          _startDate = null;
-                          _endDate = null;
-                        }
-                      });
-                      _loadRecords();
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Пользовательский диапазон дат (если выбран период 'custom')
-                  if (_selectedPeriod == 'custom')
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              final date = await showDatePicker(
-                                context: context,
-                                initialDate: _startDate ?? DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime.now(),
-                              );
-                              if (date != null) {
-                                setState(() {
-                                  _startDate = date;
-                                  if (_endDate != null && _endDate!.isBefore(_startDate!)) {
-                                    _endDate = _startDate;
-                                  }
-                                });
-                                _loadRecords();
-                              }
-                            },
-                            child: InputDecorator(
-                              decoration: const InputDecoration(
-                                labelText: 'Start Date',
-                                border: OutlineInputBorder(),
-                              ),
-                              child: Text(
-                                _startDate == null
-                                    ? 'Select Date'
-                                    : DateFormat('dd/MM/yyyy').format(_startDate!),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(width: 8),
-
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              if (_startDate == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please select start date first'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                                return;
-                              }
-
-                              final date = await showDatePicker(
-                                context: context,
-                                initialDate: _endDate ?? DateTime.now(),
-                                firstDate: _startDate!,
-                                lastDate: DateTime.now(),
-                              );
-                              if (date != null) {
-                                setState(() {
-                                  _endDate = date;
-                                });
-                                _loadRecords();
-                              }
-                            },
-                            child: InputDecorator(
-                              decoration: const InputDecoration(
-                                labelText: 'End Date',
-                                border: OutlineInputBorder(),
-                              ),
-                              child: Text(
-                                _endDate == null
-                                    ? 'Select Date'
-                                    : DateFormat('dd/MM/yyyy').format(_endDate!),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // Тип транзакции
-                  DropdownButtonFormField<String?>(
-                    decoration: const InputDecoration(
-                      labelText: 'Type',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: _selectedType,
-                    items: const [
-                      DropdownMenuItem(value: null, child: Text('All Types')),
-                      DropdownMenuItem(value: 'expense', child: Text('Expense')),
-                      DropdownMenuItem(value: 'income', child: Text('Income')),
-                      DropdownMenuItem(value: 'saving', child: Text('Saving')),
-                      DropdownMenuItem(value: 'investment', child: Text('Investment')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedType = value;
-                        // Сбрасываем выбранную категорию при изменении типа
-                        _selectedCategoryId = null;
-                      });
-                      _loadRecords();
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Категория
-                  DropdownButtonFormField<int?>(
-                    decoration: const InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: _selectedCategoryId,
-                    items: [
-                      const DropdownMenuItem(value: null, child: Text('All Categories')),
-                      ...provider.categories
-                          .where((c) => _selectedType == null || c.type == _selectedType)
-                          .map((c) => DropdownMenuItem(
-                        value: c.id,
-                        child: Text(c.name),
-                      )),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategoryId = value;
-                      });
-                      _loadRecords();
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Кнопка сброса фильтров
-                  ElevatedButton.icon(
-                    onPressed: _resetFilters,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Reset Filters'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryCard(dynamic summary) {
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
-
-    return Card(
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Summary',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Income',
-                    currencyFormat.format(summary.totalIncome),
-                    Icons.arrow_downward,
-                    Colors.green,
-                  ),
-                ),
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Expenses',
-                    currencyFormat.format(summary.totalExpense),
-                    Icons.arrow_upward,
-                    Colors.red,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Savings',
-                    currencyFormat.format(summary.totalSaving),
-                    Icons.savings,
-                    Colors.blue,
-                  ),
-                ),
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Investments',
-                    currencyFormat.format(summary.totalInvestment),
-                    Icons.trending_up,
-                    Colors.purple,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Balance',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  currencyFormat.format(summary.balance),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryItem(String label, String amount, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: color.withValues(alpha: 0.2 * 255),
-            child: Icon(
-              icon,
-              size: 16,
-              color: color,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  amount,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateHeader(DateTime date) {
-    final now = DateTime.now();
-    final yesterday = DateTime(now.year, now.month, now.day - 1);
-    String headerText;
-
-    if (_isSameDay(date, now)) {
-      headerText = 'Today';
-    } else if (_isSameDay(date, yesterday)) {
-      headerText = 'Yesterday';
-    } else {
-      headerText = DateFormat('EEEE, MMMM d, y').format(date);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
-      child: Text(
-        headerText,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecordItem(FinanceRecord record) {
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
-
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: _getTypeColor(record.type).withValues(alpha: 0.2 * 255),
-          child: Icon(
-            _getTypeIcon(record.type),
-            color: _getTypeColor(record.type),
-            size: 20,
-          ),
-        ),
-        title: Text(
-          record.categoryName ?? 'Unknown Category',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          record.description ?? DateFormat('h:mm a').format(record.date),
-        ),
-        trailing: Text(
-          currencyFormat.format(record.amount),
-          style: TextStyle(
-            color: _getTypeColor(record.type),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        onTap: () => _navigateToEditRecord(context, record),
-      ),
-    );
-  }
-
-  // Вспомогательные функции
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  IconData _getTypeIcon(String type) {
-    switch (type) {
-      case 'income':
-        return Icons.arrow_downward;
-      case 'expense':
-        return Icons.arrow_upward;
-      case 'saving':
-        return Icons.savings;
-      case 'investment':
-        return Icons.trending_up;
-      default:
-        return Icons.receipt;
-    }
-  }
-
-  Color _getTypeColor(String type) {
-    switch (type) {
-      case 'income':
-        return Colors.green;
-      case 'expense':
-        return Colors.red;
-      case 'saving':
-        return Colors.blue;
-      case 'investment':
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
   }
 
   void _navigateToAddRecord(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const FinanceRecordFormScreen(),
-      ),
-    ).then((value) {
-      if (value == true) {
-        _loadRecords();
-      }
-    });
+      MaterialPageRoute(builder: (context) => const FinanceRecordFormScreen()),
+    ).then((_) => _loadRecords());
   }
 
   void _navigateToEditRecord(BuildContext context, FinanceRecord record) {
@@ -581,10 +447,6 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
       MaterialPageRoute(
         builder: (context) => FinanceRecordFormScreen(record: record),
       ),
-    ).then((value) {
-      if (value == true) {
-        _loadRecords();
-      }
-    });
+    ).then((_) => _loadRecords());
   }
 }
