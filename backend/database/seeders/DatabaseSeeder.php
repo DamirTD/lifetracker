@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
         $this->call([SportsSeeder::class]);
         $this->call([FoodSeeder::class]);
         $this->call([TrainingProgramSeeder::class]);
-        $this->call([UserTrainingProgramSeeder::class]);
+        $this->call([
+            DefaultFinanceCategoriesSeeder::class,
+        ]);
     }
 }

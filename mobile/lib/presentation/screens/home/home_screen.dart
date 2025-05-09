@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   String? _error;
   bool _disposed = false;
-  int notificationCount = 2; // Пример уведомлений
+  int notificationCount = 0; // Пример уведомлений
 
   @override
   void initState() {

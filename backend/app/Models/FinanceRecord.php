@@ -39,4 +39,10 @@ class FinanceRecord extends Model
     {
         return $this->belongsTo(FinanceCategory::class);
     }
+
+    public function getCategoryNameAttribute()
+    {
+        return optional($this->category)->name;
+    }
+
 }

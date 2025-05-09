@@ -12,8 +12,10 @@ class FinanceRepository {
 
   FinanceRepository(this._apiClient);
 
-  Future<FinanceCalculation> calculateFinance(double salary,
-      String rule) async {
+  Future<FinanceCalculation> calculateFinance(
+    double salary,
+    String rule,
+  ) async {
     final response = await _apiClient.post('finance/calculate', {
       'salary': salary,
       'rule': rule,
@@ -28,9 +30,8 @@ class FinanceRepository {
         .toList();
   }
 
-  Future<FinanceRecord> createFinanceRecord(FinanceRecord record) async {
-    final response = await _apiClient.post(
-        '/finance/record', record.toJson());
+  Future<FinanceRecord> createFinanceRecord(Map<String, dynamic> data) async {
+    final response = await _apiClient.post('finance/record', data);
     return FinanceRecord.fromJson(response['record']);
   }
 
@@ -56,24 +57,21 @@ class FinanceRepository {
     if (type != null) queryParams['type'] = type;
     if (categoryId != null) queryParams['category_id'] = categoryId.toString();
     if (startDate != null) {
-      queryParams['start_date'] = startDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      queryParams['start_date'] = startDate.toIso8601String().split('T').first;
     }
     if (endDate != null) {
-      queryParams['end_date'] = endDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      queryParams['end_date'] = endDate.toIso8601String().split('T').first;
     }
 
     final response = await _apiClient.get(
-        'finance/records', queryParams: queryParams);
+      'finance/records',
+      queryParams: queryParams,
+    );
 
-    final records = (response['records']['data'] as List)
-        .map((record) => FinanceRecord.fromJson(record))
-        .toList();
+    final records =
+        (response['records']['data'] as List)
+            .map((record) => FinanceRecord.fromJson(record))
+            .toList();
 
     final summary = FinanceSummary.fromJson(response['summary']);
 
@@ -89,10 +87,11 @@ class FinanceRepository {
     };
   }
 
-  Future<FinanceRecord> updateFinanceRecord(int id,
-      FinanceRecord record) async {
-    final response = await _apiClient.put(
-        'finance/record/$id', record.toJson());
+  Future<FinanceRecord> updateFinanceRecord(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
+    final response = await _apiClient.put('/finance/record/$id', data);
     return FinanceRecord.fromJson(response['record']);
   }
 
@@ -114,25 +113,17 @@ class FinanceRepository {
 
     if (type != null) queryParams['type'] = type;
     if (startDate != null) {
-      queryParams['start_date'] = startDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      queryParams['start_date'] = startDate.toIso8601String().split('T').first;
     }
     if (endDate != null) {
-      queryParams['end_date'] = endDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      queryParams['end_date'] = endDate.toIso8601String().split('T').first;
     }
 
-    return await _apiClient.get(
-        'finance/statistics', queryParams: queryParams);
+    return await _apiClient.get('finance/statistics', queryParams: queryParams);
   }
 
   Future<Budget> createBudget(Budget budget) async {
-    final response = await _apiClient.post(
-        'finance/budget', budget.toJson());
+    final response = await _apiClient.post('finance/budget', budget.toJson());
     return Budget.fromJson(response['budget']);
   }
 
@@ -141,10 +132,14 @@ class FinanceRepository {
       final queryParams = <String, dynamic>{};
 
       if (period != null) queryParams['period'] = period;
-      if (categoryId != null) queryParams['category_id'] = categoryId.toString();
+      if (categoryId != null) {
+        queryParams['category_id'] = categoryId.toString();
+      }
 
       final response = await _apiClient.get(
-          'finance/budgets', queryParams: queryParams);
+        'finance/budgets',
+        queryParams: queryParams,
+      );
 
       if (response == null || response['budgets'] == null) {
         return [];
@@ -167,22 +162,21 @@ class FinanceRepository {
     String status = 'active',
     String? priority,
   }) async {
-    final queryParams = <String, dynamic>{
-      'status': status,
-    };
+    final queryParams = <String, dynamic>{'status': status};
 
     if (priority != null) queryParams['priority'] = priority;
 
     final response = await _apiClient.get(
-        'finance/goals', queryParams: queryParams);
+      'finance/goals',
+      queryParams: queryParams,
+    );
     return (response['goals'] as List)
         .map((goal) => FinancialGoal.fromJson(goal))
         .toList();
   }
 
   Future<FinancialGoal> updateGoalProgress(int goalId, double amount) async {
-    final response = await _apiClient.put(
-        'finance/goal/$goalId/progress', {
+    final response = await _apiClient.put('finance/goal/$goalId/progress', {
       'amount': amount,
     });
     return FinancialGoal.fromJson(response['goal']);
@@ -207,7 +201,9 @@ class FinanceRepository {
     if (type != null) queryParams['type'] = type;
 
     final response = await _apiClient.get(
-        'finance/categories', queryParams: queryParams);
+      'finance/categories',
+      queryParams: queryParams,
+    );
     return (response['categories'] as List)
         .map((category) => FinanceCategory.fromJson(category))
         .toList();
@@ -227,16 +223,10 @@ class FinanceRepository {
     };
 
     if (startDate != null) {
-      data['start_date'] = startDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      data['start_date'] = startDate.toIso8601String().split('T').first;
     }
     if (endDate != null) {
-      data['end_date'] = endDate
-        .toIso8601String()
-        .split('T')
-        .first;
+      data['end_date'] = endDate.toIso8601String().split('T').first;
     }
 
     final response = await _apiClient.post('finance/export', data);
@@ -244,8 +234,7 @@ class FinanceRepository {
   }
 
   Future<int> importFinanceData(String filePath) async {
-    final response = await _apiClient.uploadFile(
-        'finance/import', filePath);
+    final response = await _apiClient.uploadFile('finance/import', filePath);
     return response['imported_count'];
   }
 
@@ -258,11 +247,11 @@ class FinanceRepository {
   }
 
   Future<FinanceCategory> updateCategory(
-      int id, {
-        required String name,
-        required String type,
-        String? icon,
-      }) async {
+    int id, {
+    required String name,
+    required String type,
+    String? icon,
+  }) async {
     final response = await _apiClient.put('finance/category/$id', {
       'name': name,
       'type': type,
@@ -272,10 +261,7 @@ class FinanceRepository {
   }
 
   Future<FinancialGoal> updateFinancialGoal(int id, FinancialGoal goal) async {
-    final response = await _apiClient.put(
-      'finance/goal/$id',
-      goal.toJson(),
-    );
+    final response = await _apiClient.put('finance/goal/$id', goal.toJson());
     return FinancialGoal.fromJson(response['goal']);
   }
 
