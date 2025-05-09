@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/data/models/finance/finance_goal.dart';
+import 'package:mobile/presentation/providers/finance_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../data/models/finance/finance_goal.dart';
-import '../../../providers/finance_provider.dart';
 
 class FinanceGoalFormScreen extends StatefulWidget {
   final FinancialGoal? goal;
 
-  const FinanceGoalFormScreen({
-    super.key,
-    this.goal,
-  });
+  const FinanceGoalFormScreen({super.key, this.goal});
 
   @override
   State<FinanceGoalFormScreen> createState() => _FinanceGoalFormScreenState();
@@ -22,6 +18,7 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
   final _descriptionController = TextEditingController();
   final _targetAmountController = TextEditingController();
   final _initialAmountController = TextEditingController();
+
   String _selectedPriority = 'medium';
   DateTime _targetDate = DateTime.now().add(const Duration(days: 180));
   bool _isLoading = false;
@@ -29,8 +26,6 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Если редактируем существующую цель, заполняем поля данными
     if (widget.goal != null) {
       _nameController.text = widget.goal!.name;
       _descriptionController.text = widget.goal!.description ?? '';
@@ -39,7 +34,6 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
       _selectedPriority = widget.goal!.priority;
       _targetDate = widget.goal!.targetDate;
     } else {
-      // По умолчанию начальная сумма равна 0
       _initialAmountController.text = '0';
     }
   }
@@ -57,131 +51,204 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.goal == null ? 'Add Financial Goal' : 'Edit Financial Goal'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // Название цели
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Goal Name',
-                hintText: 'e.g. New Car, Vacation, Emergency Fund',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.flag),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter goal name';
-                }
-                return null;
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Other form fields remain the same...
-
-            // Кнопка сохранения
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              onPressed: _submitForm,
-              child: Text(
-                widget.goal == null ? 'Create Goal' : 'Update Goal',
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
+        title: Text(
+          widget.goal == null ? 'Создать цель' : 'Редактировать цель',
         ),
       ),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Название цели',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.flag),
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Введите название'
+                                  : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _targetAmountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Целевая сумма',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.attach_money),
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Введите сумму';
+                        final amount = double.tryParse(value);
+                        if (amount == null || amount <= 0)
+                          return 'Неверная сумма';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _initialAmountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Начальная сумма',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.savings),
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      validator: (value) {
+                        final amount = double.tryParse(value ?? '');
+                        if (amount == null || amount < 0)
+                          return 'Неверное значение';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    DropdownButtonFormField<String>(
+                      value: _selectedPriority,
+                      decoration: const InputDecoration(
+                        labelText: 'Приоритет',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.priority_high),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'low', child: Text('Низкий')),
+                        DropdownMenuItem(
+                          value: 'medium',
+                          child: Text('Средний'),
+                        ),
+                        DropdownMenuItem(value: 'high', child: Text('Высокий')),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => _selectedPriority = value);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    InkWell(
+                      onTap: () async {
+                        final selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _targetDate,
+                          firstDate: DateTime.now().add(
+                            const Duration(days: 1),
+                          ),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 3650),
+                          ),
+                        );
+                        if (selectedDate != null) {
+                          setState(() => _targetDate = selectedDate);
+                        }
+                      },
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Целевая дата',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.calendar_today),
+                        ),
+                        child: Text(
+                          '${_targetDate.day.toString().padLeft(2, '0')}.${_targetDate.month.toString().padLeft(2, '0')}.${_targetDate.year}',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Описание (необязательно)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.text_snippet),
+                      ),
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 24),
+
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.save),
+                      label: Text(widget.goal == null ? 'Создать' : 'Обновить'),
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
     );
   }
 
   void _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      // Get provider before async operations
       final provider = Provider.of<FinanceProvider>(context, listen: false);
-
-      // Calculations
       final targetAmount = double.parse(_targetAmountController.text);
       final currentAmount = double.parse(_initialAmountController.text);
-      final progress = (currentAmount / targetAmount * 100).clamp(0.0, 100.0);
       final daysRemaining = _targetDate.difference(DateTime.now()).inDays;
+      final progress = (currentAmount / targetAmount * 100).clamp(0, 100);
+      final amountPerDay =
+          daysRemaining > 0
+              ? (targetAmount - currentAmount) / daysRemaining
+              : 0;
 
-      // Create goal object
       final goal = FinancialGoal(
-        id: widget.goal?.id ?? 0, // This should be nullable in the model
-        name: _nameController.text,
-        description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+        id: widget.goal?.id,
+        name: _nameController.text.trim(),
         targetAmount: targetAmount,
         currentAmount: currentAmount,
-        progress: progress,
         targetDate: _targetDate,
-        daysRemaining: daysRemaining,
+        description:
+            _descriptionController.text.trim().isEmpty
+                ? null
+                : _descriptionController.text.trim(),
         priority: _selectedPriority,
         status: 'active',
-        amountNeededPerDay: daysRemaining > 0 ? (targetAmount - currentAmount) / daysRemaining : 0,
+        progress: progress.toDouble(),
+        daysRemaining: daysRemaining,
+        amountNeededPerDay: amountPerDay.toDouble(),
       );
 
-      // Save and handle result
-      bool success = false;
+      final success =
+          widget.goal == null
+              ? await provider.createFinancialGoal(goal)
+              : await provider.updateFinancialGoal(widget.goal!.id!, goal);
 
-      if (widget.goal == null) {
-        // Create new goal
-        final result = await provider.createFinancialGoal(goal);
-        success = result != null;
-      } else if (widget.goal?.id != null) {
-        // Update existing goal with non-null ID
-        final result = await provider.updateFinancialGoal(widget.goal!.id!, goal);
-        success = result != null;
-      }
-
-      // Moved outside the async gap and checking mounted
       if (!mounted) return;
-
-      // Show result
-      if (success) {
+      if (success != null) {
         Navigator.pop(context, true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to save goal. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showError('Не удалось сохранить цель');
       }
     } catch (e) {
-      // Ensure mounted before using context
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) _showError('Ошибка: ${e.toString()}');
     } finally {
-      // Final mounted check
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
 }

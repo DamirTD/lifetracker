@@ -300,7 +300,7 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DropdownButtonFormField<String>(
-                          value: _recurringFrequency,
+                          value: _recurringFrequency ?? 'daily',
                           decoration: InputDecoration(
                             labelText: 'Периодичность',
                             prefixIcon: const Icon(Icons.repeat),
@@ -381,9 +381,7 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
   }
 
   void _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     try {
       final provider = Provider.of<FinanceProvider>(context, listen: false);
@@ -393,47 +391,41 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
         'type': _selectedType,
         'period': _selectedPeriod,
         'category_id': _selectedCategoryId,
-        'date':
-            _selectedDate.toIso8601String().split('T')[0], // Формат YYYY-MM-DD
+        'date': _selectedDate.toIso8601String(), // полностью, с временем
         'description':
             _descriptionController.text.isNotEmpty
                 ? _descriptionController.text
                 : null,
         'is_recurring': _isRecurring,
-        'recurring_frequency': _isRecurring ? _recurringFrequency : null,
+        'recurring_frequency':
+            (_isRecurring &&
+                    _recurringFrequency != null &&
+                    _recurringFrequency!.isNotEmpty)
+                ? _recurringFrequency
+                : null,
       };
 
       bool success = false;
 
       if (widget.record == null) {
-        final createdRecord = await provider.createFinanceRecord(
-          data as FinanceRecord,
-        );
+        final createdRecord = await provider.createFinanceRecord(data);
         success = createdRecord != null;
       } else {
         final updatedRecord = await provider.updateFinanceRecord(
           widget.record!.id,
-          data as FinanceRecord,
+          data,
         );
         success = updatedRecord != null;
       }
 
       if (!mounted) return;
-
-      if (widget.onComplete != null) {
-        widget.onComplete!(success);
-      }
+      widget.onComplete?.call(success);
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Ошибка: ${e.toString()}'),
           backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
         ),
       );
     }

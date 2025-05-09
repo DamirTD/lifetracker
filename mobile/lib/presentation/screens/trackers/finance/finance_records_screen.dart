@@ -13,7 +13,7 @@ class FinanceRecordsScreen extends StatefulWidget {
 }
 
 class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
-  String _selectedPeriod = 'month';
+  String? _selectedPeriod = null;
   String? _selectedType;
   int? _selectedCategoryId;
   DateTime? _startDate;
@@ -241,30 +241,46 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        subtitle: Text(
-          record.description?.isNotEmpty == true
-              ? record.description!
-              : DateFormat('HH:mm').format(record.date),
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (record.description?.isNotEmpty == true)
+              Text(record.description!)
+            else
+              Text(DateFormat('dd.MM.yyyy HH:mm').format(record.date)),
             Text(
-              currencyFormat.format(record.amount),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
+              _getPeriodLabel(record.period),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
-            if (record.categoryName != null)
-              Text(record.categoryName!, style: theme.textTheme.bodySmall),
           ],
+        ),
+        trailing: Text(
+          currencyFormat.format(record.amount),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         onTap: () => _navigateToEditRecord(context, record),
       ),
     );
+  }
+
+  String _getPeriodLabel(String period) {
+    switch (period) {
+      case 'day':
+        return 'Разовая';
+      case 'week':
+        return 'Еженедельно';
+      case 'month':
+        return 'Ежемесячно';
+      case 'year':
+        return 'Ежегодно';
+      default:
+        return 'Период не указан';
+    }
   }
 
   Widget _buildDateHeader(DateTime date, ThemeData theme) {
@@ -392,7 +408,7 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
       context,
       listen: false,
     ).getFinanceRecords(
-      period: _selectedPeriod,
+      period: _selectedPeriod = null,
       type: _selectedType,
       categoryId: _selectedCategoryId,
       startDate: _startDate,

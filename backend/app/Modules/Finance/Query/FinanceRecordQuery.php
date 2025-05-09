@@ -77,7 +77,21 @@ class FinanceRecordQuery implements FinanceRecordQueryInterface
 
         $query->orderBy($sortBy, $sortDirection);
 
-        return $query->paginate($perPage, ['*'], 'page', $page);
+        return $query->paginate($perPage, ['*'], 'page', $page)
+            ->through(function (FinanceRecord $record) {
+                return [
+                    'id' => $record->id,
+                    'amount' => $record->amount,
+                    'type' => $record->type,
+                    'period' => $record->period,
+                    'category_id' => $record->category_id,
+                    'category_name' => $record->category?->name,
+                    'date' => $record->date->toIso8601String(),
+                    'description' => $record->description,
+                    'is_recurring' => $record->is_recurring,
+                    'recurring_frequency' => $record->recurring_frequency,
+                ];
+            });
     }
 
     /**
@@ -87,12 +101,15 @@ class FinanceRecordQuery implements FinanceRecordQueryInterface
     public function store(array $data): FinanceRecord
     {
         if (!isset($data['date'])) {
-            $data['date'] = now()->format('Y-m-d');
+            $data['date'] = now();
         }
 
         $data['user_id'] = auth()->id();
 
-        return FinanceRecord::create($data);
+        $record = FinanceRecord::create($data);
+        $record->load('category');
+        return $record;
+
     }
 
     /**
