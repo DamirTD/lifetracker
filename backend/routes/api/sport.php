@@ -13,6 +13,7 @@ Route::middleware(['auth:sanctum'])->prefix('sport')->group(function () {
 
     Route::post('/create-personal-training-program', [SportController::class, 'addUserTrainingProgram']);
     Route::post('/complete-training',                [SportController::class, 'completeTraining']);
+    Route::get('/user-training-programs',            [SportController::class, 'getUserTrainingPrograms']);
     Route::get('/training-program/{id}',             [SportController::class, 'getTrainingProgram']);
     Route::get('/training-history',                  [SportController::class, 'getTrainingHistory']);
 });

@@ -15,6 +15,7 @@ use App\Modules\Health\Requests\SelectSportRequest;
 use App\Modules\Health\Requests\UpdateSportRequest;
 use App\Modules\Health\Requests\UserTrainingRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SportController extends Controller
 {
@@ -47,6 +48,22 @@ class SportController extends Controller
             return ['sports' => $sports];
         });
     }
+
+    public function getUserTrainingPrograms(): JsonResponse
+    {
+        return $this->wrap(request(), function () {
+            $programs = UserTrainingProgram::with(['sport:id,name', 'sections.exercises'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+
+            return [
+                'message' => 'Программы пользователя загружены.',
+                'data' => $programs
+            ];
+        });
+    }
+
 
     /**
      * @OA\Get(

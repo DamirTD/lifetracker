@@ -64,11 +64,25 @@ class SportProvider extends ChangeNotifier {
 
   // Загрузка начальных данных
   Future<void> loadInitialData() async {
-    await Future.wait([
-      loadSports(),
-      loadUserSports(),
-      loadTrainingHistory(),
-    ]);
+    await Future.wait([loadSports(), loadUserSports(), loadTrainingHistory()]);
+  }
+
+  Future<void> loadUserPrograms() async {
+    _state = _state.copyWith(isLoading: true, error: null);
+    notifyListeners();
+
+    try {
+      final response = await _sportRepository.getUserTrainingPrograms();
+      if (response.success) {
+        _state = _state.copyWith(userPrograms: response.data, isLoading: false);
+      } else {
+        _state = _state.copyWith(error: response.message, isLoading: false);
+      }
+    } catch (e) {
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
+    }
+
+    notifyListeners();
   }
 
   // Загрузка всех видов спорта
@@ -79,10 +93,7 @@ class SportProvider extends ChangeNotifier {
     try {
       final response = await _sportRepository.getSportList();
       if (response.success && response.data != null) {
-        _state = _state.copyWith(
-          allSports: response.data,
-          isLoading: false,
-        );
+        _state = _state.copyWith(allSports: response.data, isLoading: false);
       } else {
         _state = _state.copyWith(
           error: response.message ?? 'Не удалось загрузить виды спорта',
@@ -90,10 +101,7 @@ class SportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
     }
     notifyListeners();
   }
@@ -106,21 +114,17 @@ class SportProvider extends ChangeNotifier {
     try {
       final response = await _sportRepository.getUserSportList();
       if (response.success && response.data != null) {
-        _state = _state.copyWith(
-          userSports: response.data,
-          isLoading: false,
-        );
+        _state = _state.copyWith(userSports: response.data, isLoading: false);
       } else {
         _state = _state.copyWith(
-          error: response.message ?? 'Не удалось загрузить виды спорта пользователя',
+          error:
+              response.message ??
+              'Не удалось загрузить виды спорта пользователя',
           isLoading: false,
         );
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
     }
     notifyListeners();
   }
@@ -144,22 +148,25 @@ class SportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
       notifyListeners();
       return false;
     }
   }
 
   // Получение базовой программы тренировок
-  Future<Map<String, String>?> getBasicTrainingProgram(int sportId, String goal) async {
+  Future<Map<String, String>?> getBasicTrainingProgram(
+    int sportId,
+    String goal,
+  ) async {
     _state = _state.copyWith(isLoading: true, error: null);
     notifyListeners();
 
     try {
-      final response = await _sportRepository.getBasicTrainingProgram(sportId, goal);
+      final response = await _sportRepository.getBasicTrainingProgram(
+        sportId,
+        goal,
+      );
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
 
@@ -176,10 +183,7 @@ class SportProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
       notifyListeners();
       return null;
     }
@@ -191,7 +195,9 @@ class SportProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _sportRepository.createPersonalTrainingProgram(program);
+      final response = await _sportRepository.createPersonalTrainingProgram(
+        program,
+      );
       if (response.success && response.data != null) {
         _state = _state.copyWith(
           currentProgram: response.data,
@@ -208,25 +214,26 @@ class SportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
       notifyListeners();
       return false;
     }
   }
 
   // Завершение тренировки
-  Future<bool> completeTraining(int trainingProgramId, int duration, int caloriesBurned) async {
+  Future<bool> completeTraining(
+    int trainingProgramId,
+    int duration,
+    int caloriesBurned,
+  ) async {
     _state = _state.copyWith(isLoading: true, error: null);
     notifyListeners();
 
     try {
       final response = await _sportRepository.completeTraining(
-          trainingProgramId,
-          duration,
-          caloriesBurned
+        trainingProgramId,
+        duration,
+        caloriesBurned,
       );
 
       if (response.success) {
@@ -241,10 +248,7 @@ class SportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
       notifyListeners();
       return false;
     }
@@ -264,15 +268,13 @@ class SportProvider extends ChangeNotifier {
         );
       } else {
         _state = _state.copyWith(
-          error: response.message ?? 'Не удалось загрузить программу тренировок',
+          error:
+              response.message ?? 'Не удалось загрузить программу тренировок',
           isLoading: false,
         );
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
     }
     notifyListeners();
   }
@@ -296,10 +298,7 @@ class SportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
     }
     notifyListeners();
   }
@@ -323,10 +322,7 @@ class SportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _state = _state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
+      _state = _state.copyWith(error: e.toString(), isLoading: false);
       notifyListeners();
       return false;
     }

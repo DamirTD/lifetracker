@@ -99,7 +99,7 @@ class UserTrainingRequest extends FormRequest
             'sections.*.exercises'             => 'required|array|min:1|max:5',
             'sections.*.exercises.*.name'      => 'required|string',
             'sections.*.exercises.*.reps'      => 'required|integer|min:1',
-            'sections.*.exercises.*.video_url' => 'nullable|url',
+            'sections.*.exercises.*.video_url' => 'nullable|string',
         ];
     }
 

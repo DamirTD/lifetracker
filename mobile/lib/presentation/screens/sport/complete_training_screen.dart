@@ -407,7 +407,14 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Тренировка успешно записана')),
         );
-        Navigator.popUntil(context, (route) => route.isFirst);
+        if (mounted) {
+          Navigator.of(context).pop(); // закрыть модалку
+          Future.delayed(Duration(milliseconds: 300), () {
+            if (Navigator.canPop(context)) {
+              Navigator.of(context).pop(); // вернуться назад
+            }
+          });
+        }
       }
     }
   }

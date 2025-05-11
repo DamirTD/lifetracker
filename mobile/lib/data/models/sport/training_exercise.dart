@@ -21,15 +21,11 @@ class TrainingExercise {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
+    return {
       'name': name,
       'reps': reps,
+      'video_url':
+          (videoUrl != null && videoUrl!.trim().isNotEmpty) ? videoUrl : null,
     };
-
-    if (videoUrl != null) {
-      data['video_url'] = videoUrl;
-    }
-
-    return data;
   }
 }

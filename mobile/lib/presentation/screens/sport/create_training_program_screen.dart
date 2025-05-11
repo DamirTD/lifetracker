@@ -18,14 +18,17 @@ class CreateTrainingProgramScreen extends StatefulWidget {
   });
 
   @override
-  CreateTrainingProgramScreenState createState() => CreateTrainingProgramScreenState();
+  CreateTrainingProgramScreenState createState() =>
+      CreateTrainingProgramScreenState();
 }
 
-class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen> {
+class CreateTrainingProgramScreenState
+    extends State<CreateTrainingProgramScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _goalController = TextEditingController();
-  final TextEditingController _recommendationController = TextEditingController();
+  final TextEditingController _recommendationController =
+      TextEditingController();
 
   final List<TrainingSection> _sections = [];
   bool _isSubmitting = false;
@@ -52,9 +55,7 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Новая программа: ${widget.sportName}'),
-      ),
+      appBar: AppBar(title: Text('Новая программа: ${widget.sportName}')),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -102,10 +103,7 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
                 const SizedBox(height: 24),
                 const Text(
                   'Секции тренировки',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 ..._buildSectionsWidgets(),
@@ -123,9 +121,10 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: _isSubmitting
-                        ? const CircularProgressIndicator()
-                        : const Text('Создать программу тренировок'),
+                    child:
+                        _isSubmitting
+                            ? const CircularProgressIndicator()
+                            : const Text('Создать программу тренировок'),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -192,10 +191,7 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
                 const SizedBox(height: 16),
                 const Text(
                   'Упражнения',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 ...section.exercises.asMap().entries.map((entry) {
@@ -209,11 +205,12 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
                         children: [
                           Row(
                             children: [
-                              Expanded(
-                                child: Text('Упражнение ${j + 1}'),
-                              ),
+                              Expanded(child: Text('Упражнение ${j + 1}')),
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
                                 onPressed: () => _removeExercise(i, j),
                               ),
                             ],
@@ -364,9 +361,10 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
         sportId: widget.sportId,
         goal: _goalController.text,
         name: _nameController.text,
-        recommendation: _recommendationController.text.isNotEmpty
-            ? _recommendationController.text
-            : null,
+        recommendation:
+            _recommendationController.text.isNotEmpty
+                ? _recommendationController.text
+                : null,
         sections: _sections,
       );
 
@@ -381,7 +379,7 @@ class CreateTrainingProgramScreenState extends State<CreateTrainingProgramScreen
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Программа тренировок успешно создана')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context, true); // ← ВОТ ЭТО
       }
     }
   }
