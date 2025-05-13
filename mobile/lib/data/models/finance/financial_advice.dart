@@ -16,4 +16,6 @@ class FinancialAdvice {
       type: json['type'],
     );
   }
+
+  get action => null;
 }

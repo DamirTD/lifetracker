@@ -22,7 +22,7 @@ class GetFinanceRecordsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'period' => 'required|in:week,month,year',
+            'period' => 'nullable|string',
         ];
     }
 }

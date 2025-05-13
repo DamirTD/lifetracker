@@ -25,14 +25,14 @@ class FinanceRecord {
 
   factory FinanceRecord.fromJson(Map<String, dynamic> json) {
     return FinanceRecord(
-      id: json['id'] ?? 0,
-      amount: (json['amount'] ?? 0).toDouble(),
-      type: json['type'] ?? 'expense',
-      period: json['period'] ?? 'month',
-      categoryId: json['category_id'] ?? 0, // Default to 0 if null
+      id: json['id'],
+      amount: double.parse(json['amount'].toString()),
+      type: json['type'],
+      period: json['period'],
+      categoryId: json['category_id'],
       categoryName: json['category_name'],
-      date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
       description: json['description'],
+      date: DateTime.parse(json['date']),
       isRecurring: json['is_recurring'] ?? false,
       recurringFrequency: json['recurring_frequency'],
     );

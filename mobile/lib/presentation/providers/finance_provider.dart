@@ -9,7 +9,6 @@ import '../../data/models/finance/finance_summary.dart';
 import '../../data/models/finance/financial_advice.dart';
 import '../../data/repositories/finance/finance_repository.dart';
 
-
 class FinanceProvider extends ChangeNotifier {
   final FinanceRepository _repository;
 
@@ -77,12 +76,12 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<FinanceRecord?> createFinanceRecord(FinanceRecord record) async {
+  Future<FinanceRecord?> createFinanceRecord(Map<String, dynamic> data) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      final newRecord = await _repository.createFinanceRecord(record);
+      final newRecord = await _repository.createFinanceRecord(data);
       _records.add(newRecord);
       notifyListeners();
       return newRecord;
@@ -132,19 +131,20 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<FinanceRecord?> updateFinanceRecord(int id, FinanceRecord record) async {
+  Future<FinanceRecord?> updateFinanceRecord(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      final updatedRecord = await _repository.updateFinanceRecord(id, record);
-
+      final updatedRecord = await _repository.updateFinanceRecord(id, data);
       final index = _records.indexWhere((r) => r.id == id);
       if (index != -1) {
         _records[index] = updatedRecord;
         notifyListeners();
       }
-
       return updatedRecord;
     } catch (e) {
       _setError(e.toString());
@@ -379,7 +379,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<FinanceCategory?> updateCategory(int id, {
+  Future<FinanceCategory?> updateCategory(
+    int id, {
     required String name,
     required String type,
     String? icon,

@@ -24,6 +24,7 @@ use App\Modules\Finance\ServiceInterfaces\FinanceExportServiceInterface;
 use App\Modules\Finance\ServiceInterfaces\FinanceImportServiceInterface;
 use App\Modules\Finance\ServiceInterfaces\CategoryServiceInterface;
 use App\Utils\Constants\HttpStatusCodes;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -310,13 +311,27 @@ class FinanceController extends Controller
         $data = $request->validated();
         $userId = auth()->id();
 
+        $startDate = $data['start_date'] ?? null;
+        $endDate = $data['end_date'] ?? null;
+
+        if (!$startDate && isset($data['period'])) {
+            $startDate = match ($data['period']) {
+                'day' => now()->startOfDay(),
+                'week' => now()->startOfWeek(),
+                'month' => now()->startOfMonth(),
+                'year' => now()->startOfYear(),
+                default => null,
+            };
+            $endDate = now()->endOfDay();
+        }
+
         $records = $this->recordQuery->getFilteredRecords(
             $userId,
             $data['period'] ?? null,
             $data['type'] ?? null,
             $data['category_id'] ?? null,
-            $data['start_date'] ?? null,
-            $data['end_date'] ?? null,
+            $startDate,
+            $endDate,
             $data['sort_by'] ?? 'date',
             $data['sort_direction'] ?? 'desc',
             $data['page'] ?? 1,
@@ -326,8 +341,8 @@ class FinanceController extends Controller
         $summary = $this->statisticsService->getSummary(
             $userId,
             $data['period'] ?? null,
-            $data['start_date'] ?? null,
-            $data['end_date'] ?? null
+            $startDate,
+            $endDate
         );
 
         return response()->json([
@@ -335,6 +350,7 @@ class FinanceController extends Controller
             'summary' => $summary
         ]);
     }
+
 
     /**
      * @OA\Put(
@@ -443,8 +459,8 @@ class FinanceController extends Controller
         $record = $this->recordQuery->update($id, $request->validated());
 
         return response()->json([
-            'message' => 'Запись успешно обновлена.',
-            'record'  => $record,
+            'message' => 'Запись успешно сохранена.',
+            'record'  => $record->load('category'),
         ]);
     }
 

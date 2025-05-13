@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../data/models/finance/finance_record.dart';
 import '../../providers/finance_provider.dart';
 
@@ -8,14 +7,11 @@ class FinanceRecordFormWidget extends StatefulWidget {
   final FinanceRecord? record;
   final Function(bool success)? onComplete;
 
-  const FinanceRecordFormWidget({
-    super.key,
-    this.record,
-    this.onComplete,
-  });
+  const FinanceRecordFormWidget({super.key, this.record, this.onComplete});
 
   @override
-  State<FinanceRecordFormWidget> createState() => FinanceRecordFormWidgetState();
+  State<FinanceRecordFormWidget> createState() =>
+      FinanceRecordFormWidgetState();
 }
 
 class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
@@ -70,6 +66,7 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FinanceProvider>(context);
+    final theme = Theme.of(context);
 
     return Form(
       key: _formKey,
@@ -78,62 +75,91 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Amount Field
+            // Заголовок формы
+            Text(
+              widget.record == null ? 'Новая запись' : 'Редактирование записи',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.primaryColor,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Сумма
             TextFormField(
               controller: _amountController,
-              decoration: const InputDecoration(
-                labelText: 'Amount',
-                prefixIcon: Icon(Icons.attach_money),
+              decoration: InputDecoration(
+                labelText: 'Сумма',
+                prefixIcon: const Icon(Icons.attach_money),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
               keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true),
+                decimal: true,
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter an amount';
+                  return 'Пожалуйста, введите сумму';
                 }
                 if (double.tryParse(value) == null) {
-                  return 'Please enter a valid number';
+                  return 'Пожалуйста, введите корректное число';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
+            // Тип операции
             DropdownButtonFormField<String>(
               value: _selectedType,
-              decoration: const InputDecoration(
-                labelText: 'Type',
-                prefixIcon: Icon(Icons.category),
+              decoration: InputDecoration(
+                labelText: 'Тип операции',
+                prefixIcon: const Icon(Icons.category),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
               items: const [
-                DropdownMenuItem(value: 'expense', child: Text('Expense')),
-                DropdownMenuItem(value: 'income', child: Text('Income')),
-                DropdownMenuItem(value: 'saving', child: Text('Saving')),
+                DropdownMenuItem(value: 'expense', child: Text('Расход')),
+                DropdownMenuItem(value: 'income', child: Text('Доход')),
+                DropdownMenuItem(value: 'saving', child: Text('Накопление')),
                 DropdownMenuItem(
-                    value: 'investment', child: Text('Investment')),
+                  value: 'investment',
+                  child: Text('Инвестиция'),
+                ),
               ],
               onChanged: (value) {
                 setState(() {
                   _selectedType = value!;
-                  _selectedCategoryId =
-                  null;
+                  _selectedCategoryId = null;
                 });
                 _loadCategories();
               },
             ),
             const SizedBox(height: 16),
 
+            // Период
             DropdownButtonFormField<String>(
               value: _selectedPeriod,
-              decoration: const InputDecoration(
-                labelText: 'Period',
-                prefixIcon: Icon(Icons.calendar_today),
+              decoration: InputDecoration(
+                labelText: 'Период',
+                prefixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
               items: const [
-                DropdownMenuItem(value: 'day', child: Text('Day')),
-                DropdownMenuItem(value: 'week', child: Text('Week')),
-                DropdownMenuItem(value: 'month', child: Text('Month')),
-                DropdownMenuItem(value: 'year', child: Text('Year')),
+                DropdownMenuItem(value: 'day', child: Text('День')),
+                DropdownMenuItem(value: 'week', child: Text('Неделя')),
+                DropdownMenuItem(value: 'month', child: Text('Месяц')),
+                DropdownMenuItem(value: 'year', child: Text('Год')),
               ],
               onChanged: (value) {
                 setState(() {
@@ -143,20 +169,28 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
             ),
             const SizedBox(height: 16),
 
+            // Категория
             DropdownButtonFormField<int>(
               value: _selectedCategoryId,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                prefixIcon: Icon(Icons.folder),
+              decoration: InputDecoration(
+                labelText: 'Категория',
+                prefixIcon: const Icon(Icons.folder),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
-              items: provider.categories
-                  .where((category) => category.type == _selectedType)
-                  .map((category) =>
-                  DropdownMenuItem(
-                    value: category.id,
-                    child: Text(category.name),
-                  ))
-                  .toList(),
+              items:
+                  provider.categories
+                      .where((category) => category.type == _selectedType)
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category.id,
+                          child: Text(category.name),
+                        ),
+                      )
+                      .toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedCategoryId = value;
@@ -164,26 +198,31 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
               },
               validator: (value) {
                 if (value == null) {
-                  return 'Please select a category';
+                  return 'Пожалуйста, выберите категорию';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
-            ListTile(
-              leading: const Icon(Icons.calendar_month),
-              title: const Text('Date'),
-              subtitle: Text(
-                '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate
-                    .year}',
-              ),
+            // Дата
+            InkWell(
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
                   initialDate: _selectedDate,
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
+                  builder: (context, child) {
+                    return Theme(
+                      data: theme.copyWith(
+                        colorScheme: theme.colorScheme.copyWith(
+                          primary: theme.primaryColor,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
                 );
 
                 if (date != null) {
@@ -192,71 +231,147 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
                   });
                 }
               },
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Дата',
+                  prefixIcon: const Icon(Icons.calendar_month),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${_selectedDate.day.toString().padLeft(2, '0')}/'
+                      '${_selectedDate.month.toString().padLeft(2, '0')}/'
+                      '${_selectedDate.year}',
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 16),
 
+            // Описание
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                prefixIcon: Icon(Icons.description),
+              decoration: InputDecoration(
+                labelText: 'Описание',
+                prefixIcon: const Icon(Icons.description),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
               maxLines: 2,
             ),
             const SizedBox(height: 16),
 
-            CheckboxListTile(
-              title: const Text('Recurring'),
-              value: _isRecurring,
-              onChanged: (value) {
-                setState(() {
-                  _isRecurring = value ?? false;
-                  if (!_isRecurring) {
-                    _recurringFrequency = null;
-                  }
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-
-            if (_isRecurring)
-              DropdownButtonFormField<String>(
-                value: _recurringFrequency,
-                decoration: const InputDecoration(
-                  labelText: 'Frequency',
-                  prefixIcon: Icon(Icons.repeat),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                  DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                  DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                  DropdownMenuItem(value: 'yearly', child: Text('Yearly')),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _recurringFrequency = value;
-                  });
-                },
-                validator: (value) {
-                  if (_isRecurring && (value == null || value.isEmpty)) {
-                    return 'Please select a frequency';
-                  }
-                  return null;
-                },
+            // Повторяющаяся операция
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.grey[300]!, width: 1),
               ),
-
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      title: const Text('Повторяющаяся операция'),
+                      value: _isRecurring,
+                      onChanged: (value) {
+                        setState(() {
+                          _isRecurring = value;
+                          if (!_isRecurring) {
+                            _recurringFrequency = null;
+                          }
+                        });
+                      },
+                      activeColor: theme.primaryColor,
+                    ),
+                    if (_isRecurring)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: DropdownButtonFormField<String>(
+                          value: _recurringFrequency ?? 'daily',
+                          decoration: InputDecoration(
+                            labelText: 'Периодичность',
+                            prefixIcon: const Icon(Icons.repeat),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'daily',
+                              child: Text('Ежедневно'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'weekly',
+                              child: Text('Еженедельно'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'monthly',
+                              child: Text('Ежемесячно'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'yearly',
+                              child: Text('Ежегодно'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _recurringFrequency = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (_isRecurring &&
+                                (value == null || value.isEmpty)) {
+                              return 'Пожалуйста, выберите периодичность';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
 
+            // Кнопка сохранения
             SizedBox(
               width: double.infinity,
+              height: 50,
               child: ElevatedButton(
-                onPressed: provider.isLoading
-                    ? null
-                    : () => _submitForm(),
-                child: provider.isLoading
-                    ? const CircularProgressIndicator()
-                    : Text(
-                    widget.record == null ? 'Create Record' : 'Update Record'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 2,
+                ),
+                onPressed: provider.isLoading ? null : () => _submitForm(),
+                child:
+                    provider.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                          widget.record == null ? 'СОХРАНИТЬ' : 'ОБНОВИТЬ',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
               ),
             ),
           ],
@@ -266,61 +381,53 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
   }
 
   void _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-    });
+    if (!_formKey.currentState!.validate()) return;
 
     try {
       final provider = Provider.of<FinanceProvider>(context, listen: false);
 
-      final amount = double.parse(_amountController.text);
-      final description = _descriptionController.text;
-
-      final record = FinanceRecord(
-        id: widget.record?.id ?? 0,
-        amount: amount,
-        type: _selectedType,
-        period: _selectedPeriod,
-        categoryId: _selectedCategoryId ?? 0,
-        date: _selectedDate,
-        description: description.isNotEmpty ? description : null,
-        isRecurring: _isRecurring,
-        recurringFrequency: _isRecurring ? _recurringFrequency : null,
-      );
+      final data = {
+        'amount': double.parse(_amountController.text),
+        'type': _selectedType,
+        'period': _selectedPeriod,
+        'category_id': _selectedCategoryId,
+        'date': _selectedDate.toIso8601String(), // полностью, с временем
+        'description':
+            _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
+        'is_recurring': _isRecurring,
+        'recurring_frequency':
+            (_isRecurring &&
+                    _recurringFrequency != null &&
+                    _recurringFrequency!.isNotEmpty)
+                ? _recurringFrequency
+                : null,
+      };
 
       bool success = false;
 
       if (widget.record == null) {
-        final createdRecord = await provider.createFinanceRecord(record);
+        final createdRecord = await provider.createFinanceRecord(data);
         success = createdRecord != null;
       } else {
         final updatedRecord = await provider.updateFinanceRecord(
-            widget.record!.id, record);
+          widget.record!.id,
+          data,
+        );
         success = updatedRecord != null;
       }
 
       if (!mounted) return;
-
-      if (widget.onComplete != null) {
-        widget.onComplete!(success);
-      }
+      widget.onComplete?.call(success);
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Ошибка: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
-    } finally {
-      if (mounted) {
-        setState(() {
-        });
-      }
     }
   }
 }
