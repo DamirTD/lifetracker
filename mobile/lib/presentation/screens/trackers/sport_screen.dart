@@ -218,9 +218,7 @@ class SportScreenState extends State<SportScreen> {
           child: ListTile(
             leading: const CircleAvatar(child: Icon(Icons.fitness_center)),
             title: Text(program?.name ?? 'Тренировка'),
-            subtitle: Text(
-              'Длительность: ${training.duration} мин, Калории: ${training.caloriesBurned}',
-            ),
+            subtitle: Text('Длительность: ${training.duration} мин'),
             trailing: Text(
               '${training.createdAt.day}.${training.createdAt.month}.${training.createdAt.year}',
             ),
@@ -256,10 +254,6 @@ class SportScreenState extends State<SportScreen> {
 
     int totalWorkouts = history.length;
     int totalMinutes = history.fold(0, (sum, item) => sum + item.duration);
-    int totalCalories = history.fold(
-      0,
-      (sum, item) => sum + item.caloriesBurned,
-    );
 
     return Card(
       child: Padding(
@@ -271,7 +265,6 @@ class SportScreenState extends State<SportScreen> {
               children: [
                 _buildStatItem('Тренировок', totalWorkouts.toString()),
                 _buildStatItem('Минут', totalMinutes.toString()),
-                _buildStatItem('Калорий', totalCalories.toString()),
               ],
             ),
           ],

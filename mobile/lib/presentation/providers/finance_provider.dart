@@ -24,6 +24,11 @@ class FinanceProvider extends ChangeNotifier {
   Map<String, dynamic>? _statistics;
   Map<String, dynamic>? _pagination;
 
+  String? currentPeriod;
+  String? currentType;
+  DateTime? startDate;
+  DateTime? endDate;
+
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<FinanceRecord> get records => _records;
@@ -106,6 +111,11 @@ class FinanceProvider extends ChangeNotifier {
   }) async {
     _setLoading(true);
     _setError(null);
+
+    currentPeriod = period;
+    currentType = type;
+    this.startDate = startDate;
+    this.endDate = endDate;
 
     try {
       final result = await _repository.getFinanceRecords(

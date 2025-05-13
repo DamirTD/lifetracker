@@ -90,7 +90,13 @@ class FinanceRecordFormWidgetState extends State<FinanceRecordFormWidget> {
               controller: _amountController,
               decoration: InputDecoration(
                 labelText: 'Сумма',
-                prefixIcon: const Icon(Icons.attach_money),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    '₸',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

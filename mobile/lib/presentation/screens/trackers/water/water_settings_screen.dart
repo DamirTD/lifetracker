@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../data/models/water/water_container.dart';
-import '../../../../data/models/water/water_goal_settings.dart';
-import '../../../providers/water_providers.dart';
-
+import 'package:mobile/data/models/water/water_container.dart';
+import 'package:mobile/data/models/water/water_goal_settings.dart';
+import 'package:mobile/presentation/providers/water_providers.dart';
 
 class WaterSettingsScreen extends StatefulWidget {
-  const WaterSettingsScreen({super.key});
+  final bool initialSetup;
+
+  const WaterSettingsScreen({super.key, this.initialSetup = false});
 
   @override
   WaterSettingsScreenState createState() => WaterSettingsScreenState();
@@ -15,27 +15,26 @@ class WaterSettingsScreen extends StatefulWidget {
 
 class WaterSettingsScreenState extends State<WaterSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _weightController = TextEditingController(text: '70'); // Default weight
-  final _heightController = TextEditingController(text: '170'); // Default height
-  final _glassVolumeController = TextEditingController(text: '250'); // Default glass volume
+  final _weightController = TextEditingController(text: '70');
+  final _heightController = TextEditingController(text: '170');
+  final _glassVolumeController = TextEditingController(text: '250');
 
   bool _isLoading = false;
+  bool _showBackButton = false;
 
   @override
   void initState() {
     super.initState();
+    _showBackButton = !widget.initialSetup;
     _loadCurrentSettings();
 
-    // Загружаем контейнеры при инициализации экрана
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<WaterProvider>(context, listen: false).loadContainers();
     });
   }
 
   Future<void> _loadCurrentSettings() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final waterProvider = Provider.of<WaterProvider>(context, listen: false);
@@ -46,23 +45,21 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
           final stats = waterProvider.dailyProgress;
           if (stats != null) {
             _glassVolumeController.text = stats.glassVolumeMl.toString();
-            // We don't have access to the original weight and height once set,
-            // so we keep the defaults
           }
         });
       }
     } catch (e) {
       if (mounted) {
-        // Just use defaults if there's an error
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Используются настройки по умолчанию')),
+          SnackBar(
+            content: const Text('Используются настройки по умолчанию'),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -77,65 +74,91 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Настройки трекера воды'),
+    final theme = Theme.of(context);
+
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.initialSetup) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Пожалуйста, завершите настройку перед выходом'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar:
+            _showBackButton
+                ? AppBar(
+                  title: const Text('Настройки трекера воды'),
+                  centerTitle: true,
+                  elevation: 0,
+                )
+                : null,
+        body:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _buildSettingsForm(context, theme),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildSettingsForm(context),
     );
   }
 
-  Widget _buildSettingsForm(BuildContext context) {
+  Widget _buildSettingsForm(BuildContext context, ThemeData theme) {
     final waterProvider = Provider.of<WaterProvider>(context);
-    final bool isInitialSetup = waterProvider.dailyProgress == null;
+    final isInitialSetup =
+        widget.initialSetup || waterProvider.dailyProgress == null;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (isInitialSetup) ...[
-              const Card(
-                color: Colors.blue,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Colors.white),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Для начала работы с трекером воды, пожалуйста, укажите ваши данные для расчета дневной нормы',
-                          style: TextStyle(color: Colors.white),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue[100]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue[800]),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Для начала работы с трекером воды укажите ваши данные для расчета дневной нормы',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.blue[800],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
             ],
+
             Text(
               'Расчет дневной нормы',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
-            TextFormField(
+
+            _buildInputField(
               controller: _weightController,
-              decoration: const InputDecoration(
-                labelText: 'Вес (кг)',
-                border: OutlineInputBorder(),
-                suffixText: 'кг',
-              ),
-              keyboardType: TextInputType.number,
+              label: 'Ваш вес',
+              hintText: 'Введите ваш вес',
+              suffixText: 'кг',
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Пожалуйста, введите ваш вес';
-                }
+                if (value == null || value.isEmpty) return 'Введите ваш вес';
                 final weight = int.tryParse(value);
                 if (weight == null || weight < 30 || weight > 250) {
                   return 'Вес должен быть от 30 до 250 кг';
@@ -144,18 +167,14 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
+
+            _buildInputField(
               controller: _heightController,
-              decoration: const InputDecoration(
-                labelText: 'Рост (см)',
-                border: OutlineInputBorder(),
-                suffixText: 'см',
-              ),
-              keyboardType: TextInputType.number,
+              label: 'Ваш рост',
+              hintText: 'Введите ваш рост',
+              suffixText: 'см',
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Пожалуйста, введите ваш рост';
-                }
+                if (value == null || value.isEmpty) return 'Введите ваш рост';
                 final height = int.tryParse(value);
                 if (height == null || height < 100 || height > 250) {
                   return 'Рост должен быть от 100 до 250 см';
@@ -164,67 +183,82 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
+
+            _buildInputField(
               controller: _glassVolumeController,
-              decoration: const InputDecoration(
-                labelText: 'Объём вашего стакана (мл)',
-                border: OutlineInputBorder(),
-                suffixText: 'мл',
-              ),
-              keyboardType: TextInputType.number,
+              label: 'Объем стакана',
+              hintText: 'Объем вашего стакана',
+              suffixText: 'мл',
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Пожалуйста, введите объём стакана';
-                }
+                if (value == null || value.isEmpty)
+                  return 'Введите объем стакана';
                 final volume = int.tryParse(value);
                 if (volume == null || volume < 100 || volume > 1000) {
-                  return 'Объём должен быть от 100 до 1000 мл';
+                  return 'Объем должен быть от 100 до 1000 мл';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 32),
+
             SizedBox(
               width: double.infinity,
+              height: 52,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: theme.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _saveSettings(context, isInitialSetup);
-                  }
-                },
+                onPressed: () => _saveSettings(context, isInitialSetup),
                 child: Text(
-                  isInitialSetup ? 'Сохранить и начать' : 'Сохранить настройки',
-                  style: const TextStyle(
+                  isInitialSetup ? 'СОХРАНИТЬ И НАЧАТЬ' : 'СОХРАНИТЬ НАСТРОЙКИ',
+                  style: theme.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            // Only show the Containers section if not initial setup
+
             if (!isInitialSetup) ...[
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
+              const Divider(height: 1),
+              const SizedBox(height: 24),
+
               Text(
-                'Управление контейнерами',
-                style: Theme.of(context).textTheme.titleLarge,
+                'Мои контейнеры',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Добавьте часто используемые емкости для быстрого выбора',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[600],
+                ),
               ),
               const SizedBox(height: 16),
+
               _buildContainersList(context),
               const SizedBox(height: 16),
+
               SizedBox(
                 width: double.infinity,
+                height: 48,
                 child: OutlinedButton.icon(
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add_rounded),
                   label: const Text('Добавить контейнер'),
-                  onPressed: () {
-                    _showAddContainerDialog(context);
-                  },
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    side: BorderSide(color: theme.primaryColor),
+                  ),
+                  onPressed: () => _showAddContainerDialog(context),
                 ),
               ),
             ],
@@ -234,61 +268,90 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
     );
   }
 
-  // existing methods for containers management
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required String hintText,
+    required String suffixText,
+    required String? Function(String?) validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            suffixText: suffixText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.grey),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+          keyboardType: TextInputType.number,
+          validator: validator,
+        ),
+      ],
+    );
+  }
 
   void _saveSettings(BuildContext context, bool isInitialSetup) async {
-    final weight = int.parse(_weightController.text);
-    final height = int.parse(_heightController.text);
-    final glassVolumeMl = int.parse(_glassVolumeController.text);
+    if (!_formKey.currentState!.validate()) return;
 
     final settings = WaterGoalSettings(
-      weight: weight,
-      height: height,
-      glassVolumeMl: glassVolumeMl,
+      weight: int.parse(_weightController.text),
+      height: int.parse(_heightController.text),
+      glassVolumeMl: int.parse(_glassVolumeController.text),
     );
 
-    // Store the context before the async gap
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
-
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final waterProvider = Provider.of<WaterProvider>(context, listen: false);
       await waterProvider.setDailyGoal(settings);
 
       if (mounted) {
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Настройки сохранены')),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Настройки сохранены'),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         );
 
-        // If this was initial setup, navigate back
         if (isInitialSetup && mounted) {
-          // Instead of relying on a non-existent type, we'll simply navigate back
-          navigator.pop();
-
-          // Note: If you need to navigate to a specific screen or tab, you should
-          // implement a proper navigation solution or use a callback
+          Navigator.of(context).pop();
         }
       }
     } catch (e) {
       if (mounted) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text('Ошибка: ${e.toString()}')),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка: ${e.toString()}'),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
 
-  // Existing methods for container management
   Widget _buildContainersList(BuildContext context) {
     return Consumer<WaterProvider>(
       builder: (context, waterProvider, child) {
@@ -297,51 +360,125 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
         }
 
         if (waterProvider.containers.isEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('У вас еще нет сохраненных контейнеров'),
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.water_drop_outlined,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Нет сохраненных контейнеров',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                ),
+              ],
             ),
           );
         }
 
-        return ListView.builder(
+        return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: waterProvider.containers.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final container = waterProvider.containers[index];
-            return ListTile(
-              leading: const Icon(
-                Icons.water_drop,
-                color: Colors.blue,
-              ),
-              title: Text(container.name),
-              subtitle: Text('${container.volumeMl} мл'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (container.isDefault)
-                    Chip(
-                      label: const Text('По умолчанию'),
-                      backgroundColor: Colors.blue.withAlpha(100),
-                    ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      _showDeleteContainerDialog(context, container.id!);
-                    },
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              onTap: () {
-                _showEditContainerDialog(context, container);
-              },
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _getContainerIcon(container.icon),
+                    color: Colors.blue[800],
+                  ),
+                ),
+                title: Text(
+                  container.name,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text('${container.volumeMl} мл'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (container.isDefault)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'По умолчанию',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: Colors.blue[800]),
+                        ),
+                      ),
+                    IconButton(
+                      icon: Icon(Icons.edit_rounded, color: Colors.grey[600]),
+                      onPressed:
+                          () => _showEditContainerDialog(context, container),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete_rounded, color: Colors.red[400]),
+                      onPressed:
+                          () => _showDeleteContainerDialog(
+                            context,
+                            container.id!,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         );
       },
     );
+  }
+
+  IconData _getContainerIcon(String iconName) {
+    switch (iconName) {
+      case 'bottle':
+        return Icons.local_drink_rounded;
+      case 'mug':
+        return Icons.coffee_rounded;
+      default:
+        return Icons.water_drop_rounded;
+    }
   }
 
   void _showAddContainerDialog(BuildContext context) {
@@ -363,66 +500,87 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Название',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: volumeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Объем (мл)',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Объем',
                         suffixText: 'мл',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: selectedIcon,
-                      decoration: const InputDecoration(
-                        labelText: 'Иконка',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Тип контейнера',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                       items: const [
                         DropdownMenuItem(value: 'glass', child: Text('Стакан')),
-                        DropdownMenuItem(value: 'bottle', child: Text('Бутылка')),
+                        DropdownMenuItem(
+                          value: 'bottle',
+                          child: Text('Бутылка'),
+                        ),
                         DropdownMenuItem(value: 'mug', child: Text('Кружка')),
                       ],
                       onChanged: (value) {
                         if (value != null) {
-                          setDialogState(() {
-                            selectedIcon = value;
-                          });
+                          setDialogState(() => selectedIcon = value);
                         }
                       },
                     ),
                     const SizedBox(height: 16),
-                    CheckboxListTile(
+                    SwitchListTile(
                       title: const Text('Использовать по умолчанию'),
                       value: isDefault,
                       onChanged: (value) {
-                        if (value != null) {
-                          setDialogState(() {
-                            isDefault = value;
-                          });
-                        }
+                        setDialogState(() => isDefault = value);
                       },
+                      contentPadding: EdgeInsets.zero,
                     ),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                  },
+                  onPressed: () => Navigator.of(dialogContext).pop(),
                   child: const Text('Отмена'),
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () {
-                    if (nameController.text.isNotEmpty && volumeController.text.isNotEmpty) {
+                    if (nameController.text.isNotEmpty &&
+                        volumeController.text.isNotEmpty) {
                       final volume = int.tryParse(volumeController.text);
                       if (volume != null && volume > 0) {
                         final container = WaterContainer(
@@ -432,14 +590,19 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
                           isDefault: isDefault,
                         );
 
-                        Provider.of<WaterProvider>(context, listen: false)
-                            .saveContainer(container);
+                        Provider.of<WaterProvider>(
+                          context,
+                          listen: false,
+                        ).saveContainer(container);
 
                         Navigator.of(dialogContext).pop();
                       }
                     }
                   },
-                  child: const Text('Добавить'),
+                  child: const Text(
+                    'Добавить',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -449,9 +612,14 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
     );
   }
 
-  void _showEditContainerDialog(BuildContext context, WaterContainer container) {
+  void _showEditContainerDialog(
+    BuildContext context,
+    WaterContainer container,
+  ) {
     final nameController = TextEditingController(text: container.name);
-    final volumeController = TextEditingController(text: container.volumeMl.toString());
+    final volumeController = TextEditingController(
+      text: container.volumeMl.toString(),
+    );
     String selectedIcon = container.icon;
     bool isDefault = container.isDefault;
 
@@ -468,66 +636,87 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Название',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: volumeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Объем (мл)',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Объем',
                         suffixText: 'мл',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: selectedIcon,
-                      decoration: const InputDecoration(
-                        labelText: 'Иконка',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: 'Тип контейнера',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
                       items: const [
                         DropdownMenuItem(value: 'glass', child: Text('Стакан')),
-                        DropdownMenuItem(value: 'bottle', child: Text('Бутылка')),
+                        DropdownMenuItem(
+                          value: 'bottle',
+                          child: Text('Бутылка'),
+                        ),
                         DropdownMenuItem(value: 'mug', child: Text('Кружка')),
                       ],
                       onChanged: (value) {
                         if (value != null) {
-                          setDialogState(() {
-                            selectedIcon = value;
-                          });
+                          setDialogState(() => selectedIcon = value);
                         }
                       },
                     ),
                     const SizedBox(height: 16),
-                    CheckboxListTile(
+                    SwitchListTile(
                       title: const Text('Использовать по умолчанию'),
                       value: isDefault,
                       onChanged: (value) {
-                        if (value != null) {
-                          setDialogState(() {
-                            isDefault = value;
-                          });
-                        }
+                        setDialogState(() => isDefault = value);
                       },
+                      contentPadding: EdgeInsets.zero,
                     ),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                  },
+                  onPressed: () => Navigator.of(dialogContext).pop(),
                   child: const Text('Отмена'),
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () {
-                    if (nameController.text.isNotEmpty && volumeController.text.isNotEmpty) {
+                    if (nameController.text.isNotEmpty &&
+                        volumeController.text.isNotEmpty) {
                       final volume = int.tryParse(volumeController.text);
                       if (volume != null && volume > 0) {
                         final updatedContainer = WaterContainer(
@@ -538,14 +727,19 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
                           isDefault: isDefault,
                         );
 
-                        Provider.of<WaterProvider>(context, listen: false)
-                            .saveContainer(updatedContainer);
+                        Provider.of<WaterProvider>(
+                          context,
+                          listen: false,
+                        ).saveContainer(updatedContainer);
 
                         Navigator.of(dialogContext).pop();
                       }
                     }
                   },
-                  child: const Text('Сохранить'),
+                  child: const Text(
+                    'Сохранить',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -561,21 +755,23 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Удалить контейнер?'),
-          content: const Text('Вы уверены, что хотите удалить этот контейнер?'),
+          content: const Text(
+            'Вы уверены, что хотите удалить этот контейнер? Это действие нельзя отменить.',
+          ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('Отмена'),
             ),
             TextButton(
               onPressed: () {
-                Provider.of<WaterProvider>(context, listen: false)
-                    .deleteContainer(containerId);
+                Provider.of<WaterProvider>(
+                  context,
+                  listen: false,
+                ).deleteContainer(containerId);
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('Удалить'),
+              child: const Text('Удалить', style: TextStyle(color: Colors.red)),
             ),
           ],
         );

@@ -222,33 +222,26 @@ class SportProvider extends ChangeNotifier {
 
   // Завершение тренировки
   Future<bool> completeTraining(
-    int trainingProgramId,
+    int programId,
     int duration,
-    int caloriesBurned,
+    double? weightBefore,
+    double? weightAfter,
   ) async {
-    _state = _state.copyWith(isLoading: true, error: null);
-    notifyListeners();
-
     try {
-      final response = await _sportRepository.completeTraining(
-        trainingProgramId,
+      final success = await _sportRepository.completeTraining(
+        programId,
         duration,
-        caloriesBurned,
+        weightBefore,
+        weightAfter,
       );
 
-      if (response.success) {
-        await loadTrainingHistory(); // Перезагрузить историю тренировок
-        return true;
-      } else {
-        _state = _state.copyWith(
-          error: response.message ?? 'Не удалось завершить тренировку',
-          isLoading: false,
-        );
-        notifyListeners();
-        return false;
+      if (success) {
+        await loadTrainingHistory();
       }
+
+      return success;
     } catch (e) {
-      _state = _state.copyWith(error: e.toString(), isLoading: false);
+      _state = _state.copyWith(error: e.toString());
       notifyListeners();
       return false;
     }

@@ -14,28 +14,45 @@ class WaterScreen extends StatefulWidget {
 
 class _WaterScreenState extends State<WaterScreen> {
   int _currentIndex = 0;
+  bool _showInitialSetup = false;
 
   @override
   void initState() {
     super.initState();
-    // Check if daily goal is set and navigate to settings if not
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<WaterProvider>(context, listen: false);
-      provider.loadDailyStats().then((_) {
-        if (provider.dailyProgress == null && _currentIndex != 2) {
-          setState(() {
-            _currentIndex = 2; // Navigate to settings tab
-          });
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Пожалуйста, настройте дневную норму сначала'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
+    _checkInitialSetup();
+  }
+
+  Future<void> _checkInitialSetup() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (!mounted) return;
+
+    final provider = Provider.of<WaterProvider>(context, listen: false);
+    await provider.loadDailyStats();
+
+    if (mounted && provider.dailyProgress == null) {
+      setState(() {
+        _currentIndex = 2;
+        _showInitialSetup = true;
       });
-    });
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Пожалуйста, настройте дневную норму сначала'),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -46,31 +63,49 @@ class _WaterScreenState extends State<WaterScreen> {
         children: [
           const WaterDashboardScreen(),
           const WaterHistoryScreen(),
-          const WaterSettingsScreen(),
+          WaterSettingsScreen(initialSetup: _showInitialSetup),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Главная',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'История',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Настройки',
-          ),
-        ],
-      ),
+      bottomNavigationBar:
+          _currentIndex == 2 && _showInitialSetup
+              ? null
+              : _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        if (_currentIndex == index) return;
+
+        setState(() {
+          _currentIndex = index;
+          _showInitialSetup = false;
+        });
+      },
+      selectedItemColor: Colors.blue[800],
+      unselectedItemColor: Colors.grey[600],
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      type: BottomNavigationBarType.fixed,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard_rounded),
+          activeIcon: Icon(Icons.dashboard_rounded, size: 28),
+          label: 'Главная',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.history_rounded),
+          activeIcon: Icon(Icons.history_rounded, size: 28),
+          label: 'История',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings_rounded),
+          activeIcon: Icon(Icons.settings_rounded, size: 28),
+          label: 'Настройки',
+        ),
+      ],
     );
   }
 }

@@ -43,17 +43,18 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Аналитика потребления воды'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildContent(context),
+      appBar: AppBar(title: const Text('Аналитика потребления воды')),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _buildContent(context),
     );
   }
 
   Widget _buildContent(BuildContext context) {
-    final _ = Provider.of<WaterProvider>(context);
+    final provider = Provider.of<WaterProvider>(context);
+    final insights = provider.insights;
+    final comparison = provider.comparison;
 
     if (_errorMessage != null) {
       return Center(
@@ -78,8 +79,6 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
       );
     }
 
-    // Always showing placeholder content instead of trying to render potentially broken
-    // visualization components
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -91,10 +90,12 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Insights section
+          // Тенденции потребления
           Card(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -107,22 +108,28 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
                   const SizedBox(height: 16),
                   _buildTrendItem(
                     context: context,
-                    title: 'Лучшее время потребления',
-                    value: 'Нет данных',
+                    title: 'Пик потребления',
+                    value:
+                        insights?['peak_hour'] != null
+                            ? '${insights!['peak_hour']}:00'
+                            : 'Нет данных',
                     icon: Icons.access_time,
                     color: Colors.blue,
                   ),
                   _buildTrendItem(
                     context: context,
                     title: 'Наиболее активный день',
-                    value: 'Нет данных',
+                    value: insights?['most_active_day'] ?? 'Нет данных',
                     icon: Icons.calendar_today,
                     color: Colors.green,
                   ),
                   _buildTrendItem(
                     context: context,
                     title: 'Регулярность потребления',
-                    value: 'Нет данных',
+                    value:
+                        insights?['consistency'] != null
+                            ? '${insights!['consistency']}%'
+                            : 'Нет данных',
                     icon: Icons.autorenew,
                     color: Colors.orange,
                   ),
@@ -133,10 +140,12 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
 
           const SizedBox(height: 24),
 
-          // Recommendations section
+          // Рекомендации
           Card(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -169,6 +178,53 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
               ),
             ),
           ),
+
+          const SizedBox(height: 24),
+          // Сравнение с другими
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Сравнение с другими',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTrendItem(
+                    context: context,
+                    title: 'Ваш средний объём',
+                    value:
+                        comparison?['user_average_ml']?.toString() ??
+                        'Нет данных',
+                    icon: Icons.person,
+                    color: Colors.teal,
+                  ),
+                  _buildTrendItem(
+                    context: context,
+                    title: 'Мировой средний объём',
+                    value:
+                        comparison?['global_average_ml']?.toString() ??
+                        'Нет данных',
+                    icon: Icons.public,
+                    color: Colors.indigo,
+                  ),
+                  _buildTrendItem(
+                    context: context,
+                    title: 'Выше среднего?',
+                    value: comparison?['above_average'] == true ? 'Да' : 'Нет',
+                    icon: Icons.trending_up,
+                    color: Colors.purple,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -188,7 +244,7 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1 * 255),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color),
@@ -198,14 +254,8 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text(title, style: Theme.of(context).textTheme.bodyMedium),
+                Text(value, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
           ),
@@ -215,11 +265,11 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
   }
 
   Widget _buildRecommendationItem(
-      BuildContext context,
-      String title,
-      String description,
-      IconData icon,
-      ) {
+    BuildContext context,
+    String title,
+    String description,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -238,10 +288,7 @@ class WaterAnalyticsScreenState extends State<WaterAnalyticsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
+                Text(title, style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 4),
                 Text(
                   description,

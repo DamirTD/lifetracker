@@ -15,7 +15,8 @@ class CompleteTrainingScreen extends StatefulWidget {
 class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _durationController = TextEditingController();
-  final TextEditingController _caloriesController = TextEditingController();
+  final TextEditingController _weightBeforeController = TextEditingController();
+  final TextEditingController _weightAfterController = TextEditingController();
 
   bool _isSubmitting = false;
   int _currentSection = 0;
@@ -38,7 +39,8 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
   @override
   void dispose() {
     _durationController.dispose();
-    _caloriesController.dispose();
+    _weightBeforeController.dispose();
+    _weightAfterController.dispose();
     super.dispose();
   }
 
@@ -347,18 +349,34 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
           ),
           const SizedBox(height: 16),
           TextFormField(
-            controller: _caloriesController,
+            controller: _weightBeforeController,
             decoration: const InputDecoration(
-              labelText: 'Сожжено калорий',
+              labelText: 'Вес до тренировки (кг)',
               border: OutlineInputBorder(),
             ),
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Введите количество калорий';
+              if (value != null &&
+                  value.isNotEmpty &&
+                  double.tryParse(value) == null) {
+                return 'Введите корректный вес';
               }
-              if (int.tryParse(value) == null) {
-                return 'Введите число';
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _weightAfterController,
+            decoration: const InputDecoration(
+              labelText: 'Вес после тренировки (кг)',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            validator: (value) {
+              if (value != null &&
+                  value.isNotEmpty &&
+                  double.tryParse(value) == null) {
+                return 'Введите корректный вес';
               }
               return null;
             },
@@ -385,36 +403,36 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isSubmitting = true;
-      });
+      setState(() => _isSubmitting = true);
 
       final duration = int.parse(_durationController.text);
-      final calories = int.parse(_caloriesController.text);
+      final weightBefore =
+          _weightBeforeController.text.isNotEmpty
+              ? double.tryParse(_weightBeforeController.text)
+              : null;
+      final weightAfter =
+          _weightAfterController.text.isNotEmpty
+              ? double.tryParse(_weightAfterController.text)
+              : null;
 
       final provider = Provider.of<SportProvider>(context, listen: false);
       final success = await provider.completeTraining(
         widget.program.id!,
         duration,
-        calories,
+        weightBefore,
+        weightAfter,
       );
 
-      setState(() {
-        _isSubmitting = false;
-      });
+      setState(() => _isSubmitting = false);
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Тренировка успешно записана')),
         );
-        if (mounted) {
-          Navigator.of(context).pop(); // закрыть модалку
-          Future.delayed(Duration(milliseconds: 300), () {
-            if (Navigator.canPop(context)) {
-              Navigator.of(context).pop(); // вернуться назад
-            }
-          });
-        }
+        Navigator.of(context).pop();
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (Navigator.canPop(context)) Navigator.of(context).pop();
+        });
       }
     }
   }
