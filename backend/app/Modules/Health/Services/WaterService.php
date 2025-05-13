@@ -886,27 +886,32 @@ class WaterService implements WaterServiceInterface
 
     public function getComparison(int $userId): array
     {
-        $userAverage = UserWaterProgress::where('user_id', $userId)
-            ->where('date', '>=', Carbon::now()->subDays(30))
+        $last30Days = Carbon::now()->subDays(30);
+
+        $userAverage = DB::table('user_water_progress')
+            ->where('user_id', $userId)
+            ->where('date', '>=', $last30Days)
             ->avg('consumed_ml');
 
-        if (!$userAverage) {
+        if (!$userAverage || $userAverage < 100) {
             return [
-                'status' => HttpStatusCodes::OK,
+                'status' => 200,
                 'data' => [
-                    'message' => 'Недостаточно данных для сравнения.',
+                    'user_average_ml' => 0,
+                    'global_average_ml' => 0,
+                    'percentile' => null,
+                    'above_average' => false,
+                    'has_enough_data' => false,
                 ],
             ];
         }
 
         $globalAverage = DB::table('user_water_progress')
-            ->where('date', '>=', Carbon::now()->subDays(30))
+            ->where('date', '>=', $last30Days)
             ->avg('consumed_ml');
 
-        $ageGroupAverage = null;
-
         $allAverages = DB::table('user_water_progress')
-            ->where('date', '>=', Carbon::now()->subDays(30))
+            ->where('date', '>=', $last30Days)
             ->groupBy('user_id')
             ->select(DB::raw('user_id, AVG(consumed_ml) as average'))
             ->get()
@@ -918,18 +923,22 @@ class WaterService implements WaterServiceInterface
             return $item >= $userAverage;
         });
 
-        $percentile = $allAverages->count() > 0 ? round(($userRank / $allAverages->count()) * 100) : null;
+        $percentile = $allAverages->count() > 1
+            ? round(($userRank / $allAverages->count()) * 100)
+            : 100;
 
         return [
-            'status' => HttpStatusCodes::OK,
+            'status' => 200,
             'data' => [
-                'user_average_ml' => round($userAverage),
+                'user_average_ml'   => round($userAverage),
                 'global_average_ml' => round($globalAverage),
-                'percentile' => $percentile,
-                'above_average' => $userAverage > $globalAverage,
+                'percentile'        => $percentile,
+                'above_average'     => $userAverage > $globalAverage,
+                'has_enough_data'   => true,
             ],
         ];
     }
+
 
     public function getEcoReport(int $userId): array
     {

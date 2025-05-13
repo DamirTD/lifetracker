@@ -28,14 +28,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   DateTime? _selectedDate;
   TaskCategory? _selectedCategory;
-
   int _selectedPriority = 1;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-
     if (widget.task != null) {
       _titleController.text = widget.task!.title;
       _descriptionController.text = widget.task!.description ?? '';
@@ -50,8 +48,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
             _selectedDate = null;
           }
         }
-      } else {
-        _selectedDate = null;
       }
 
       _selectedPriority = widget.task!.priority;
@@ -63,7 +59,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         );
       }
     } else {
-      _selectedDate = null;
       _selectedCategory =
           widget.categories.isNotEmpty ? widget.categories.first : null;
     }
@@ -83,7 +78,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
     );
-
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
@@ -99,9 +93,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   Future<void> _saveTask() async {
     if (_formKey.currentState!.validate() && _selectedCategory != null) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
       try {
         final formattedDate =
@@ -143,9 +135,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         }
 
         widget.onSave();
-        if (mounted) {
-          Navigator.of(context).pop();
-        }
+        if (mounted) Navigator.of(context).pop();
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
@@ -153,60 +143,52 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           ).showSnackBar(SnackBar(content: Text('Ошибка: ${e.toString()}')));
         }
       } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.task == null ? 'Новая задача' : 'Редактирование задачи',
-        ),
+        title: Text(widget.task == null ? 'Новая задача' : 'Редактирование'),
+        centerTitle: true,
       ),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(
                   key: _formKey,
-                  child: Column(
+                  child: ListView(
                     children: [
-                      _buildCard(
+                      _buildSectionTitle('Основное'),
+                      _buildInputCard(
                         child: TextFormField(
                           controller: _titleController,
-                          decoration: _inputDecoration(
-                            'Название задачи',
-                            Icons.title,
-                          ),
+                          decoration: _inputDecoration('Название', Icons.edit),
                           validator:
                               (value) =>
-                                  (value == null || value.isEmpty)
-                                      ? 'Введите название задачи'
+                                  value == null || value.isEmpty
+                                      ? 'Введите название'
                                       : null,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      _buildCard(
+                      _buildInputCard(
                         child: TextFormField(
                           controller: _descriptionController,
-                          decoration: _inputDecoration(
-                            'Описание (опционально)',
-                            Icons.notes,
-                          ),
+                          decoration: _inputDecoration('Описание', Icons.notes),
                           maxLines: 3,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _buildCard(
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Категория и приоритет'),
+                      _buildInputCard(
                         child: DropdownButtonFormField<TaskCategory>(
                           decoration: _inputDecoration(
                             'Категория',
@@ -216,9 +198,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                           items:
                               widget.categories
                                   .map(
-                                    (category) => DropdownMenuItem(
-                                      value: category,
-                                      child: Text(category.name),
+                                    (cat) => DropdownMenuItem(
+                                      value: cat,
+                                      child: Text(cat.name),
                                     ),
                                   )
                                   .toList(),
@@ -232,7 +214,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      _buildCard(
+                      _buildInputCard(
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: const Text('Приоритет'),
@@ -246,67 +228,48 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                             ],
                             onChanged:
                                 (newValue) => setState(() {
-                                  if (newValue != null) {
+                                  if (newValue != null)
                                     _selectedPriority = newValue;
-                                  }
                                 }),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _buildCard(
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Срок'),
+                      _buildInputCard(
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Row(
+                          leading: const Icon(Icons.calendar_today),
+                          title: Text(
+                            _selectedDate != null
+                                ? DateFormat(
+                                  'dd.MM.yyyy',
+                                ).format(_selectedDate!)
+                                : 'Дата не выбрана',
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.calendar_today, size: 20),
-                              const SizedBox(width: 8),
-                              const Text('Срок выполнения'),
-                              const SizedBox(width: 4),
-                              Text(
-                                '(опционально)',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey,
+                              if (_selectedDate != null)
+                                IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: _clearDate,
                                 ),
+                              IconButton(
+                                icon: const Icon(Icons.edit_calendar),
+                                onPressed: () => _selectDate(context),
                               ),
                             ],
                           ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    _selectedDate == null
-                                        ? 'Не указана'
-                                        : DateFormat(
-                                          'dd.MM.yyyy',
-                                        ).format(_selectedDate!),
-                                  ),
-                                ),
-                                if (_selectedDate != null)
-                                  IconButton(
-                                    icon: const Icon(Icons.clear),
-                                    onPressed: _clearDate,
-                                  ),
-                                IconButton(
-                                  icon: const Icon(Icons.edit_calendar),
-                                  onPressed: () => _selectDate(context),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.check),
                           label: Text(
-                            widget.task == null
-                                ? 'Создать задачу'
-                                : 'Сохранить изменения',
+                            widget.task == null ? 'Создать' : 'Сохранить',
                           ),
                           onPressed: _saveTask,
                           style: ElevatedButton.styleFrom(
@@ -324,6 +287,18 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     );
   }
 
+  Widget _buildSectionTitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
@@ -333,13 +308,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     );
   }
 
-  Widget _buildCard({required Widget child}) {
+  Widget _buildInputCard({required Widget child}) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 3,
-      shadowColor: Colors.black26,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      elevation: 2,
       margin: EdgeInsets.zero,
-      child: Padding(padding: const EdgeInsets.all(12.0), child: child),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: child,
+      ),
     );
   }
 

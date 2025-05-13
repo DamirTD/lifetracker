@@ -118,8 +118,8 @@ class _DietStatisticsScreenState extends State<DietStatisticsScreen> {
   }
 
   Widget _buildStatisticsView() {
-    final average = _statistics!['average'];
-    final successRate = _statistics!['success_rate'];
+    final average = _statistics?['average'] ?? {};
+    final successRate = (_statistics?['success_rate'] ?? 0).toDouble();
     final mostFrequentFoods = _statistics!['most_frequent_foods'] as List?;
 
     return SingleChildScrollView(

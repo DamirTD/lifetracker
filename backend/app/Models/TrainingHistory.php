@@ -10,7 +10,15 @@ class TrainingHistory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'training_program_id', 'date', 'duration', 'calories_burned'];
+    protected $fillable = [
+        'user_id',
+        'training_program_id',
+        'duration',
+        'weight_before',
+        'weight_after',
+        'date',
+        'calories_burned',
+    ];
 
     public function user(): BelongsTo
     {

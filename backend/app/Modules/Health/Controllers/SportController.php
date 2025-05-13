@@ -276,9 +276,18 @@ class SportController extends Controller
      */
     public function completeTraining(CompleteTrainingRequest $request): JsonResponse
     {
-        return $this->wrap($request, function ($data) use ($request) {
-            $validated = $request->validated();
-            $this->trainingProgramHelper->completeUserTraining($validated);
+        $validated = $request->validated();
+
+        return $this->wrap($validated, function ($data) {
+            TrainingHistory::create([
+                'user_id'             => auth()->id(),
+                'training_program_id' => $data['training_program_id'],
+                'duration'            => $data['duration'],
+                'weight_before'       => $data['weight_before'] ?? null,
+                'weight_after'        => $data['weight_after'] ?? null,
+                'date'                => now()->toDateString(),
+                'calories_burned'     => $data['calories_burned'] ?? null,
+            ]);
 
             return [
                 'message' => 'Тренировка завершена, история добавлена.',

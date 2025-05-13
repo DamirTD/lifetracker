@@ -11,6 +11,7 @@ class SleepStatisticsScreen extends StatefulWidget {
 
 class _SleepStatisticsScreenState extends State<SleepStatisticsScreen> {
   String _selectedPeriod = 'week';
+  bool _showRecommendations = false;
   final List<String> _periodOptions = ['week', 'month', 'year'];
   final Map<String, String> _periodLabels = {
     'week': 'Неделя',
@@ -20,176 +21,129 @@ class _SleepStatisticsScreenState extends State<SleepStatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Consumer<SleepProvider>(
       builder: (context, provider, child) {
         final statistics = provider.statistics;
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Выбор периода
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Период статистики',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          labelText: 'Выберите период',
-                          border: OutlineInputBorder(),
-                        ),
-                        value: _selectedPeriod,
-                        items: _periodOptions.map((String period) {
-                          return DropdownMenuItem<String>(
+              // Заголовок и селектор периода
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Статистика сна',
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    value: _selectedPeriod,
+                    style: textTheme.bodyMedium,
+                    dropdownColor: colors.surface,
+                    underline: const SizedBox(),
+                    borderRadius: BorderRadius.circular(10),
+                    items:
+                        _periodOptions.map((period) {
+                          return DropdownMenuItem(
                             value: period,
-                            child: Text(_periodLabels[period] ?? period),
+                            child: Text(_periodLabels[period]!),
                           );
                         }).toList(),
-                        onChanged: (value) {
-                          if (value != null && value != _selectedPeriod) {
-                            setState(() {
-                              _selectedPeriod = value;
-                            });
-                            provider.loadStatistics(value);
-                          }
-                        },
-                      ),
-                    ],
+                    onChanged: (value) {
+                      if (value != null && value != _selectedPeriod) {
+                        setState(() => _selectedPeriod = value);
+                        provider.loadStatistics(value);
+                      }
+                    },
                   ),
-                ),
+                ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
               if (statistics != null) ...[
                 // Основные метрики
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Основные метрики',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        const SizedBox(height: 16),
-
-                        _buildStatisticTile(
-                          'Средняя продолжительность',
-                          statistics.averageDurationFormatted,
-                          Icons.timelapse,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Среднее качество',
-                          statistics.averageQuality,
-                          Icons.star,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Эффективность сна',
-                          '${statistics.sleepEfficiency}%',
-                          Icons.trending_up,
-                        ),
-                      ],
-                    ),
+                _sectionTitle('Основные метрики'),
+                const SizedBox(height: 12),
+                _statGrid([
+                  _tile(
+                    'Продолжительность',
+                    statistics.averageDurationFormatted,
+                    Icons.timelapse,
                   ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Дополнительная статистика
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Дополнительная статистика',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        const SizedBox(height: 16),
-
-                        _buildStatisticTile(
-                          'Самый длинный сон',
-                          statistics.longestSleepFormatted,
-                          Icons.arrow_upward,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Самый короткий сон',
-                          statistics.shortestSleepFormatted,
-                          Icons.arrow_downward,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Всего прерываний',
-                          statistics.totalInterruptions.toString(),
-                          Icons.report_problem,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Частое время отхода ко сну',
-                          statistics.mostCommonBedtime,
-                          Icons.nightlight,
-                        ),
-
-                        const Divider(),
-
-                        _buildStatisticTile(
-                          'Лучший день для сна',
-                          statistics.bestSleepDay,
-                          Icons.calendar_today,
-                        ),
-                      ],
-                    ),
+                  _tile(
+                    'Качество сна',
+                    statistics.averageQuality,
+                    Icons.star_rate,
                   ),
-                ),
+                  _tile(
+                    'Эффективность',
+                    '${statistics.sleepEfficiency}%',
+                    Icons.trending_up,
+                  ),
+                ]),
+
+                const SizedBox(height: 32),
+
+                // Доп. статистика
+                _sectionTitle('Дополнительные данные'),
+                const SizedBox(height: 12),
+                _statGrid([
+                  _tile(
+                    'Длинный сон',
+                    statistics.longestSleepFormatted,
+                    Icons.arrow_upward,
+                  ),
+                  _tile(
+                    'Короткий сон',
+                    statistics.shortestSleepFormatted,
+                    Icons.arrow_downward,
+                  ),
+                  _tile(
+                    'Прерывания',
+                    statistics.totalInterruptions.toString(),
+                    Icons.bug_report,
+                  ),
+                  _tile(
+                    'Обычно засыпает',
+                    statistics.mostCommonBedtime,
+                    Icons.nightlight_round,
+                  ),
+                  _tile(
+                    'Лучший день',
+                    statistics.bestSleepDay,
+                    Icons.calendar_month,
+                  ),
+                ]),
               ] else if (provider.error != null) ...[
                 Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
                         Icons.error_outline,
-                        size: 48,
                         color: Colors.red,
+                        size: 48,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       Text(
-                        'Ошибка загрузки статистики: ${provider.error}',
+                        'Ошибка: ${provider.error}',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(color: colors.error, fontSize: 16),
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          provider.loadStatistics(_selectedPeriod);
-                        },
-                        child: const Text('Повторить'),
+                      ElevatedButton.icon(
+                        onPressed:
+                            () => provider.loadStatistics(_selectedPeriod),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Повторить'),
                       ),
                     ],
                   ),
@@ -197,7 +151,7 @@ class _SleepStatisticsScreenState extends State<SleepStatisticsScreen> {
               ] else ...[
                 const Center(
                   child: Padding(
-                    padding: EdgeInsets.all(32.0),
+                    padding: EdgeInsets.symmetric(vertical: 40),
                     child: Text(
                       'Нет данных для отображения',
                       style: TextStyle(fontSize: 16),
@@ -206,41 +160,59 @@ class _SleepStatisticsScreenState extends State<SleepStatisticsScreen> {
                 ),
               ],
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
 
-              // Рекомендации на основе статистики
-              if (provider.recommendations != null && provider.recommendations!.isNotEmpty) ...[
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Рекомендации',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        const SizedBox(height: 16),
-
-                        ...provider.recommendations!.map((recommendation) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(Icons.tips_and_updates, color: Colors.blue),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(recommendation),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
+              // Рекомендации
+              if (provider.recommendations != null &&
+                  provider.recommendations!.isNotEmpty) ...[
+                TextButton.icon(
+                  onPressed: () {
+                    setState(
+                      () => _showRecommendations = !_showRecommendations,
+                    );
+                  },
+                  icon: Icon(
+                    _showRecommendations
+                        ? Icons.expand_less
+                        : Icons.expand_more,
                   ),
+                  label: Text(
+                    _showRecommendations
+                        ? 'Скрыть рекомендации'
+                        : 'Рекомендации',
+                  ),
+                ),
+
+                AnimatedCrossFade(
+                  firstChild: const SizedBox.shrink(),
+                  secondChild: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Рекомендации'),
+                      const SizedBox(height: 12),
+                      ...provider.recommendations!.map(
+                        (text) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.tips_and_updates,
+                                color: Colors.amber,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(text)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  crossFadeState:
+                      _showRecommendations
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
+                  duration: const Duration(milliseconds: 300),
                 ),
               ],
             ],
@@ -250,17 +222,41 @@ class _SleepStatisticsScreenState extends State<SleepStatisticsScreen> {
     );
   }
 
-  Widget _buildStatisticTile(String title, String value, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: Theme.of(context).primaryColor),
-      title: Text(title),
-      trailing: Text(
-        value,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+  Widget _tile(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 28, color: Colors.blue),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statGrid(List<Widget> tiles) {
+    return Wrap(spacing: 16, runSpacing: 16, children: tiles);
+  }
+
+  Widget _sectionTitle(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
     );
   }
 }

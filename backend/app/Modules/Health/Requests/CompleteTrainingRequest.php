@@ -37,19 +37,19 @@ class CompleteTrainingRequest extends FormRequest
         return [
             'training_program_id' => 'required|exists:user_training_programs,id',
             'duration'            => 'required|integer',
-            'calories_burned'     => 'required|integer',
+            'weight_before'       => 'nullable|numeric|min:0',
+            'weight_after'        => 'nullable|numeric|min:0',
+            'calories_burned'     => 'nullable|integer|min:0',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'training_program_id.required' => 'Поле "ID тренировочной программы" обязательно для заполнения.',
-            'training_program_id.exists'   => 'Выбранная тренировочная программа не существует.',
-            'duration.required'            => 'Поле "Длительность тренировки" обязательно для заполнения.',
-            'duration.integer'             => 'Длительность тренировки должна быть целым числом.',
-            'calories_burned.required'     => 'Поле "Потраченные калории" обязательно для заполнения.',
-            'calories_burned.integer'      => 'Количество потраченных калорий должно быть целым числом.',
+            'training_program_id.required' => 'Поле "ID тренировочной программы" обязательно.',
+            'duration.required'            => 'Поле "Длительность" обязательно.',
+            'weight_before.numeric'        => 'Вес до тренировки должен быть числом.',
+            'weight_after.numeric'         => 'Вес после тренировки должен быть числом.',
         ];
     }
 }

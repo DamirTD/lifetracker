@@ -121,20 +121,23 @@ class SportRepository {
   }
 
   // Завершение тренировки
-  Future<ApiResponse<void>> completeTraining(
+  Future<bool> completeTraining(
     int trainingProgramId,
     int duration,
-    int caloriesBurned,
+    double? weightBefore,
+    double? weightAfter,
   ) async {
     try {
       final response = await _apiClient.post('sport/complete-training', {
         'training_program_id': trainingProgramId,
         'duration': duration,
-        'calories_burned': caloriesBurned,
+        'weight_before': weightBefore,
+        'weight_after': weightAfter,
       });
-      return ApiResponse<void>(success: true, message: response['message']);
+
+      return response['message'] != null;
     } catch (e) {
-      return ApiResponse<void>(success: false, message: e.toString());
+      return false;
     }
   }
 

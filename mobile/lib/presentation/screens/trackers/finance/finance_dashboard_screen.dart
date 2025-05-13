@@ -76,6 +76,9 @@ class FinanceDashboardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildFilterSection(context, provider),
+            const SizedBox(height: 16),
+
             // Summary Card
             if (summary != null) _buildSummaryCard(context, summary),
 
@@ -93,7 +96,7 @@ class FinanceDashboardWidget extends StatelessWidget {
 
   Widget _buildSummaryCard(BuildContext context, FinanceSummary summary) {
     final theme = Theme.of(context);
-    final formatter = NumberFormat.currency(locale: 'ru_RU', symbol: '₽');
+    final formatter = NumberFormat.currency(locale: 'kk_KZ', symbol: '₸');
 
     return Card(
       elevation: 3,
@@ -213,6 +216,135 @@ class FinanceDashboardWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFilterSection(BuildContext context, FinanceProvider provider) {
+    final theme = Theme.of(context);
+    final types = ['all', 'income', 'expense', 'saving', 'investment'];
+    final periods = ['day', 'week', 'month', 'year'];
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Фильтр', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: provider.currentPeriod,
+                    decoration: const InputDecoration(labelText: 'Период'),
+                    items:
+                        periods
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      provider.getFinanceRecords(
+                        period: value,
+                        type: provider.currentType,
+                        startDate: provider.startDate,
+                        endDate: provider.endDate,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: provider.currentType,
+                    decoration: const InputDecoration(labelText: 'Тип'),
+                    items:
+                        types
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e == 'all' ? null : e,
+                                child: Text(e == 'all' ? 'Все' : e),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      provider.getFinanceRecords(
+                        period: provider.currentPeriod,
+                        type: value,
+                        startDate: provider.startDate,
+                        endDate: provider.endDate,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.date_range),
+                    label: Text(
+                      provider.startDate != null
+                          ? DateFormat('dd.MM.yyyy').format(provider.startDate!)
+                          : 'С даты',
+                    ),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now().subtract(
+                          const Duration(days: 30),
+                        ),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (date != null) {
+                        provider.getFinanceRecords(
+                          period: provider.currentPeriod,
+                          type: provider.currentType,
+                          startDate: date,
+                          endDate: provider.endDate,
+                        );
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.event),
+                    label: Text(
+                      provider.endDate != null
+                          ? DateFormat('dd.MM.yyyy').format(provider.endDate!)
+                          : 'По дату',
+                    ),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (date != null) {
+                        provider.getFinanceRecords(
+                          period: provider.currentPeriod,
+                          type: provider.currentType,
+                          startDate: provider.startDate,
+                          endDate: date,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

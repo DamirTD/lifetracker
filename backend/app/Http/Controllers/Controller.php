@@ -25,7 +25,9 @@ abstract class Controller
 
     protected function wrap($request, callable $callback): JsonResponse
     {
-        $this->validatedData = $this->getValidatedData($request);
+        $this->validatedData = is_array($request)
+            ? $request
+            : $this->getValidatedData($request);
 
         return ApiExceptionHandler::handle(function () use ($callback) {
             $result = $callback($this->validatedData);

@@ -21,13 +21,17 @@ class WaterProgress {
 
   factory WaterProgress.fromJson(Map<String, dynamic> json) {
     return WaterProgress(
-      date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      date:
+          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
       dailyGoalMl: json['daily_goal_ml'] ?? 0,
       consumedMl: json['consumed_ml'] ?? 0,
       remainingMl: json['remaining_ml'] ?? 0,
-      glassesToday: json['glasses_today'] ?? 0,
+      glassesToday: json['glasses_drunk'] ?? 0,
       glassVolumeMl: json['glass_volume_ml'] ?? 250,
-      lastAddedAt: json['last_added_at'] != null ? DateTime.parse(json['last_added_at']) : null,
+      lastAddedAt:
+          json['last_added_at'] != null
+              ? DateTime.parse(json['last_added_at'])
+              : null,
       percentComplete: json['percent_complete'] ?? 0,
     );
   }
