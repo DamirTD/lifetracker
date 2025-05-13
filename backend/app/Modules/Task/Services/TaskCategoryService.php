@@ -36,6 +36,11 @@ class TaskCategoryService implements TaskCategoryServiceInterface
 
     public function createDefaultCategoriesIfNeeded(int $userId): void
     {
+        $existingNames = $this->taskCategoryRepository
+            ->getCategoriesByUserId($userId)
+            ->pluck('name')
+            ->toArray();
+
         $defaultCategories = [
             ['name' => 'Работа', 'user_id' => $userId],
             ['name' => 'Личное', 'user_id' => $userId],
@@ -43,9 +48,12 @@ class TaskCategoryService implements TaskCategoryServiceInterface
         ];
 
         foreach ($defaultCategories as $category) {
-            $this->taskCategoryRepository->create($category);
+            if (!in_array($category['name'], $existingNames)) {
+                $this->taskCategoryRepository->create($category);
+            }
         }
     }
+
 
     public function deleteCategory(int $categoryId): bool
     {

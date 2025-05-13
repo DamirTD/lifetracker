@@ -48,12 +48,14 @@ class AuthService implements AuthServiceInterface
         $user = $this->userQuery->findByLogin($login);
 
         if (!$user) {
-            throw new Exception('Пользователь с таким логином не найден.');
+            throw new \Exception('Пользователь с таким логином не найден.');
         }
 
-        $user->tokens()
-            ->where('name', 'auth_token')
-            ->delete();
+        if (!Hash::check($password, $user->password)) {
+            throw new \Exception('Неверный пароль.');
+        }
+
+        $user->tokens()->where('name', 'auth_token')->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -62,6 +64,7 @@ class AuthService implements AuthServiceInterface
             'token' => $token,
         ];
     }
+
 
     public function logout(): void
     {

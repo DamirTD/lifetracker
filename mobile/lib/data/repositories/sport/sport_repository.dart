@@ -17,22 +17,19 @@ class SportRepository {
       final sports = List<Sport>.from(
         (response['sports'] as List).map((x) => Sport.fromJson(x)),
       );
-      return ApiResponse<List<Sport>>(
-        success: true,
-        data: sports,
-      );
+      return ApiResponse<List<Sport>>(success: true, data: sports);
     } catch (e) {
-      return ApiResponse<List<Sport>>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<List<Sport>>(success: false, message: e.toString());
     }
   }
 
   // Получение списка видов спорта пользователя
   Future<ApiResponse<List<Sport>>> getUserSportList() async {
     try {
-      final response = await _apiClient.get('sport/user-sport-list', queryParams: {});
+      final response = await _apiClient.get(
+        'sport/user-sport-list',
+        queryParams: {},
+      );
       final sports = List<Sport>.from(
         (response['data'] as List).map((x) => Sport.fromJson(x)),
       );
@@ -42,10 +39,7 @@ class SportRepository {
         message: response['message'],
       );
     } catch (e) {
-      return ApiResponse<List<Sport>>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<List<Sport>>(success: false, message: e.toString());
     }
   }
 
@@ -61,15 +55,15 @@ class SportRepository {
         message: response['message'],
       );
     } catch (e) {
-      return ApiResponse<UserSport>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<UserSport>(success: false, message: e.toString());
     }
   }
 
   // Получение базовой программы тренировок
-  Future<ApiResponse<Map<String, dynamic>>> getBasicTrainingProgram(int sportId, String goal) async {
+  Future<ApiResponse<Map<String, dynamic>>> getBasicTrainingProgram(
+    int sportId,
+    String goal,
+  ) async {
     try {
       final response = await _apiClient.post('sport/basic-training-program', {
         'sport_id': sportId,
@@ -77,10 +71,7 @@ class SportRepository {
       });
       return ApiResponse<Map<String, dynamic>>(
         success: true,
-        data: {
-          'message': response['message'],
-          'advice': response['advice'],
-        },
+        data: {'message': response['message'], 'advice': response['advice']},
       );
     } catch (e) {
       return ApiResponse<Map<String, dynamic>>(
@@ -90,8 +81,27 @@ class SportRepository {
     }
   }
 
+  Future<ApiResponse<List<TrainingProgram>>> getUserTrainingPrograms() async {
+    try {
+      final response = await _apiClient.get(
+        'sport/user-training-programs',
+        queryParams: {},
+      );
+      final data =
+          (response['data'] as List)
+              .map((e) => TrainingProgram.fromJson(e))
+              .toList();
+
+      return ApiResponse(success: true, data: data);
+    } catch (e) {
+      return ApiResponse(success: false, message: e.toString());
+    }
+  }
+
   // Добавление пользовательской программы тренировок
-  Future<ApiResponse<TrainingProgram>> createPersonalTrainingProgram(TrainingProgram program) async {
+  Future<ApiResponse<TrainingProgram>> createPersonalTrainingProgram(
+    TrainingProgram program,
+  ) async {
     try {
       final response = await _apiClient.post(
         'sport/create-personal-training-program',
@@ -111,29 +121,30 @@ class SportRepository {
   }
 
   // Завершение тренировки
-  Future<ApiResponse<void>> completeTraining(int trainingProgramId, int duration, int caloriesBurned) async {
+  Future<ApiResponse<void>> completeTraining(
+    int trainingProgramId,
+    int duration,
+    int caloriesBurned,
+  ) async {
     try {
       final response = await _apiClient.post('sport/complete-training', {
         'training_program_id': trainingProgramId,
         'duration': duration,
         'calories_burned': caloriesBurned,
       });
-      return ApiResponse<void>(
-        success: true,
-        message: response['message'],
-      );
+      return ApiResponse<void>(success: true, message: response['message']);
     } catch (e) {
-      return ApiResponse<void>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<void>(success: false, message: e.toString());
     }
   }
 
   // Получение программы тренировок по ID
   Future<ApiResponse<TrainingProgram>> getTrainingProgram(int id) async {
     try {
-      final response = await _apiClient.get('sport/training-program/$id', queryParams: {});
+      final response = await _apiClient.get(
+        'sport/training-program/$id',
+        queryParams: {},
+      );
       return ApiResponse<TrainingProgram>(
         success: true,
         data: TrainingProgram.fromJson(response['data']),
@@ -150,7 +161,10 @@ class SportRepository {
   // Получение истории тренировок
   Future<ApiResponse<List<TrainingHistory>>> getTrainingHistory() async {
     try {
-      final response = await _apiClient.get('sport/training-history', queryParams: {});
+      final response = await _apiClient.get(
+        'sport/training-history',
+        queryParams: {},
+      );
       final history = List<TrainingHistory>.from(
         (response['data'] as List).map((x) => TrainingHistory.fromJson(x)),
       );
@@ -180,10 +194,7 @@ class SportRepository {
         message: response['message'],
       );
     } catch (e) {
-      return ApiResponse<Sport>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<Sport>(success: false, message: e.toString());
     }
   }
 
@@ -191,15 +202,9 @@ class SportRepository {
   Future<ApiResponse<void>> deleteUserSport(int id) async {
     try {
       final response = await _apiClient.delete('sport/user-sport/$id');
-      return ApiResponse<void>(
-        success: true,
-        message: response['message'],
-      );
+      return ApiResponse<void>(success: true, message: response['message']);
     } catch (e) {
-      return ApiResponse<void>(
-        success: false,
-        message: e.toString(),
-      );
+      return ApiResponse<void>(success: false, message: e.toString());
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile/data/models/sport/training_program.dart';
 import 'package:mobile/presentation/providers/sport_provider.dart';
 import 'package:mobile/presentation/screens/sport/create_training_program_screen.dart';
 import 'package:mobile/presentation/screens/sport/training_program_detail_screen.dart';
@@ -18,7 +17,8 @@ class TrainingProgramListScreen extends StatefulWidget {
   });
 
   @override
-  TrainingProgramListScreenState createState() => TrainingProgramListScreenState();
+  TrainingProgramListScreenState createState() =>
+      TrainingProgramListScreenState();
 }
 
 class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
@@ -31,11 +31,17 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<SportProvider>(context, listen: false).loadUserPrograms();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Программы: ${widget.sportName}'),
-      ),
+      appBar: AppBar(title: Text('Программы: ${widget.sportName}')),
       body: Consumer<SportProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
@@ -43,10 +49,7 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
           }
 
           if (provider.error != null) {
-            return AppError(
-              message: provider.error!,
-              onRetry: () {},
-            );
+            return AppError(message: provider.error!, onRetry: () {});
           }
 
           return Padding(
@@ -59,9 +62,7 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
                 const SizedBox(height: 20),
                 _buildProgramsHeader(context),
                 const SizedBox(height: 16),
-                Expanded(
-                  child: _buildTrainingProgramsList(context, provider),
-                ),
+                Expanded(child: _buildTrainingProgramsList(context, provider)),
               ],
             ),
           );
@@ -79,10 +80,7 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
           children: [
             const Text(
               'Получить базовую программу',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -113,10 +111,7 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
       children: [
         const Text(
           'Ваши программы тренировок',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         TextButton.icon(
           onPressed: () => _createPersonalTrainingProgram(initialGoal: null),
@@ -127,26 +122,23 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
     );
   }
 
-  Widget _buildTrainingProgramsList(BuildContext context, SportProvider provider) {
-    final trainingHistory = provider.trainingHistory;
+  Widget _buildTrainingProgramsList(
+    BuildContext context,
+    SportProvider provider,
+  ) {
+    final userPrograms = provider.state.userPrograms;
 
-    if (trainingHistory == null || trainingHistory.isEmpty) {
-      return _buildEmptyStateView('У вас пока нет программ тренировок');
+    if (userPrograms == null) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    final Map<int, TrainingProgram> uniquePrograms = {};
-
-    for (var history in trainingHistory) {
-      final program = history.trainingProgram;
-      if (program != null && program.sportId == widget.sportId) {
-        uniquePrograms[program.id!] = program;
-      }
-    }
-
-    final programs = uniquePrograms.values.toList();
+    final programs =
+        userPrograms.where((p) => p.sportId == widget.sportId).toList();
 
     if (programs.isEmpty) {
-      return _buildEmptyStateView('У вас пока нет программ тренировок для этого вида спорта');
+      return _buildEmptyStateView(
+        'У вас пока нет программ тренировок для этого вида спорта',
+      );
     }
 
     return ListView.builder(
@@ -198,9 +190,9 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
     if (_goalController.text.isEmpty) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пожалуйста, укажите цель')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Пожалуйста, укажите цель')));
       return;
     }
 
@@ -217,42 +209,52 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
     _showRecommendationDialog(recommendation, initialGoal);
   }
 
-  void _showRecommendationDialog(Map<String, String> recommendation, String initialGoal) {
+  void _showRecommendationDialog(
+    Map<String, String> recommendation,
+    String initialGoal,
+  ) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: Text(recommendation['message'] ?? 'Рекомендация'),
-        content: Text(recommendation['advice'] ?? 'Нет рекомендаций'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Закрыть'),
+      builder:
+          (BuildContext dialogContext) => AlertDialog(
+            title: Text(recommendation['message'] ?? 'Рекомендация'),
+            content: Text(recommendation['advice'] ?? 'Нет рекомендаций'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Закрыть'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  if (mounted) {
+                    _createPersonalTrainingProgram(initialGoal: initialGoal);
+                  }
+                },
+                child: const Text('Создать программу'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              if (mounted) {
-                _createPersonalTrainingProgram(initialGoal: initialGoal);
-              }
-            },
-            child: const Text('Создать программу'),
-          ),
-        ],
-      ),
     );
   }
 
-  void _createPersonalTrainingProgram({String? initialGoal}) {
-    Navigator.push(
+  void _createPersonalTrainingProgram({String? initialGoal}) async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CreateTrainingProgramScreen(
-          sportId: widget.sportId,
-          sportName: widget.sportName,
-          initialGoal: initialGoal,
-        ),
+        builder:
+            (context) => CreateTrainingProgramScreen(
+              sportId: widget.sportId,
+              sportName: widget.sportName,
+              initialGoal: initialGoal,
+            ),
       ),
     );
+
+    // После возврата — обновить список программ
+    if (result == true && mounted) {
+      Provider.of<SportProvider>(context, listen: false).loadUserPrograms();
+    }
   }
 
   Future<void> _viewTrainingProgram(int programId) async {
@@ -264,9 +266,10 @@ class TrainingProgramListScreenState extends State<TrainingProgramListScreen> {
     if (mounted && provider.currentProgram != null) {
       navigator.push(
         MaterialPageRoute(
-          builder: (context) => TrainingProgramDetailScreen(
-            program: provider.currentProgram!,
-          ),
+          builder:
+              (context) => TrainingProgramDetailScreen(
+                program: provider.currentProgram!,
+              ),
         ),
       );
     }

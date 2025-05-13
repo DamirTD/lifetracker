@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Modules\Auth\Query\UserQuery;
 use App\Modules\Auth\QueryInterface\UserQueryInterface;
 use App\Modules\Auth\Repository\UserRepository;
@@ -50,6 +51,7 @@ use App\Modules\Task\ServiceInterfaces\TaskCategoryServiceInterface;
 use App\Modules\Task\ServiceInterfaces\TaskServiceInterface;
 use App\Modules\Task\Services\TaskCategoryService;
 use App\Modules\Task\Services\TaskService;
+use App\Observers\UserObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -86,5 +88,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserQueryInterface::class, UserQuery::class);
         $this->app->bind(FinanceRecordQueryInterface::class, FinanceRecordQuery::class);
         $this->app->bind(TaskQueryInterface::class, TaskQuery::class);
+    }
+
+    // Observers
+    public function boot(): void
+    {
+        User::observe(UserObserver::class);
     }
 }
