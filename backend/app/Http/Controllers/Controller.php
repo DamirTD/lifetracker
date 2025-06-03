@@ -6,7 +6,6 @@ use App\Http\Exceptions\ApiExceptionHandler;
 use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
-use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(

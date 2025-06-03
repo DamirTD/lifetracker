@@ -76,6 +76,7 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         if (widget.initialSetup) {
@@ -190,8 +191,9 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
               hintText: 'Объем вашего стакана',
               suffixText: 'мл',
               validator: (value) {
-                if (value == null || value.isEmpty)
+                if (value == null || value.isEmpty) {
                   return 'Введите объем стакана';
+                }
                 final volume = int.tryParse(value);
                 if (volume == null || volume < 100 || volume > 1000) {
                   return 'Объем должен быть от 100 до 1000 мл';
@@ -321,7 +323,8 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
       final waterProvider = Provider.of<WaterProvider>(context, listen: false);
       await waterProvider.setDailyGoal(settings);
 
-      if (mounted) {
+      if (!mounted) return; // Проверка перед использованием context
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Настройки сохранены'),
@@ -332,12 +335,12 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
           ),
         );
 
-        if (isInitialSetup && mounted) {
+        if (isInitialSetup) {
           Navigator.of(context).pop();
         }
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ошибка: ${e.toString()}'),
@@ -398,7 +401,7 @@ class WaterSettingsScreenState extends State<WaterSettingsScreen> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withAlpha((0.05 * 255).round()),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),

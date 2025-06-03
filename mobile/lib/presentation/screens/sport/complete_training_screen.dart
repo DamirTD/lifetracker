@@ -431,7 +431,9 @@ class CompleteTrainingScreenState extends State<CompleteTrainingScreen> {
         );
         Navigator.of(context).pop();
         Future.delayed(const Duration(milliseconds: 300), () {
-          if (Navigator.canPop(context)) Navigator.of(context).pop();
+          if (mounted && Navigator.canPop(context)) {
+            Navigator.of(context).pop();
+          }
         });
       }
     }

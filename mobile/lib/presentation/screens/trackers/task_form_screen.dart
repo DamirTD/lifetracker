@@ -228,8 +228,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                             ],
                             onChanged:
                                 (newValue) => setState(() {
-                                  if (newValue != null)
+                                  if (newValue != null) {
                                     _selectedPriority = newValue;
+                                  }
                                 }),
                           ),
                         ),

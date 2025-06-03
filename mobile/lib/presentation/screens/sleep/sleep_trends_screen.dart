@@ -329,7 +329,7 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
               color: _getTrendColor(
                 trend,
                 isInterruption: isInterruption,
-              ).withOpacity(0.1),
+              ).withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -412,7 +412,7 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                     (spots) =>
                         spots.map((spot) {
                           return LineTooltipItem(
-                            '${spot.y.toStringAsFixed(1)}',
+                            spot.y.toStringAsFixed(1),
                             TextStyle(
                               color: lineColor,
                               fontWeight: FontWeight.bold,
@@ -488,8 +488,8 @@ class _SleepTrendsScreenState extends State<SleepTrendsScreen> {
                   show: true,
                   gradient: LinearGradient(
                     colors: [
-                      lineColor.withOpacity(0.3),
-                      lineColor.withOpacity(0.1),
+                      lineColor.withAlpha((0.3 * 255).round()),
+                      lineColor.withAlpha((0.1 * 255).round()),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

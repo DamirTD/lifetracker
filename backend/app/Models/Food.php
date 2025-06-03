@@ -30,4 +30,11 @@ class Food extends Model
     {
         return $this->hasMany(DietEntry::class);
     }
+
+    public function scopeSearch($query, $search): void
+    {
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+    }
 }

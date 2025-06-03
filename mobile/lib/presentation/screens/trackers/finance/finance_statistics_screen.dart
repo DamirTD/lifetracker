@@ -234,7 +234,9 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withAlpha((0.1 * 255).round()),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -440,7 +442,9 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withAlpha((0.1 * 255).round()),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -520,7 +524,9 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
               Text(
                 title,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withAlpha(
+                    (0.6 * 255).round(),
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
@@ -546,7 +552,9 @@ class _FinanceStatisticsScreenState extends State<FinanceStatisticsScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withAlpha((0.1 * 255).round()),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

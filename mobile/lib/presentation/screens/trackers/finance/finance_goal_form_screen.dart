@@ -89,11 +89,13 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
                         decimal: true,
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Введите сумму';
+                        }
                         final amount = double.tryParse(value);
-                        if (amount == null || amount <= 0)
+                        if (amount == null || amount <= 0) {
                           return 'Неверная сумма';
+                        }
                         return null;
                       },
                     ),
@@ -111,8 +113,9 @@ class _FinanceGoalFormScreenState extends State<FinanceGoalFormScreen> {
                       ),
                       validator: (value) {
                         final amount = double.tryParse(value ?? '');
-                        if (amount == null || amount < 0)
+                        if (amount == null || amount < 0) {
                           return 'Неверное значение';
+                        }
                         return null;
                       },
                     ),

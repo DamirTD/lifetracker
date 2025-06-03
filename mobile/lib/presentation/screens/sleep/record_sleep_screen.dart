@@ -161,7 +161,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withAlpha((0.1 * 255).round()),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: 20, color: colors.primary),
@@ -169,7 +169,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
       title: Text(
         title,
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: colors.onSurface.withOpacity(0.8),
+          color: colors.onSurface.withAlpha((0.8 * 255).round()),
         ),
       ),
       subtitle: Text(
@@ -181,7 +181,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: colors.onSurface.withOpacity(0.6),
+        color: colors.onSurface.withAlpha((0.6 * 255).round()),
       ),
       onTap: onTap,
       minVerticalPadding: 0,
@@ -198,7 +198,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: colors.primary.withOpacity(0.1),
+          color: colors.primary.withAlpha((0.1 * 255).round()),
           shape: BoxShape.circle,
         ),
         child: Icon(Icons.mood, size: 20, color: colors.primary),
@@ -206,7 +206,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
       title: Text(
         'Настроение при пробуждении',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: colors.onSurface.withOpacity(0.8),
+          color: colors.onSurface.withAlpha((0.8 * 255).round()),
         ),
       ),
       subtitle: Text(
@@ -216,12 +216,12 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
           color:
               _moodOnWaking != null
                   ? colors.onSurface
-                  : colors.onSurface.withOpacity(0.5),
+                  : colors.onSurface.withAlpha((0.5 * 255).round()),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: colors.onSurface.withOpacity(0.6),
+        color: colors.onSurface.withAlpha((0.6 * 255).round()),
       ),
       onTap: _selectMood,
     );
@@ -274,20 +274,24 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                       Icon(
                         Icons.hotel_rounded,
                         size: 48,
-                        color: colors.onSurface.withOpacity(0.3),
+                        color: colors.onSurface.withAlpha((0.3 * 255).round()),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         'Нет прерываний',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colors.onSurface.withOpacity(0.5),
+                          color: colors.onSurface.withAlpha(
+                            (0.5 * 255).round(),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Нажмите + чтобы добавить',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: colors.onSurface.withOpacity(0.4),
+                          color: colors.onSurface.withAlpha(
+                            (0.4 * 255).round(),
+                          ),
                         ),
                       ),
                     ],
@@ -322,7 +326,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: colors.surfaceVariant.withOpacity(0.4),
+                        color: colors.surfaceContainerHighest.withAlpha(
+                          (0.4 * 255).round(),
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
@@ -331,7 +337,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                         ),
                         leading: Icon(
                           Icons.access_time,
-                          color: colors.onSurface.withOpacity(0.6),
+                          color: colors.onSurface.withAlpha(
+                            (0.6 * 255).round(),
+                          ),
                         ),
                         title: Text(
                           interruption.time,
@@ -346,7 +354,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                         trailing: IconButton(
                           icon: Icon(
                             Icons.delete_outline,
-                            color: colors.onSurface.withOpacity(0.4),
+                            color: colors.onSurface.withAlpha(
+                              (0.4 * 255).round(),
+                            ),
                           ),
                           onPressed: () => _confirmDeleteInterruption(index),
                           splashRadius: 20,
@@ -404,10 +414,12 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                   borderSide: BorderSide(color: colors.outline),
                 ),
                 filled: true,
-                fillColor: colors.surfaceVariant.withOpacity(0.4),
+                fillColor: colors.surfaceContainerHighest.withAlpha(
+                  (0.4 * 255).round(),
+                ),
                 prefixIcon: Icon(
                   Icons.thermostat,
-                  color: colors.onSurface.withOpacity(0.6),
+                  color: colors.onSurface.withAlpha((0.6 * 255).round()),
                 ),
                 suffixText: '°C',
                 contentPadding: const EdgeInsets.symmetric(
@@ -436,10 +448,12 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                   borderSide: BorderSide(color: colors.outline),
                 ),
                 filled: true,
-                fillColor: colors.surfaceVariant.withOpacity(0.4),
+                fillColor: colors.surfaceContainerHighest.withAlpha(
+                  (0.4 * 255).round(),
+                ),
                 prefixIcon: Icon(
                   Icons.volume_up,
-                  color: colors.onSurface.withOpacity(0.6),
+                  color: colors.onSurface.withAlpha((0.6 * 255).round()),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 6,
@@ -456,7 +470,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                           Icon(
                             entry.value,
                             size: 20,
-                            color: colors.onSurface.withOpacity(0.8),
+                            color: colors.onSurface.withAlpha(
+                              (0.8 * 255).round(),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Text(entry.key, style: theme.textTheme.bodyLarge),
@@ -469,7 +485,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
               borderRadius: BorderRadius.circular(12),
               icon: Icon(
                 Icons.arrow_drop_down,
-                color: colors.onSurface.withOpacity(0.6),
+                color: colors.onSurface.withAlpha((0.6 * 255).round()),
               ),
               style: theme.textTheme.bodyLarge,
             ),
@@ -488,10 +504,12 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                   borderSide: BorderSide(color: colors.outline),
                 ),
                 filled: true,
-                fillColor: colors.surfaceVariant.withOpacity(0.4),
+                fillColor: colors.surfaceContainerHighest.withAlpha(
+                  (0.4 * 255).round(),
+                ),
                 prefixIcon: Icon(
                   Icons.lightbulb_outline,
-                  color: colors.onSurface.withOpacity(0.6),
+                  color: colors.onSurface.withAlpha((0.6 * 255).round()),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 6,
@@ -508,7 +526,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                           Icon(
                             entry.value,
                             size: 20,
-                            color: colors.onSurface.withOpacity(0.8),
+                            color: colors.onSurface.withAlpha(
+                              (0.8 * 255).round(),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Text(entry.key, style: theme.textTheme.bodyLarge),
@@ -521,7 +541,7 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
               borderRadius: BorderRadius.circular(12),
               icon: Icon(
                 Icons.arrow_drop_down,
-                color: colors.onSurface.withOpacity(0.6),
+                color: colors.onSurface.withAlpha((0.6 * 255).round()),
               ),
               style: theme.textTheme.bodyLarge,
             ),
@@ -811,7 +831,9 @@ class _RecordSleepScreenState extends State<RecordSleepScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: colors.surfaceVariant.withOpacity(0.4),
+                    fillColor: colors.surfaceContainerHighest.withAlpha(
+                      (0.4 * 255).round(),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
