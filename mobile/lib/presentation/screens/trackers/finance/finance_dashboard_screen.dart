@@ -379,7 +379,9 @@ class FinanceDashboardWidget extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withAlpha((0.1 * 255).round()),
+        ),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -394,7 +396,7 @@ class FinanceDashboardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -414,7 +416,9 @@ class FinanceDashboardWidget extends StatelessWidget {
                     Text(
                       advice.description,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withAlpha(
+                          (0.7 * 255).round(),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),

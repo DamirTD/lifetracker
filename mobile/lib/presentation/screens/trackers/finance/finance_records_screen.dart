@@ -13,7 +13,7 @@ class FinanceRecordsScreen extends StatefulWidget {
 }
 
 class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
-  String? _selectedPeriod = null;
+  String? _selectedPeriod;
   String? _selectedType;
   int? _selectedCategoryId;
   DateTime? _startDate;
@@ -223,7 +223,9 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.1)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withAlpha((0.1 * 255).round()),
+        ),
       ),
       child: ListTile(
         leading: Container(
@@ -251,7 +253,9 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
             Text(
               _getPeriodLabel(record.period),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withAlpha(
+                  (0.6 * 255).round(),
+                ),
               ),
             ),
           ],
@@ -304,7 +308,7 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
           title,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withAlpha((0.6 * 255).round()),
           ),
         ),
       ),
@@ -332,7 +336,7 @@ class _FinanceRecordsScreenState extends State<FinanceRecordsScreen> {
           Text(
             'Измените фильтры или добавьте новую операцию',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withAlpha((0.6 * 255).round()),
             ),
           ),
           const SizedBox(height: 24),

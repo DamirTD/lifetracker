@@ -49,7 +49,7 @@ class _DietScreenState extends State<DietScreen>
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() => _selectedDate = picked);
       Provider.of<DietProvider>(
         context,

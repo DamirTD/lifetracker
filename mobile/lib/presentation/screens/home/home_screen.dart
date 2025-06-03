@@ -85,14 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CircularProgressIndicator(
                   strokeWidth: 4,
                   color: colors.primary,
-                  backgroundColor: colors.primary.withOpacity(0.2),
+                  backgroundColor: colors.primary.withValues(alpha: 51),
                 ),
               ),
               const SizedBox(height: 24),
               Text(
                 'Загружаем ваши данные...',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colors.onSurface.withOpacity(0.8),
+                  color: colors.onSurface.withAlpha((0.8 * 255).toInt()),
                 ),
               ),
             ],
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _error!,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colors.onSurface.withOpacity(0.7),
+                    color: colors.onSurface.withAlpha((0.7 * 255).round()),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        colors.primary.withOpacity(0.08),
+                        colors.primary.withAlpha((0.08 * 255).round()),
                         colors.surface,
                       ],
                     ),
@@ -306,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 "Как твои дела сегодня?",
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colors.onSurface.withOpacity(0.7),
+                  color: colors.onSurface.withAlpha((0.7 * 255).round()),
                 ),
               ),
             ],
@@ -341,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: BoxShape.circle,
             color: colors.primaryContainer,
             border: Border.all(
-              color: colors.primary.withOpacity(0.2),
+              color: colors.primary.withAlpha((0.2 * 255).round()),
               width: 2,
             ),
           ),
@@ -377,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: colors.surface,
             boxShadow: [
               BoxShadow(
-                color: colors.shadow.withOpacity(0.1),
+                color: colors.shadow.withAlpha((0.1 * 255).round()),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -423,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   _getTrackerSubtitle(category['label']),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: colors.onSurface.withOpacity(0.6),
+                    color: colors.onSurface.withAlpha((0.6 * 255).round()),
                     fontSize: 12,
                   ),
                   textAlign: TextAlign.center,

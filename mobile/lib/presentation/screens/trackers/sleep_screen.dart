@@ -139,17 +139,17 @@ class _SleepScreenState extends State<SleepScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blueAccent,
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const RecordSleepScreen(),
               fullscreenDialog: true,
             ),
-          ).then((_) {
-            if (!mounted) return;
-            Provider.of<SleepProvider>(context, listen: false).loadData();
-          });
+          );
+          if (!mounted) return;
+          // ignore: use_build_context_synchronously
+          Provider.of<SleepProvider>(context, listen: false).loadData();
         },
         label: const Text('Сон'),
         icon: const Icon(Icons.nightlight_round),
@@ -162,7 +162,7 @@ class _SleepScreenState extends State<SleepScreen> {
       leading: Icon(icon, size: 22),
       title: Text(title, style: const TextStyle(fontSize: 15)),
       selected: _selectedIndex == index,
-      selectedTileColor: Colors.blue.withOpacity(0.1),
+      selectedTileColor: Colors.blue.withAlpha((0.1 * 255).round()),
       onTap: () {
         setState(() {
           _selectedIndex = index;

@@ -252,12 +252,14 @@ class _FinanceScreenState extends State<FinanceScreen> {
           break;
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ошибка загрузки: ${e.toString()}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка загрузки: ${e.toString()}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 

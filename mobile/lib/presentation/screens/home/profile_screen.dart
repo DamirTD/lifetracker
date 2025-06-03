@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             shape: BoxShape.circle,
             color: colors.primaryContainer,
             border: Border.all(
-              color: colors.primary.withOpacity(0.2),
+              color: colors.primary.withAlpha((0.2 * 255).round()),
               width: 2,
             ),
           ),
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(
           _user?.email ?? '',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: colors.onSurface.withOpacity(0.6),
+            color: colors.onSurface.withAlpha((0.6 * 255).round()),
           ),
         ),
       ],
@@ -109,7 +109,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colors.outlineVariant.withOpacity(0.3)),
+        side: BorderSide(
+          color: colors.outlineVariant.withAlpha((0.3 * 255).round()),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -119,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'НАСТРОЙКИ',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: colors.onSurface.withOpacity(0.6),
+                color: colors.onSurface.withAlpha((0.6 * 255).round()),
                 letterSpacing: 1,
               ),
             ),
@@ -148,7 +150,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colors.outlineVariant.withOpacity(0.3)),
+        side: BorderSide(
+          color: colors.outlineVariant.withAlpha((0.3 * 255).round()),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -158,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'ИНФОРМАЦИЯ',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: colors.onSurface.withOpacity(0.6),
+                color: colors.onSurface.withAlpha((0.6 * 255).round()),
                 letterSpacing: 1,
               ),
             ),
@@ -259,7 +263,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(
               title,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withAlpha((0.6 * 255).round()),
               ),
             ),
           ),

@@ -10,9 +10,11 @@ use App\Modules\Health\Requests\GetMonthlyRequest;
 use App\Modules\Health\Requests\GetStatisticsRequest;
 use App\Modules\Health\Requests\UpdateDietGoalsRequest;
 use App\Modules\Health\Requests\UpdateFoodRequest;
+use App\Modules\Health\Resources\FoodResource;
 use App\Modules\Health\ServiceInterfaces\DietServiceInterface;
 use App\Utils\Constants\HttpStatusCodes;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Schema(
@@ -39,41 +41,69 @@ class DietController extends Controller
     /**
      * @OA\Get(
      *     path="/api/diet/foods",
-     *     summary="Получить список доступных продуктов",
+     *     summary="Получить список доступных продуктов с пагинацией",
      *     tags={"Diet"},
      *     @OA\Parameter(
      *         name="search",
      *         in="query",
+     *         description="Поиск по названию продукта",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Номер страницы",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Список продуктов",
+     *         description="Список продуктов с пагинацией",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Chicken Breast"),
-     *                 @OA\Property(property="calories", type="integer", example=165),
-     *                 @OA\Property(property="protein", type="integer", example=31),
-     *                 @OA\Property(property="fat", type="integer", example=3.6),
-     *                 @OA\Property(property="carbohydrates", type="integer", example=0)
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Chicken Breast"),
+     *                     @OA\Property(property="calories", type="integer", example=165),
+     *                     @OA\Property(property="protein", type="number", format="float", example=31.0),
+     *                     @OA\Property(property="fat", type="number", format="float", example=3.6),
+     *                     @OA\Property(property="carbohydrates", type="number", format="float", example=0)
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://example.com/api/diet/foods?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://example.com/api/diet/foods?page=3"),
+     *                 @OA\Property(property="prev", type="string", example=null),
+     *                 @OA\Property(property="next", type="string", example="http://example.com/api/diet/foods?page=2")
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="path", type="string", example="http://example.com/api/diet/foods"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=15),
+     *                 @OA\Property(property="total", type="integer", example=45)
      *             )
      *         )
      *     )
      * )
      */
-    public function getFoods(): JsonResponse
+    public function getFoods(Request $request): JsonResponse
     {
-        $search = request()->query('search');
-        $foods = Food::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%$search%");
-        })
+        $search = $request->query('search');
+        $foods = Food::search($search)
             ->orderBy('name')
-            ->get();
+            ->paginate(15);
 
-        return response()->json($foods);
+        return response()->json(FoodResource::collection($foods));
     }
 
     /**
