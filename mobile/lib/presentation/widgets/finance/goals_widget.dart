@@ -36,7 +36,11 @@ class GoalsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildGoalCard(BuildContext context, FinancialGoal goal, FinanceProvider provider) {
+  Widget _buildGoalCard(
+    BuildContext context,
+    FinancialGoal goal,
+    FinanceProvider provider,
+  ) {
     final progressPercentage = goal.progress.clamp(0.0, 100.0);
     final daysRemaining = goal.daysRemaining ?? 0;
 
@@ -84,16 +88,16 @@ class GoalsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('${progressPercentage.toStringAsFixed(1)}% complete'),
-                Text('\$${goal.currentAmount.toStringAsFixed(2)} / \$${goal.targetAmount.toStringAsFixed(2)}'),
+                Text(
+                  '\$${goal.currentAmount.toStringAsFixed(2)} / \$${goal.targetAmount.toStringAsFixed(2)}',
+                ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Target date: ${_formatDate(goal.targetDate)}',
-                ),
+                Text('Target date: ${_formatDate(goal.targetDate)}'),
                 Text(
                   daysRemaining > 0 ? '$daysRemaining days left' : 'Due',
                   style: TextStyle(
@@ -110,7 +114,8 @@ class GoalsWidget extends StatelessWidget {
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.add),
                   label: const Text('Add Progress'),
-                  onPressed: () => _showAddProgressDialog(context, goal, provider),
+                  onPressed:
+                      () => _showAddProgressDialog(context, goal, provider),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,
@@ -180,84 +185,93 @@ class GoalsWidget extends StatelessWidget {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _showAddProgressDialog(BuildContext context, FinancialGoal goal, FinanceProvider provider) {
+  void _showAddProgressDialog(
+    BuildContext context,
+    FinancialGoal goal,
+    FinanceProvider provider,
+  ) {
     final TextEditingController amountController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Progress'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Currently saved: \$${goal.currentAmount.toStringAsFixed(2)}'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: amountController,
-              decoration: const InputDecoration(
-                labelText: 'Amount to add',
-                prefixIcon: Icon(Icons.attach_money),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Add Progress'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Currently saved: \$${goal.currentAmount.toStringAsFixed(2)}',
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: amountController,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount to add',
+                    prefixIcon: Icon(Icons.attach_money),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (amountController.text.isNotEmpty) {
-                final amount = double.tryParse(amountController.text);
-                if (amount != null && amount > 0) {
-                  // Check for null ID and handle appropriately
-                  if (goal.id != null) {
-                    final navigator = Navigator.of(context);
-                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (amountController.text.isNotEmpty) {
+                    final amount = double.tryParse(amountController.text);
+                    if (amount != null && amount > 0) {
+                      // Check for null ID and handle appropriately
+                      if (goal.id != null) {
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                    await provider.updateGoalProgress(goal.id!, amount);
+                        await provider.updateGoalProgress(goal.id!, amount);
 
-                    navigator.pop();
+                        navigator.pop();
 
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(
-                        content: Text('Progress updated for ${goal.name}'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Progress updated for ${goal.name}'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } else {
+                        // Handle case where goal ID is null
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Cannot update goal without an ID'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter a valid amount'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   } else {
-                    // Handle case where goal ID is null
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Cannot update goal without an ID'),
+                        content: Text('Please enter an amount'),
                         backgroundColor: Colors.red,
                       ),
                     );
-                    Navigator.of(context).pop();
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter a valid amount'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please enter an amount'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Add'),
+                },
+                child: const Text('Add'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

@@ -19,6 +19,12 @@ class SportScreen extends StatefulWidget {
 }
 
 class SportScreenState extends State<SportScreen> {
+  final Color primaryColor = const Color(0xFF4A90E2);
+  final Color backgroundCard = const Color(0xFFF9FAFB);
+  final Color accentColor = const Color(0xFF1D3557);
+  final Color textColor = const Color(0xFF333333);
+  final Color fadedTextColor = Colors.grey.shade600;
+
   @override
   void initState() {
     super.initState();
@@ -31,20 +37,25 @@ class SportScreenState extends State<SportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Спорт')),
+      appBar: AppBar(
+        title: const Text(
+          'Мой спорт',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        foregroundColor: primaryColor,
+      ),
       body: Consumer<SportProvider>(
         builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const AppLoading();
-          }
-
+          if (provider.isLoading) return const AppLoading();
           if (provider.error != null) {
             return AppError(
               message: provider.error!,
               onRetry: () => provider.loadInitialData(),
             );
           }
-
           return _buildMainContent(context, provider);
         },
       ),
@@ -72,9 +83,7 @@ class SportScreenState extends State<SportScreen> {
                     )
                     : _buildSportsGrid(context, userSports),
           ),
-
           const SizedBox(height: 24),
-
           _buildSection(
             title: 'Недавние тренировки',
             onSeeAll: () => _navigateToTrainingHistory(context),
@@ -94,9 +103,7 @@ class SportScreenState extends State<SportScreen> {
                       trainingHistory.take(3).toList(),
                     ),
           ),
-
           const SizedBox(height: 24),
-
           _buildSection(
             title: 'Статистика',
             onSeeAll: null,
@@ -120,7 +127,11 @@ class SportScreenState extends State<SportScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
             ),
             if (onSeeAll != null)
               TextButton(
@@ -141,21 +152,32 @@ class SportScreenState extends State<SportScreen> {
     VoidCallback? onAction,
   }) {
     return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: backgroundCard,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.fitness_center, size: 56, color: Colors.grey),
+            const Icon(Icons.fitness_center, size: 48, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, color: textColor),
             ),
             if (actionText != null && onAction != null) ...[
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: onAction, child: Text(actionText)),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: onAction,
+                child: Text(actionText),
+              ),
             ],
           ],
         ),
@@ -177,20 +199,35 @@ class SportScreenState extends State<SportScreen> {
       itemBuilder: (context, index) {
         final sport = sports[index];
         return Card(
-          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 3,
+          color: backgroundCard,
           child: InkWell(
+            borderRadius: BorderRadius.circular(16),
             onTap: () => _navigateToSportDetails(context, sport),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 16,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.fitness_center, size: 32),
+                  const Icon(
+                    Icons.sports_martial_arts,
+                    size: 32,
+                    color: Color(0xFF1D3557),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     sport.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
                   ),
                 ],
               ),
@@ -214,13 +251,28 @@ class SportScreenState extends State<SportScreen> {
         final program = training.trainingProgram;
 
         return Card(
-          margin: const EdgeInsets.only(bottom: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          elevation: 2,
+          color: backgroundCard,
+          margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.fitness_center)),
-            title: Text(program?.name ?? 'Тренировка'),
-            subtitle: Text('Длительность: ${training.duration} мин'),
+            leading: CircleAvatar(
+              backgroundColor: primaryColor.withOpacity(0.1),
+              child: Icon(Icons.access_time, color: primaryColor),
+            ),
+            title: Text(
+              program?.name ?? 'Тренировка',
+              style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+            ),
+            subtitle: Text(
+              'Длительность: ${training.duration} мин',
+              style: TextStyle(color: fadedTextColor),
+            ),
             trailing: Text(
               '${training.createdAt.day}.${training.createdAt.month}.${training.createdAt.year}',
+              style: TextStyle(color: fadedTextColor),
             ),
             onTap: () {
               if (program != null) {
@@ -238,15 +290,16 @@ class SportScreenState extends State<SportScreen> {
 
     if (history == null || history.isEmpty) {
       return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(
-                'Завершите тренировку, чтобы увидеть статистику',
-                textAlign: TextAlign.center,
-              ),
-            ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 3,
+        color: backgroundCard,
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: Text(
+              'Завершите тренировку, чтобы увидеть статистику',
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );
@@ -256,17 +309,16 @@ class SportScreenState extends State<SportScreen> {
     int totalMinutes = history.fold(0, (sum, item) => sum + item.duration);
 
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      color: backgroundCard,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem('Тренировок', totalWorkouts.toString()),
-                _buildStatItem('Минут', totalMinutes.toString()),
-              ],
-            ),
+            _buildStatItem('Тренировок', totalWorkouts.toString()),
+            _buildStatItem('Минут', totalMinutes.toString()),
           ],
         ),
       ),
@@ -278,9 +330,14 @@ class SportScreenState extends State<SportScreen> {
       children: [
         Text(
           value,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(color: fadedTextColor)),
       ],
     );
   }
@@ -288,21 +345,21 @@ class SportScreenState extends State<SportScreen> {
   void _navigateToUserSports(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const UserSportsScreen()),
+      MaterialPageRoute(builder: (_) => const UserSportsScreen()),
     );
   }
 
   void _navigateToSportList(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SportListScreen()),
+      MaterialPageRoute(builder: (_) => const SportListScreen()),
     );
   }
 
   void _navigateToTrainingHistory(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const TrainingHistoryScreen()),
+      MaterialPageRoute(builder: (_) => const TrainingHistoryScreen()),
     );
   }
 
@@ -311,7 +368,7 @@ class SportScreenState extends State<SportScreen> {
       context,
       MaterialPageRoute(
         builder:
-            (context) => TrainingProgramListScreen(
+            (_) => TrainingProgramListScreen(
               sportId: sport.id,
               sportName: sport.name,
             ),
@@ -330,7 +387,7 @@ class SportScreenState extends State<SportScreen> {
         context,
         MaterialPageRoute(
           builder:
-              (context) => TrainingProgramDetailScreen(
+              (_) => TrainingProgramDetailScreen(
                 program: provider.currentProgram!,
               ),
         ),
