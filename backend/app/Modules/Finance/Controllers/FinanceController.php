@@ -315,16 +315,27 @@ class FinanceController extends Controller
         $endDate = $data['end_date'] ?? null;
 
         if (!$startDate && isset($data['period'])) {
-            $startDate = match ($data['period']) {
-                'day' => now()->startOfDay(),
-                'week' => now()->startOfWeek(),
-                'month' => now()->startOfMonth(),
-                'year' => now()->startOfYear(),
+            match ($data['period']) {
+                'day' => [
+                    $startDate = now()->startOfDay(),
+                    $endDate = now()->endOfDay(),
+                ],
+                'week' => [
+                    $startDate = now()->startOfWeek(),
+                    $endDate = now()->endOfWeek(),
+                ],
+                'month' => [
+                    $startDate = now()->startOfMonth(),
+                    $endDate = now()->endOfMonth(),
+                ],
+                'year' => [
+                    $startDate = now()->startOfYear(),
+                    $endDate = now()->endOfYear(),
+                ],
                 default => null,
             };
-            $endDate = now()->endOfDay();
         }
-
+        
         $records = $this->recordQuery->getFilteredRecords(
             $userId,
             $data['period'] ?? null,

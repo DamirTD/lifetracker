@@ -494,17 +494,52 @@ class _TasksScreenState extends State<TasksScreen> {
               _getPriorityIcon(task.priority),
               const SizedBox(width: 8),
               IconButton(
-                icon: Icon(Icons.edit, size: 20, color: Colors.grey[600]),
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                  color: Colors.red[400],
+                ),
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.all(8),
-                onPressed: () {
-                  final categories =
-                      Provider.of<TasksProvider>(
-                        context,
-                        listen: false,
-                      ).categories;
-                  if (categories != null && categories.isNotEmpty) {
-                    _navigateToTaskForm(task, categories);
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder:
+                        (ctx) => AlertDialog(
+                          title: const Text('Удалить задачу'),
+                          content: const Text(
+                            'Вы уверены, что хотите удалить эту задачу?',
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text('Отмена'),
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                'Удалить',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                            ),
+                          ],
+                        ),
+                  );
+
+                  if (confirm == true && task.id != null) {
+                    await Provider.of<TasksProvider>(
+                      context,
+                      listen: false,
+                    ).deleteTask(task.id!);
                   }
                 },
               ),
@@ -647,12 +682,15 @@ class _TasksScreenState extends State<TasksScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddOptionsBottomSheet,
-        tooltip: 'Добавить',
+        icon: const Icon(Icons.add),
+        label: const Text('Добавить'),
+        backgroundColor: Theme.of(context).primaryColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: const Icon(Icons.add),
+        elevation: 6,
       ),
+
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
