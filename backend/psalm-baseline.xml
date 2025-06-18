@@ -1,0 +1,1676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.12.0@cf420941d061a57050b6c468ef2c778faf40aee2">
+  <file src="app/Console/Kernel.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function commands(): void]]></code>
+      <code><![CDATA[protected function schedule(Schedule $schedule): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="app/Exceptions/Handler.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function register(): void]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClosureParam>
+      <code><![CDATA[$e]]></code>
+    </UnusedClosureParam>
+  </file>
+  <file src="app/Http/Controllers/Controller.php">
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Http/Exceptions/ApiExceptionHandler.php">
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Http/Middleware/Authenticate.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function redirectTo(Request $request): ?string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="app/Http/Middleware/RedirectIfAuthenticated.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[redirect(RouteServiceProvider::HOME)]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[Response]]></code>
+    </InvalidReturnType>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[handle]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Http/Middleware/TrustHosts.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function hosts(): array]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[TrustHosts]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Http/Middleware/ValidateSignature.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$except]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="app/Models/Budget.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[category]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/DietEntry.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[calculateNutrients]]></code>
+      <code><![CDATA[food]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->date]]></code>
+      <code><![CDATA[$this->food]]></code>
+      <code><![CDATA[$this->food_id]]></code>
+      <code><![CDATA[$this->id]]></code>
+      <code><![CDATA[$this->meal_type]]></code>
+      <code><![CDATA[$this->quantity]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Models/DietGoal.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/Exercise.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[section]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/FinanceCategory.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/FinanceGoal.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/FinanceRecord.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[category]]></code>
+      <code><![CDATA[getCategoryNameAttribute]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->category]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Models/Food.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[dietEntries]]></code>
+      <code><![CDATA[scopeSearch]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/Sleep.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/SleepGoal.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/Task.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[category]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/TaskCategory.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[tasks]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/TrainingHistory.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[sport]]></code>
+      <code><![CDATA[trainingProgram]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/TrainingSection.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[exercises]]></code>
+      <code><![CDATA[trainingProgram]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserSport.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[sport]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserTrainingProgram.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[sections]]></code>
+      <code><![CDATA[sport]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserWaterContainer.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserWaterProgress.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserWaterProgressHistory.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[container]]></code>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Models/UserWaterReminder.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[user]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Controllers/LoginController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[login]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Controllers/LogoutController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[logout]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Controllers/RegisterController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[register]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Controllers/UserController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getUser]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Auth/Query/UserQuery.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function findByLogin(string $login): ?User]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[User::where('login', $login)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Auth/Repository/UserRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function save(User $user): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="app/Modules/Auth/Requests/LoginRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Requests/RegisterRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Auth/Services/AuthService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function login(string $login, string $password): array]]></code>
+      <code><![CDATA[public function logout(): void]]></code>
+      <code><![CDATA[public function register(array $data): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[delete]]></code>
+      <code><![CDATA[where]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$user->password]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Finance/Controllers/FinanceController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[calculateFinance]]></code>
+      <code><![CDATA[createBudget]]></code>
+      <code><![CDATA[createCategory]]></code>
+      <code><![CDATA[deleteFinanceRecord]]></code>
+      <code><![CDATA[exportFinanceData]]></code>
+      <code><![CDATA[getBudgets]]></code>
+      <code><![CDATA[getCategories]]></code>
+      <code><![CDATA[getFinanceRecords]]></code>
+      <code><![CDATA[getFinanceStatistics]]></code>
+      <code><![CDATA[getFinancialAdvice]]></code>
+      <code><![CDATA[getFinancialGoals]]></code>
+      <code><![CDATA[importFinanceData]]></code>
+      <code><![CDATA[setFinancialGoal]]></code>
+      <code><![CDATA[storeFinanceRecord]]></code>
+      <code><![CDATA[updateFinanceRecord]]></code>
+      <code><![CDATA[updateGoalProgress]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$request]]></code>
+    </PossiblyUnusedParam>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$request->amount]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Finance/Controllers/KaspiBankController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[analyze]]></code>
+      <code><![CDATA[importPdf]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Finance/Helpers/KaspiPDFHelper.php">
+    <InvalidOperand>
+      <code><![CDATA[$totals['received'] += $amount]]></code>
+      <code><![CDATA[$totals['spent'] += $amount]]></code>
+    </InvalidOperand>
+  </file>
+  <file src="app/Modules/Finance/Query/FinanceRecordQuery.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function delete(int $id): bool]]></code>
+      <code><![CDATA[public function findByIdAndUser(int $id, int $userId): ?FinanceRecord]]></code>
+      <code><![CDATA[public function getByUserAndPeriod(int $userId, ?string $period): Collection]]></code>
+      <code><![CDATA[public function getFilteredRecords(]]></code>
+      <code><![CDATA[public function store(array $data): FinanceRecord]]></code>
+      <code><![CDATA[public function update(int $id, array $data): FinanceRecord]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceRecord::create($data)]]></code>
+      <code><![CDATA[FinanceRecord::findOrFail($id)]]></code>
+      <code><![CDATA[FinanceRecord::findOrFail($id)]]></code>
+      <code><![CDATA[FinanceRecord::where('id', $id)]]></code>
+      <code><![CDATA[FinanceRecord::where('user_id', $userId)]]></code>
+      <code><![CDATA[FinanceRecord::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$record->amount]]></code>
+      <code><![CDATA[$record->category]]></code>
+      <code><![CDATA[$record->category_id]]></code>
+      <code><![CDATA[$record->date]]></code>
+      <code><![CDATA[$record->description]]></code>
+      <code><![CDATA[$record->id]]></code>
+      <code><![CDATA[$record->is_recurring]]></code>
+      <code><![CDATA[$record->period]]></code>
+      <code><![CDATA[$record->recurring_frequency]]></code>
+      <code><![CDATA[$record->type]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Finance/QueryInterfaces/FinanceRecordQueryInterface.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getByUserAndPeriod]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedReturnValue>
+      <code><![CDATA[bool]]></code>
+    </PossiblyUnusedReturnValue>
+  </file>
+  <file src="app/Modules/Finance/Repository/FinanceRecordRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(array $data): FinanceRecord]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceRecord::create($data)]]></code>
+    </UndefinedMagicMethod>
+    <UnusedClass>
+      <code><![CDATA[FinanceRecordRepository]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Modules/Finance/RepositoryInterfaces/FinanceRecordRepositoryInterface.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[create]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/CalculateFinanceRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/CreateBudgetRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/CreateCategoryRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/DeleteFinanceRecordRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/ExportFinanceDataRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/GetBudgetRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/GetFinanceRecordsRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/GetFinanceStatisticsRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function prepareForValidation(): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/GetFinancialGoalsRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function prepareForValidation(): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/ImportFinanceDataRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/KaspiPDFAnalyzeRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/KaspiPdfRequest.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->query('sortBy')]]></code>
+      <code><![CDATA[$this->query('sortOrder', 'desc')]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[string]]></code>
+    </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <NullableReturnStatement>
+      <code><![CDATA[$this->query('sortOrder', 'desc')]]></code>
+    </NullableReturnStatement>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/SetFinancialGoalRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Requests/StoreFinanceRecordRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Services/BudgetService.php">
+    <InvalidMethodCall>
+      <code><![CDATA[format]]></code>
+      <code><![CDATA[format]]></code>
+    </InvalidMethodCall>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createOrUpdate(]]></code>
+      <code><![CDATA[public function getBudgets(]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$recordQuery]]></code>
+    </PossiblyUnusedProperty>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Budget::create([
+                'user_id'     => $userId,
+                'category_id' => $categoryId,
+                'amount'      => $amount,
+                'period'      => $period,
+                'start_date'  => $startDate,
+                'end_date'    => $endDate
+            ])]]></code>
+      <code><![CDATA[Budget::where('user_id', $userId)]]></code>
+      <code><![CDATA[Budget::where('user_id', $userId)]]></code>
+      <code><![CDATA[FinanceRecord::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Finance/Services/CategoryService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(]]></code>
+      <code><![CDATA[public function getByUserAndType(]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceCategory::create([
+            'user_id' => $userId,
+            'name' => $name,
+            'type' => $type,
+            'icon' => $icon,
+        ])]]></code>
+      <code><![CDATA[FinanceCategory::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Finance/Services/FinanceAdviceService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function calculateBreakdown(float $salary, string $rule): array]]></code>
+      <code><![CDATA[public function getAdvice(string $rule): array]]></code>
+      <code><![CDATA[public function getPersonalizedAdvice(int $userId): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <RedundantCondition>
+      <code><![CDATA[count($advice) < 3]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="app/Modules/Finance/Services/FinanceExportService.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[url('storage/' . $path)]]></code>
+      <code><![CDATA[url('storage/' . $path)]]></code>
+      <code><![CDATA[url('storage/' . $path)]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[string]]></code>
+      <code><![CDATA[string]]></code>
+      <code><![CDATA[string]]></code>
+    </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function export(]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedClass>
+      <code><![CDATA[FPDF]]></code>
+      <code><![CDATA[Spreadsheet]]></code>
+      <code><![CDATA[Xlsx]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="app/Modules/Finance/Services/FinanceImportService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function import(]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedClass>
+      <code><![CDATA[IOFactory]]></code>
+    </UndefinedClass>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceCategory::create([
+                        'user_id' => $userId,
+                        'name' => $categoryName,
+                        'type' => $categoryType
+                    ])]]></code>
+      <code><![CDATA[FinanceCategory::where('user_id', $userId)]]></code>
+      <code><![CDATA[FinanceRecord::create([
+                    'user_id'     => $userId,
+                    'category_id' => $categories[$categoryName]->id,
+                    'amount'      => floatval($data['amount']),
+                    'type'        => $data['type'],
+                    'period'      => $data['period'] ?? 'month',
+                    'date'        => $data['date'],
+                    'description' => $data['description'] ?? null
+                ])]]></code>
+    </UndefinedMagicMethod>
+    <UnusedParam>
+      <code><![CDATA[$file]]></code>
+      <code><![CDATA[$userId]]></code>
+    </UnusedParam>
+  </file>
+  <file src="app/Modules/Finance/Services/FinanceStatisticsService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getStatistics(]]></code>
+      <code><![CDATA[public function getSummary(int $userId, ?string $period, ?string $startDate, ?string $endDate): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$recordQuery]]></code>
+    </PossiblyUnusedProperty>
+    <UnusedVariable>
+      <code><![CDATA[$data]]></code>
+    </UnusedVariable>
+  </file>
+  <file src="app/Modules/Finance/Services/FinancialGoalService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createGoal(]]></code>
+      <code><![CDATA[public function getGoalByIdAndUser(int $id, int $userId): ?FinanceGoal]]></code>
+      <code><![CDATA[public function getGoals(]]></code>
+      <code><![CDATA[public function updateProgress(int $id, float $amount): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceGoal::create([
+            'user_id' => $userId,
+            'name' => $name,
+            'target_amount' => $targetAmount,
+            'current_amount' => $currentAmount,
+            'target_date' => $targetDate,
+            'description' => $description,
+            'priority' => $priority,
+            'status' => 'active'
+        ])]]></code>
+      <code><![CDATA[FinanceGoal::findOrFail($id)]]></code>
+      <code><![CDATA[FinanceGoal::where('id', $id)]]></code>
+      <code><![CDATA[FinanceGoal::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$goal->current_amount]]></code>
+      <code><![CDATA[$goal->current_amount]]></code>
+      <code><![CDATA[$goal->description]]></code>
+      <code><![CDATA[$goal->id]]></code>
+      <code><![CDATA[$goal->name]]></code>
+      <code><![CDATA[$goal->priority]]></code>
+      <code><![CDATA[$goal->status]]></code>
+      <code><![CDATA[$goal->target_amount]]></code>
+      <code><![CDATA[$goal->target_date]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Finance/Services/KaspiPDFAnalyzerService.php">
+    <InvalidScalarArgument>
+      <code><![CDATA[$operation]]></code>
+      <code><![CDATA[$operation]]></code>
+    </InvalidScalarArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function analyze(array $transactions): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Finance/Services/KaspiPDFService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createTransaction(?string $date, ?string $operation, ?string $amount, string $details): ?KaspiPDFTransactionDTO]]></code>
+      <code><![CDATA[public function extractDetails(string $line): string]]></code>
+      <code><![CDATA[public function getAmount(string $line): ?string]]></code>
+      <code><![CDATA[public function getOperation(string $line): ?string]]></code>
+      <code><![CDATA[public function processLine(string $line): ?array]]></code>
+      <code><![CDATA[public function sort(array $transactions, ?string $sortBy, string $sortOrder = 'desc'): array]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="app/Modules/Health/Controllers/DietController.php">
+    <InvalidArgument>
+      <code><![CDATA[now()->month]]></code>
+      <code><![CDATA[now()->year]]></code>
+    </InvalidArgument>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[addFood]]></code>
+      <code><![CDATA[deleteFood]]></code>
+      <code><![CDATA[getDailyDiet]]></code>
+      <code><![CDATA[getDietGoals]]></code>
+      <code><![CDATA[getFoods]]></code>
+      <code><![CDATA[getMonthlyDiet]]></code>
+      <code><![CDATA[getStatistics]]></code>
+      <code><![CDATA[getWeeklyDiet]]></code>
+      <code><![CDATA[updateDietGoals]]></code>
+      <code><![CDATA[updateFood]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Food::search($search)]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Controllers/SleepController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[getGoalsProgress]]></code>
+      <code><![CDATA[getRecommendations]]></code>
+      <code><![CDATA[getSleepCorrelations]]></code>
+      <code><![CDATA[getStatistics]]></code>
+      <code><![CDATA[getTrends]]></code>
+      <code><![CDATA[importDeviceData]]></code>
+      <code><![CDATA[recordSleep]]></code>
+      <code><![CDATA[setSleepGoals]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Controllers/SportController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[addUserTrainingProgram]]></code>
+      <code><![CDATA[basicTrainingProgram]]></code>
+      <code><![CDATA[completeTraining]]></code>
+      <code><![CDATA[deleteSport]]></code>
+      <code><![CDATA[editSport]]></code>
+      <code><![CDATA[getSportList]]></code>
+      <code><![CDATA[getTrainingHistory]]></code>
+      <code><![CDATA[getTrainingProgram]]></code>
+      <code><![CDATA[getUserSportList]]></code>
+      <code><![CDATA[getUserTrainingPrograms]]></code>
+      <code><![CDATA[selectUserSport]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Sport::findOrFail($id)]]></code>
+      <code><![CDATA[TrainingHistory::create([
+                'user_id'             => auth()->id(),
+                'training_program_id' => $data['training_program_id'],
+                'duration'            => $data['duration'],
+                'weight_before'       => $data['weight_before'] ?? null,
+                'weight_after'        => $data['weight_after'] ?? null,
+                'date'                => now()->toDateString(),
+                'calories_burned'     => $data['calories_burned'] ?? null,
+            ])]]></code>
+      <code><![CDATA[TrainingProgram::where('sport_id', $data['sport_id'])]]></code>
+      <code><![CDATA[UserSport::findOrFail($id)]]></code>
+      <code><![CDATA[UserSport::updateOrCreate(
+                [
+                    'user_id'  => auth()->id(),
+                    'sport_id' => $data['sport_id'],
+                ]
+            )]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Controllers/WaterController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[addGlass]]></code>
+      <code><![CDATA[deleteContainer]]></code>
+      <code><![CDATA[deleteReminder]]></code>
+      <code><![CDATA[getComparison]]></code>
+      <code><![CDATA[getContainers]]></code>
+      <code><![CDATA[getDailyConsumption]]></code>
+      <code><![CDATA[getDailyStats]]></code>
+      <code><![CDATA[getEcoReport]]></code>
+      <code><![CDATA[getHistory]]></code>
+      <code><![CDATA[getInsights]]></code>
+      <code><![CDATA[getMonthlyConsumption]]></code>
+      <code><![CDATA[getOverallStats]]></code>
+      <code><![CDATA[getReminders]]></code>
+      <code><![CDATA[getWeeklyConsumption]]></code>
+      <code><![CDATA[removeGlass]]></code>
+      <code><![CDATA[saveContainer]]></code>
+      <code><![CDATA[setDailyGoal]]></code>
+      <code><![CDATA[setReminder]]></code>
+      <code><![CDATA[toggleReminder]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Helpers/DietHelper.php">
+    <InvalidTemplateParam>
+      <code><![CDATA[$entries->groupBy(function ($entry) {
+            return $entry->date->format('Y-m-d');
+        })]]></code>
+    </InvalidTemplateParam>
+    <UndefinedMagicMethod>
+      <code><![CDATA[DietGoal::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[calculateNutrients]]></code>
+      <code><![CDATA[calculateNutrients]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$entry->date]]></code>
+      <code><![CDATA[$entry->date]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Health/Helpers/UserTrainingProgramHelper.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[completeUserTraining]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[TrainingHistory::create([
+            'user_id'             => auth()->id(),
+            'training_program_id' => $userTrainingProgram->id,
+            'date'                => now(),
+            'duration'            => $validated['duration'],
+            'calories_burned'     => $validated['calories_burned'],
+        ])]]></code>
+      <code><![CDATA[UserTrainingProgram::create([
+            'user_id'        => auth()->id(),
+            'sport_id'       => $validated['sport_id'],
+            'goal'           => $validated['goal'],
+            'name'           => $validated['name'],
+            'recommendation' => $validated['recommendation'] ?? null,
+        ])]]></code>
+      <code><![CDATA[UserTrainingProgram::find($validated['training_program_id'])]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Repository/DietRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createDietEntry(array $data): DietEntry]]></code>
+      <code><![CDATA[public function getDietEntriesByUserId(int $userId, string $date)]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[DietEntry::create($data)]]></code>
+      <code><![CDATA[DietEntry::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Repository/SleepGoalRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(array $data): array]]></code>
+      <code><![CDATA[public function delete(int $id): bool]]></code>
+      <code><![CDATA[public function findById(int $id): ?array]]></code>
+      <code><![CDATA[public function getGoalsForUser(int $userId): ?array]]></code>
+      <code><![CDATA[public function update(int $id, array $data): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[SleepGoal::create($data)]]></code>
+      <code><![CDATA[SleepGoal::find($id)]]></code>
+      <code><![CDATA[SleepGoal::findOrFail($id)]]></code>
+      <code><![CDATA[SleepGoal::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/Repository/SleepRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(array $data): array]]></code>
+      <code><![CDATA[public function delete(int $id): bool]]></code>
+      <code><![CDATA[public function findById(int $id): ?array]]></code>
+      <code><![CDATA[public function getAllForUser(int $userId): array]]></code>
+      <code><![CDATA[public function getRecentSleepData(int $userId, int $limit): array]]></code>
+      <code><![CDATA[public function getSleepDataForPeriod(int $userId, Carbon $startDate): array]]></code>
+      <code><![CDATA[public function update(int $id, array $data): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Sleep::create($data)]]></code>
+      <code><![CDATA[Sleep::find($id)]]></code>
+      <code><![CDATA[Sleep::findOrFail($id)]]></code>
+      <code><![CDATA[Sleep::where('user_id', $userId)]]></code>
+      <code><![CDATA[Sleep::where('user_id', $userId)]]></code>
+      <code><![CDATA[Sleep::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Health/RepositoryInterfaces/DietRepositoryInterface.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[createDietEntry]]></code>
+      <code><![CDATA[getDietEntriesByUserId]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/RepositoryInterfaces/SleepGoalRepositoryInterface.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[delete]]></code>
+      <code><![CDATA[findById]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/RepositoryInterfaces/SleepRepositoryInterface.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[delete]]></code>
+      <code><![CDATA[findById]]></code>
+      <code><![CDATA[getAllForUser]]></code>
+      <code><![CDATA[update]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/AddFoodRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/AddGlassRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/BasicSportRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/CompleteTrainingRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/DateRangeRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[DateRangeRequest]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Modules/Health/Requests/GetDietRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/GetMonthlyRequest.php">
+    <InvalidOperand>
+      <code><![CDATA[date('Y') + 1]]></code>
+      <code><![CDATA[date('Y') + 1]]></code>
+    </InvalidOperand>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/GetStatisticsRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/ImportDeviceDataRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function attributes(): array]]></code>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/MonthYearRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[MonthYearRequest]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Modules/Health/Requests/RecordSleepRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/SaveContainerRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/SelectSportRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/SetDailyGoalRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/SetReminderRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/SetSleepGoalRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function attributes(): array]]></code>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/ToggleReminderRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[ToggleReminderRequest]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Modules/Health/Requests/UpdateDietGoalsRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/UpdateFoodRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/UpdateSportRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Requests/UserTrainingRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function messages(): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Health/Resources/FoodResource.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function toArray($request): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->calories]]></code>
+      <code><![CDATA[$this->carbohydrates]]></code>
+      <code><![CDATA[$this->fat]]></code>
+      <code><![CDATA[$this->id]]></code>
+      <code><![CDATA[$this->name]]></code>
+      <code><![CDATA[$this->protein]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Modules/Health/Services/DietService.php">
+    <InvalidOperand>
+      <code><![CDATA[($goalAchievedDays / $totalDays) * 100]]></code>
+    </InvalidOperand>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function addFood(array $data)]]></code>
+      <code><![CDATA[public function deleteFood($id): bool]]></code>
+      <code><![CDATA[public function getDailyDiet($date, $mealType = null): array]]></code>
+      <code><![CDATA[public function getDietGoals(): array]]></code>
+      <code><![CDATA[public function getMonthlyDiet($year, $month): array]]></code>
+      <code><![CDATA[public function getStatistics($period): array]]></code>
+      <code><![CDATA[public function getWeeklyDiet($date = null): array]]></code>
+      <code><![CDATA[public function updateDietGoals(array $data): array]]></code>
+      <code><![CDATA[public function updateFood($id, array $data)]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <TooManyArguments>
+      <code><![CDATA[select]]></code>
+    </TooManyArguments>
+    <UndefinedMagicMethod>
+      <code><![CDATA[DietEntry::create([
+            'user_id'   => Auth::id(),
+            'food_id'   => $data['food_id'],
+            'quantity'  => $data['quantity'],
+            'date'      => $data['date'],
+            'meal_type' => $data['meal_type'],
+        ])]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietEntry::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietGoal::create([
+            'user_id'       => Auth::id(),
+            'calories'      => $data['calories'],
+            'protein'       => $data['protein'],
+            'fat'           => $data['fat'],
+            'carbohydrates' => $data['carbohydrates'],
+            'is_active'     => true,
+        ])]]></code>
+      <code><![CDATA[DietGoal::where('user_id', Auth::id())]]></code>
+      <code><![CDATA[DietGoal::where('user_id', Auth::id())]]></code>
+    </UndefinedMagicMethod>
+    <UnusedVariable>
+      <code><![CDATA[$dietGoal]]></code>
+      <code><![CDATA[$dietGoal]]></code>
+    </UnusedVariable>
+  </file>
+  <file src="app/Modules/Health/Services/SleepService.php">
+    <InvalidArrayOffset>
+      <code><![CDATA[$countBuckets[$roundedTemp]]]></code>
+      <code><![CDATA[$countBuckets[$roundedTemp]]]></code>
+      <code><![CDATA[$countBuckets[$roundedTemp]]]></code>
+      <code><![CDATA[$hourlyCount[$hour]]]></code>
+      <code><![CDATA[$hourlyCount[$hour]]]></code>
+      <code><![CDATA[$hourlyCount[$hour]]]></code>
+      <code><![CDATA[$hourlyQuality[$hour]]]></code>
+      <code><![CDATA[$hourlyQuality[$hour]]]></code>
+      <code><![CDATA[$hourlyQuality[$hour]]]></code>
+      <code><![CDATA[$tempBuckets[$roundedTemp]]]></code>
+      <code><![CDATA[$tempBuckets[$roundedTemp]]]></code>
+      <code><![CDATA[$tempBuckets[$roundedTemp]]]></code>
+    </InvalidArrayOffset>
+    <InvalidOperand>
+      <code><![CDATA[$avgDuration / 60]]></code>
+      <code><![CDATA[$avgQuality + (min($avgDuration, 480) / 480) * 5]]></code>
+      <code><![CDATA[$bedtimeDiff * 1.67]]></code>
+      <code><![CDATA[$bedtimeRegularity + $wakeTimeRegularity]]></code>
+      <code><![CDATA[$bedtimeScore + $wakeTimeScore]]></code>
+      <code><![CDATA[$bestHour * 60]]></code>
+      <code><![CDATA[$currentBedtimeMinutes - $avgBedtimeMinutes]]></code>
+      <code><![CDATA[$currentWakeTimeMinutes - $avgWakeTimeMinutes]]></code>
+      <code><![CDATA[$hoursProgress + $bedtimeAdherence]]></code>
+      <code><![CDATA[$minutes - $avg]]></code>
+      <code><![CDATA[$n * $sumXY]]></code>
+      <code><![CDATA[$sumX * $sumY]]></code>
+      <code><![CDATA[$totalDuration / count($sleepData)]]></code>
+      <code><![CDATA[$totalTimeInBed - $totalInterruptionTime]]></code>
+      <code><![CDATA[$wakeTimeDiff * 1.67]]></code>
+      <code><![CDATA[($bedtimeRegularity + $wakeTimeRegularity) / 2]]></code>
+      <code><![CDATA[($bedtimeScore + $wakeTimeScore) / 2]]></code>
+      <code><![CDATA[($bedtimeSuccessCount / $totalDays) * 100]]></code>
+      <code><![CDATA[($bestHour * 60) + 30]]></code>
+      <code><![CDATA[($hoursProgress + $bedtimeAdherence + $wakeTimeAdherence + $interruptionsSuccess) / 4]]></code>
+      <code><![CDATA[($hoursSuccessCount / $totalDays) * 100]]></code>
+      <code><![CDATA[($interruptionsSuccessCount / $totalDays) * 100]]></code>
+      <code><![CDATA[($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX * $sumX)]]></code>
+      <code><![CDATA[($totalTimeInBed - $totalInterruptionTime) / $totalTimeInBed]]></code>
+      <code><![CDATA[($wakeTimeSuccessCount / $totalDays) * 100]]></code>
+      <code><![CDATA[(420 - $avgDuration) / 60]]></code>
+      <code><![CDATA[(min($avgDuration, 480) / 480) * 5]]></code>
+      <code><![CDATA[100 - ($bedtimeDeviation * 1.67)]]></code>
+      <code><![CDATA[100 - ($bedtimeDiff * 1.67)]]></code>
+      <code><![CDATA[100 - ($wakeTimeDeviation * 1.67)]]></code>
+      <code><![CDATA[100 - ($wakeTimeDiff * 1.67)]]></code>
+      <code><![CDATA[1440 - $deviation1]]></code>
+      <code><![CDATA[420 - $avgDuration]]></code>
+      <code><![CDATA[array_sum($data['duration']) / count($data['duration'])]]></code>
+      <code><![CDATA[array_sum($data['durations']) / count($data['durations'])]]></code>
+      <code><![CDATA[array_sum($deviations) / count($deviations)]]></code>
+      <code><![CDATA[array_sum($durations) / count($durations)]]></code>
+      <code><![CDATA[array_sum($temperatures) / count($temperatures)]]></code>
+      <code><![CDATA[array_sum($x) / $n]]></code>
+      <code><![CDATA[array_sum($y) / $n]]></code>
+      <code><![CDATA[ceil((420 - $avgDuration) / 60)]]></code>
+      <code><![CDATA[floor($optimalBedtime / 60) % 24]]></code>
+      <code><![CDATA[min($avgDuration, 480) / 480]]></code>
+      <code><![CDATA[round($avgDuration / 60, 1)]]></code>
+    </InvalidOperand>
+    <InvalidReturnStatement>
+      <code><![CDATA[($bestHour * 60) + 30]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[int]]></code>
+    </InvalidReturnType>
+    <InvalidScalarArgument>
+      <code><![CDATA[$hours]]></code>
+    </InvalidScalarArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function analyzeSleep(int $durationInMinutes, array $interruptions, ?string $moodOnWaking = null, ?array $environment = null): string]]></code>
+      <code><![CDATA[public function getGoalsProgress(): array]]></code>
+      <code><![CDATA[public function getRecommendations(): array]]></code>
+      <code><![CDATA[public function getSleepCorrelations(): array]]></code>
+      <code><![CDATA[public function getStatistics(string $period): array]]></code>
+      <code><![CDATA[public function getTrends(int $months): array]]></code>
+      <code><![CDATA[public function importDeviceData(array $data): array]]></code>
+      <code><![CDATA[public function recordSleep(array $data): array]]></code>
+      <code><![CDATA[public function setSleepGoals(array $goals): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <TypeDoesNotContainType>
+      <code><![CDATA[0]]></code>
+      <code><![CDATA[0]]></code>
+      <code><![CDATA[0]]></code>
+      <code><![CDATA[0]]></code>
+    </TypeDoesNotContainType>
+    <UnusedParam>
+      <code><![CDATA[$deviceData]]></code>
+      <code><![CDATA[$deviceData]]></code>
+      <code><![CDATA[$deviceData]]></code>
+      <code><![CDATA[$interruptions]]></code>
+      <code><![CDATA[$interruptionsCount]]></code>
+      <code><![CDATA[$qualityScores]]></code>
+      <code><![CDATA[$userId]]></code>
+      <code><![CDATA[$userId]]></code>
+      <code><![CDATA[$userId]]></code>
+      <code><![CDATA[$userId]]></code>
+    </UnusedParam>
+    <UnusedVariable>
+      <code><![CDATA[$sleepRecords]]></code>
+    </UnusedVariable>
+  </file>
+  <file src="app/Modules/Health/Services/WaterService.php">
+    <InvalidOperand>
+      <code><![CDATA[$baseGoalMl * $heightFactor]]></code>
+      <code><![CDATA[$bottlesSaved * 15]]></code>
+      <code><![CDATA[$bottlesSaved * 3]]></code>
+      <code><![CDATA[$co2Saved / 20000]]></code>
+      <code><![CDATA[$dailyGoalMl / $data->glass_volume_ml]]></code>
+      <code><![CDATA[$dailyGoalMl / $data->glass_volume_ml]]></code>
+      <code><![CDATA[$plasticSaved / 1000]]></code>
+      <code><![CDATA[($plasticSaved / 1000) * 6000]]></code>
+      <code><![CDATA[($userRank / $allAverages->count()) * 100]]></code>
+      <code><![CDATA[ceil($dailyGoalMl / $data->glass_volume_ml) * $data->glass_volume_ml]]></code>
+    </InvalidOperand>
+    <InvalidScalarArgument>
+      <code><![CDATA[$hour]]></code>
+      <code><![CDATA[$hour]]></code>
+    </InvalidScalarArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function addGlass(int $userId, ?int $containerId = null, ?int $customVolumeMl = null): array]]></code>
+      <code><![CDATA[public function calculateDailyGoal(WaterGoalDTO $data): array]]></code>
+      <code><![CDATA[public function deleteContainer(int $userId, int $containerId): array]]></code>
+      <code><![CDATA[public function deleteReminder(int $userId, int $reminderId): array]]></code>
+      <code><![CDATA[public function getComparison(int $userId): array]]></code>
+      <code><![CDATA[public function getConsumptionInsights(int $userId): array]]></code>
+      <code><![CDATA[public function getContainers(int $userId): array]]></code>
+      <code><![CDATA[public function getDailyConsumption(int $userId, ?string $date = null): array]]></code>
+      <code><![CDATA[public function getDailyStats(int $userId): array]]></code>
+      <code><![CDATA[public function getEcoReport(int $userId): array]]></code>
+      <code><![CDATA[public function getHistory(int $userId, ?string $startDate = null, ?string $endDate = null, int $perPage = 10): array]]></code>
+      <code><![CDATA[public function getMonthlyConsumption(int $userId, ?string $yearMonth = null): array]]></code>
+      <code><![CDATA[public function getOverallStats(int $userId): array]]></code>
+      <code><![CDATA[public function getReminders(int $userId): array]]></code>
+      <code><![CDATA[public function getWeeklyConsumption(int $userId, ?string $startDate = null): array]]></code>
+      <code><![CDATA[public function removeGlass(int $userId): array]]></code>
+      <code><![CDATA[public function saveContainer(int $userId, WaterContainerDTO $containerData): array]]></code>
+      <code><![CDATA[public function setReminder(int $userId, WaterReminderDTO $reminderData): array]]></code>
+      <code><![CDATA[public function toggleReminder(int $userId, int $reminderId, bool $isEnabled): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[UserWaterContainer::find($containerId)]]></code>
+      <code><![CDATA[UserWaterContainer::updateOrCreate(
+            [
+                'id' => $containerData->id ?? null,
+                'user_id' => $userId
+            ],
+            [
+                'name' => $containerData->name,
+                'volume_ml' => $containerData->volume_ml,
+                'icon' => $containerData->icon ?? 'glass',
+                'color' => $containerData->color ?? '#3498db',
+                'is_default' => $containerData->is_default ?? false,
+            ]
+        )]]></code>
+      <code><![CDATA[UserWaterContainer::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterContainer::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterContainer::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::updateOrCreate(
+            ['user_id' => $userId, 'date' => Carbon::today()],
+            [
+                'daily_goal_ml' => $dailyGoalMl,
+                'glass_volume_ml' => $data->glass_volume_ml,
+                'remaining_ml' => $dailyGoalMl,
+            ]
+        )]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgress::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::create([
+                'user_id' => $userId,
+                'date' => Carbon::today(),
+                'daily_goal_ml' => $dailyGoalMl,
+                'glass_volume_ml' => $data->glass_volume_ml,
+                'calculation_factors' => json_encode([
+                    'weight' => $data->weight,
+                    'height' => $data->height,
+                    'goal' => $data->goal,
+                    'activity_level' => $data->activity_level ?? 'moderate',
+                    'climate' => $data->climate ?? 'moderate',
+                ])
+            ])]]></code>
+      <code><![CDATA[UserWaterProgressHistory::create([
+            'user_id' => $userId,
+            'date' => Carbon::today(),
+            'action' => 'add',
+            'volume_ml' => $volumeMl,
+            'container_id' => $containerId,
+            'timestamp' => Carbon::now(),
+        ])]]></code>
+      <code><![CDATA[UserWaterProgressHistory::create([
+            'user_id' => $userId,
+            'date' => Carbon::today(),
+            'action' => 'remove',
+            'volume_ml' => $volumeToRemove,
+            'container_id' => $lastAddition ? $lastAddition->container_id : null,
+            'timestamp' => Carbon::now(),
+        ])]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterProgressHistory::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterReminder::updateOrCreate(
+            [
+                'id' => $reminderData->id ?? null,
+                'user_id' => $userId
+            ],
+            [
+                'start_time' => $reminderData->start_time,
+                'end_time' => $reminderData->end_time,
+                'interval_minutes' => $reminderData->interval_minutes,
+                'days_of_week' => json_encode($reminderData->days_of_week ?? [1, 2, 3, 4, 5, 6, 7]),
+                'is_enabled' => $reminderData->is_enabled ?? true,
+                'message' => $reminderData->message ?? 'Пора выпить стакан воды!',
+            ]
+        )]]></code>
+      <code><![CDATA[UserWaterReminder::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterReminder::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterReminder::where('user_id', $userId)]]></code>
+      <code><![CDATA[UserWaterReminder::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$progress->consumed_ml]]></code>
+      <code><![CDATA[$progress->daily_goal_ml]]></code>
+      <code><![CDATA[$progress->glass_volume_ml]]></code>
+      <code><![CDATA[$progress->glass_volume_ml]]></code>
+      <code><![CDATA[$progress->glasses_today]]></code>
+      <code><![CDATA[$progress->remaining_ml]]></code>
+    </UndefinedMagicPropertyFetch>
+    <UnusedVariable>
+      <code><![CDATA[$minHour]]></code>
+    </UnusedVariable>
+  </file>
+  <file src="app/Modules/Task/Controllers/TaskCategoryController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[destroy]]></code>
+      <code><![CDATA[index]]></code>
+      <code><![CDATA[store]]></code>
+      <code><![CDATA[update]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Task/Controllers/TaskController.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+      <code><![CDATA[destroy]]></code>
+      <code><![CDATA[index]]></code>
+      <code><![CDATA[markAsCompleted]]></code>
+      <code><![CDATA[store]]></code>
+      <code><![CDATA[update]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$taskRepository]]></code>
+    </PossiblyUnusedProperty>
+    <UndefinedMagicMethod>
+      <code><![CDATA[json]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Task/Repositories/TaskCategoryRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(array $data): TaskCategory]]></code>
+      <code><![CDATA[public function delete(int $id): bool]]></code>
+      <code><![CDATA[public function findById(int $id): ?TaskCategory]]></code>
+      <code><![CDATA[public function getCategoriesByUserId(int $userId): Collection]]></code>
+      <code><![CDATA[public function update(int $id, array $data): ?TaskCategory]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[TaskCategory::create($data)]]></code>
+      <code><![CDATA[TaskCategory::find($id)]]></code>
+      <code><![CDATA[TaskCategory::where('user_id', $userId)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Task/Repositories/TaskRepository.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function create(array $data): Task {]]></code>
+      <code><![CDATA[public function delete(Task $task): void {]]></code>
+      <code><![CDATA[public function markAsCompleted(Task $task): Task]]></code>
+      <code><![CDATA[public function update(Task $task, array $data): Task {]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Task::create($data)]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Modules/Task/Requests/TaskCategoryRequest.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function validated($key = null, $default = null)]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[authorize]]></code>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Task/Requests/TaskRequest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[rules]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Modules/Task/Resources/TaskCategoryResource.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function toArray(Request $request): array]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->id]]></code>
+      <code><![CDATA[$this->name]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Modules/Task/Resources/TaskResource.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function toArray(Request $request): array {]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->category]]></code>
+      <code><![CDATA[$this->description]]></code>
+      <code><![CDATA[$this->due_date]]></code>
+      <code><![CDATA[$this->id]]></code>
+      <code><![CDATA[$this->is_completed]]></code>
+      <code><![CDATA[$this->priority]]></code>
+      <code><![CDATA[$this->title]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Modules/Task/Services/TaskCategoryService.php">
+    <InvalidScalarArgument>
+      <code><![CDATA[$userId]]></code>
+      <code><![CDATA[$userId]]></code>
+      <code><![CDATA[$userId]]></code>
+    </InvalidScalarArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createCategory(array $data): TaskCategory]]></code>
+      <code><![CDATA[public function createDefaultCategoriesIfNeeded(int $userId): void]]></code>
+      <code><![CDATA[public function deleteCategory(int $categoryId): bool]]></code>
+      <code><![CDATA[public function getUserCategories(): Collection]]></code>
+      <code><![CDATA[public function updateCategory(int $categoryId, array $data): ?TaskCategory]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$category->user_id]]></code>
+      <code><![CDATA[$category->user_id]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Modules/Task/Services/TaskService.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createTask(array $data): Task {]]></code>
+      <code><![CDATA[public function deleteTask(Task $task): void]]></code>
+      <code><![CDATA[public function getTasks($userId): Collection]]></code>
+      <code><![CDATA[public function markAsCompleted(Task $task): Task]]></code>
+      <code><![CDATA[public function updateTask(Task $task, array $data): Task]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$taskQuery]]></code>
+    </PossiblyUnusedProperty>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Task::where('user_id', $userId)]]></code>
+      <code><![CDATA[TaskCategory::firstOrCreate([
+                'name'    => $data['category'],
+                'user_id' => $userId,
+            ])]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Observers/UserObserver.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[created]]></code>
+      <code><![CDATA[deleted]]></code>
+      <code><![CDATA[forceDeleted]]></code>
+      <code><![CDATA[restored]]></code>
+      <code><![CDATA[updated]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[$user]]></code>
+    </PossiblyUnusedParam>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceCategory::create([
+                    'user_id' => $user->id,
+                    'name'    => $cat['name'],
+                    'type'    => $cat['type'],
+                    'icon'    => $cat['icon'],
+                ])]]></code>
+      <code><![CDATA[FinanceCategory::where('user_id', $user->id)]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$user->id]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Providers/AppServiceProvider.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function register(): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[boot]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Providers/AuthServiceProvider.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[boot]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="app/Providers/BroadcastServiceProvider.php">
+    <UnusedClass>
+      <code><![CDATA[BroadcastServiceProvider]]></code>
+    </UnusedClass>
+  </file>
+  <file src="app/Providers/EventServiceProvider.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function boot(): void]]></code>
+      <code><![CDATA[public function shouldDiscoverEvents(): bool]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="app/Providers/RouteServiceProvider.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function boot(): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="database/factories/UserFactory.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function definition(): array]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[UserFactory]]></code>
+    </UnusedClass>
+    <UnusedClosureParam>
+      <code><![CDATA[$attributes]]></code>
+    </UnusedClosureParam>
+  </file>
+  <file src="database/migrations/2025_01_14_091645_add_consumed_ml_to_user_water_progress_table.php">
+    <UnusedClosureParam>
+      <code><![CDATA[$table]]></code>
+    </UnusedClosureParam>
+  </file>
+  <file src="database/migrations/2025_01_14_091905_add_remaining_ml_to_user_water_progress_table.php">
+    <UnusedClosureParam>
+      <code><![CDATA[$table]]></code>
+    </UnusedClosureParam>
+  </file>
+  <file src="database/seeders/DatabaseSeeder.php">
+    <UnusedClass>
+      <code><![CDATA[DatabaseSeeder]]></code>
+    </UnusedClass>
+  </file>
+  <file src="database/seeders/DefaultFinanceCategoriesSeeder.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[run]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[FinanceCategory::where('user_id', $user->id)]]></code>
+    </UndefinedMagicMethod>
+    <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$user->id]]></code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="database/seeders/FoodSeeder.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[run]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Food::create([
+            'name' => 'Apple',
+            'calories' => 95,
+            'protein' => 0.5,
+            'fat' => 0.3,
+            'carbohydrates' => 25,
+        ])]]></code>
+      <code><![CDATA[Food::create([
+            'name' => 'Broccoli',
+            'calories' => 55,
+            'protein' => 5,
+            'fat' => 1,
+            'carbohydrates' => 11,
+        ])]]></code>
+      <code><![CDATA[Food::create([
+            'name' => 'Chicken Breast',
+            'calories' => 200,
+            'protein' => 30,
+            'fat' => 5,
+            'carbohydrates' => 0,
+        ])]]></code>
+      <code><![CDATA[Food::create([
+            'name' => 'Rice',
+            'calories' => 130,
+            'protein' => 3,
+            'fat' => 0,
+            'carbohydrates' => 28,
+        ])]]></code>
+      <code><![CDATA[Food::create([
+            'name' => 'Salmon',
+            'calories' => 232,
+            'protein' => 25,
+            'fat' => 14,
+            'carbohydrates' => 0,
+        ])]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="database/seeders/SportsSeeder.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[run]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[Sport::truncate()]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="database/seeders/TrainingProgramSeeder.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[run]]></code>
+    </PossiblyUnusedMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[TrainingProgram::insert([
+            ['sport_id' => 1, 'goal' => 'Набрать массу', 'recommendation' => '4-5 силовых тренировок в неделю, прогрессия нагрузок, высокий белковый рацион.'],
+            ['sport_id' => 1, 'goal' => 'Похудеть', 'recommendation' => '4-5 тренировок в неделю с акцентом на круговые тренировки, кардио, контроль питания.'],
+            ['sport_id' => 1, 'goal' => 'Повысить выносливость', 'recommendation' => 'Интервальные тренировки, кардио, больше повторений с меньшим весом.'],
+
+            ['sport_id' => 2, 'goal' => 'Набрать массу', 'recommendation' => 'Дополните бег силовыми тренировками 3 раза в неделю, следите за питанием.'],
+            ['sport_id' => 2, 'goal' => 'Похудеть', 'recommendation' => 'Бег 4-5 раз в неделю, интервальный бег, длинные дистанции.'],
+            ['sport_id' => 2, 'goal' => 'Повысить выносливость', 'recommendation' => 'Добавляйте длинные кроссы, интервальные забеги и бег в горку.'],
+
+            ['sport_id' => 3, 'goal' => 'Набрать массу', 'recommendation' => 'Дополните велотренировки упражнениями на ноги (приседания, жим ногами).'],
+            ['sport_id' => 3, 'goal' => 'Похудеть', 'recommendation' => 'Велотренировки 4-6 раз в неделю с разной интенсивностью.'],
+            ['sport_id' => 3, 'goal' => 'Повысить выносливость', 'recommendation' => 'Увеличивайте продолжительность поездок, используйте интервальные нагрузки.'],
+
+            ['sport_id' => 4, 'goal' => 'Набрать массу', 'recommendation' => 'Плавайте в интенсивном режиме, дополняйте силовыми тренировками.'],
+            ['sport_id' => 4, 'goal' => 'Похудеть', 'recommendation' => 'Плавайте 3-5 раз в неделю, добавляйте интервальные и длинные дистанции.'],
+            ['sport_id' => 4, 'goal' => 'Повысить выносливость', 'recommendation' => 'Используйте разные стили плавания, увеличивайте время тренировок.'],
+        ])]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="routes/console.php">
+    <InvalidScope>
+      <code><![CDATA[$this]]></code>
+    </InvalidScope>
+  </file>
+</files>
