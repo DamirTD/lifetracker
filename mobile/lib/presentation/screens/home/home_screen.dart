@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
 import 'package:mobile/data/models/user_model.dart';
 import 'package:mobile/data/repositories/user_repository.dart';
 import 'package:mobile/presentation/screens/home/profile_screen.dart';
@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   String? _error;
   bool _disposed = false;
-  int notificationCount = 2;
   double _scrollOffset = 0;
 
   @override
@@ -168,20 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed:
-                      () => Navigator.pushReplacementNamed(context, '/welcome'),
-                  child: const Text('Вернуться на экран входа'),
-                ),
               ],
             ),
           ),
@@ -191,7 +176,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: colors.surface,
-      floatingActionButton: _buildSpeedDial(context),
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           setState(() {
@@ -208,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: colors.surface,
               surfaceTintColor: colors.surfaceTint,
               expandedHeight: 180,
+              automaticallyImplyLeading: false,
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,
                 background: Container(
@@ -327,31 +312,23 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             MaterialPageRoute(builder: (context) => const ProfileScreen()),
           ),
-      child: Badge(
-        isLabelVisible: notificationCount > 0,
-        label:
-            notificationCount > 0 ? Text(notificationCount.toString()) : null,
-        backgroundColor: colors.error,
-        textColor: colors.onError,
-        alignment: Alignment.topRight,
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: colors.primaryContainer,
-            border: Border.all(
-              color: colors.primary.withAlpha((0.2 * 255).round()),
-              width: 2,
-            ),
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: colors.primaryContainer,
+          border: Border.all(
+            color: colors.primary.withAlpha((0.2 * 255).round()),
+            width: 2,
           ),
-          child:
-              avatarUrl.isEmpty
-                  ? Icon(Icons.person, size: 28, color: colors.primary)
-                  : ClipOval(
-                    child: Image.network(avatarUrl, fit: BoxFit.cover),
-                  ),
         ),
+        child:
+            avatarUrl.isEmpty
+                ? Icon(Icons.person, size: 28, color: colors.primary)
+                : ClipOval(
+                  child: Image.network(avatarUrl, fit: BoxFit.cover),
+                ),
       ),
     );
   }
@@ -457,71 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildSpeedDial(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
 
-    return SpeedDial(
-      icon: Icons.add,
-      activeIcon: Icons.close,
-      backgroundColor: colors.primary,
-      foregroundColor: colors.onPrimary,
-      elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      spaceBetweenChildren: 12,
-      childrenButtonSize: const Size(
-        56,
-        56,
-      ), // Исправлено: передаем Size вместо int
-      childMargin: const EdgeInsets.symmetric(horizontal: 8),
-      childPadding: const EdgeInsets.all(8),
-      children: [
-        SpeedDialChild(
-          child: Icon(Icons.local_drink, color: colors.onPrimary),
-          backgroundColor: Colors.blue,
-          label: 'Добавить воду',
-          labelStyle: TextStyle(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w500,
-          ),
-          labelBackgroundColor: colors.surface,
-          onTap: () => _navigateToTracker(context, 'Вода'),
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.task_alt, color: colors.onPrimary),
-          backgroundColor: Colors.green,
-          label: 'Новая задача',
-          labelStyle: TextStyle(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w500,
-          ),
-          labelBackgroundColor: colors.surface,
-          onTap: () => _navigateToTracker(context, 'Задачи'),
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.attach_money, color: colors.onPrimary),
-          backgroundColor: Colors.teal,
-          label: 'Добавить расход',
-          labelStyle: TextStyle(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w500,
-          ),
-          labelBackgroundColor: colors.surface,
-          onTap: () => _navigateToTracker(context, 'Финансы'),
-        ),
-      ],
-    );
-  }
-
-  void _navigateToTracker(BuildContext context, String trackerName) {
-    final tracker = _categories.firstWhere(
-      (element) => element['label'] == trackerName,
-      orElse: () => _categories[0],
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => tracker['screen']),
-    );
-  }
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
