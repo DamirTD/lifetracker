@@ -8,7 +8,10 @@ class AuthRepository {
   Future<UserModel?> login(String login, String password) async {
     final response = await http.post(
       Uri.parse("${Config.apiUrl}/login"),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
       body: jsonEncode({
         "login": login,
         "password": password,
@@ -31,7 +34,10 @@ class AuthRepository {
   Future<Map<String, dynamic>> register(Map<String, String> userData) async {
     final response = await http.post(
       Uri.parse("${Config.apiUrl}/register"),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
       body: jsonEncode(userData),
     );
 

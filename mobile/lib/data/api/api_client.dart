@@ -13,18 +13,21 @@ class ApiClient {
     return prefs.getString('auth_token');
   }
 
-  Future<Map<String, String>> _getHeaders() async {
-    final token = await _getToken();
-
-    if (token == null || token.isEmpty) {
-      throw Exception('Пожалуйста, войдите в систему.');
-    }
-
-    return {
+  Future<Map<String, String>> _getHeaders({bool requireAuth = true}) async {
+    Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
     };
+
+    if (requireAuth) {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        throw Exception('Пожалуйста, войдите в систему.');
+      }
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    return headers;
   }
 
   Future<dynamic> get(String path, {required Map<String, dynamic> queryParams}) async {
@@ -45,9 +48,9 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> post(String path, dynamic data) async {
+  Future<dynamic> post(String path, dynamic data, {bool requireAuth = true}) async {
     try {
-      final headers  = await _getHeaders();
+      final headers  = await _getHeaders(requireAuth: requireAuth);
       final response = await _httpClient.post(
         Uri.parse('$baseUrl/$path'),
         headers: headers,
@@ -57,6 +60,11 @@ class ApiClient {
     } catch (e) {
       rethrow;
     }
+  }
+
+  // Публичный POST запрос без авторизации (для login/register)
+  Future<dynamic> postPublic(String path, dynamic data) async {
+    return post(path, data, requireAuth: false);
   }
 
   Future<dynamic> put(String path, dynamic data) async {
