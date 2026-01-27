@@ -168,4 +168,28 @@ class TaskRepository {
       rethrow;
     }
   }
+
+  Future<Task> markTaskAsIncomplete(int taskId) async {
+    try {
+      final headers = await _getHeaders();
+
+      final response = await http.patch(
+        Uri.parse('${Config.apiUrl}/tasks/$taskId/incomplete'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Task.fromJson(data['data']);
+      } else if (response.statusCode == 401) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
+        throw Exception('Сессия истекла. Пожалуйста, войдите в систему повторно.');
+      } else {
+        throw Exception('Ошибка отмены выполнения задачи: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

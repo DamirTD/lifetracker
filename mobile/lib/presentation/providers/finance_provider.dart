@@ -87,14 +87,16 @@ class FinanceProvider extends ChangeNotifier {
 
     try {
       final newRecord = await _repository.createFinanceRecord(data);
-      _records.add(newRecord);
+      _records.insert(0, newRecord); // Добавляем в начало списка
       notifyListeners();
       return newRecord;
     } catch (e) {
       _setError(e.toString());
-      return null;
+      notifyListeners();
+      rethrow; // Пробрасываем ошибку дальше для обработки в UI
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
@@ -109,8 +111,9 @@ class FinanceProvider extends ChangeNotifier {
     int page = 1,
     int perPage = 15,
   }) async {
-    _setLoading(true);
-    _setError(null);
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
     currentPeriod = period;
     currentType = type;
@@ -130,14 +133,17 @@ class FinanceProvider extends ChangeNotifier {
         perPage: perPage,
       );
 
-      _records = result['records'];
+      // Явно обновляем список записей
+      _records = List<FinanceRecord>.from(result['records'] ?? []);
       _summary = result['summary'];
       _pagination = result['pagination'];
-      notifyListeners();
+      _error = null;
     } catch (e) {
-      _setError(e.toString());
+      _error = e.toString();
+      // Не очищаем записи при ошибке, оставляем предыдущие данные
     } finally {
-      _setLoading(false);
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -158,9 +164,11 @@ class FinanceProvider extends ChangeNotifier {
       return updatedRecord;
     } catch (e) {
       _setError(e.toString());
-      return null;
+      notifyListeners();
+      rethrow; // Пробрасываем ошибку дальше для обработки в UI
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 

@@ -305,6 +305,17 @@ class TasksProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> markTaskAsIncomplete(int id) async {
+    try {
+      await _taskRepository.markTaskAsIncomplete(id);
+      await loadData();
+    } catch (e) {
+      _state = _state.copyWith(error: e.toString());
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future<void> deleteTask(int id) async {
     try {
       await _taskRepository.deleteTask(id);

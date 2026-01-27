@@ -25,4 +25,10 @@ class TaskRepository implements TaskRepositoryInterface
         $task->update(['is_completed' => true]);
         return $task;
     }
+
+    public function markAsIncomplete(Task $task): Task
+    {
+        $task->update(['is_completed' => false]);
+        return $task;
+    }
 }

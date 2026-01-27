@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/models/finance/finance_budget.dart';
@@ -21,8 +22,47 @@ import '../../providers/finance_provider.dart';
       }
 
       if (budgets.isEmpty) {
-        return const Center(
-          child: Text('No budgets found. Create your first budget!'),
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                  child: Icon(
+                    Icons.account_balance_wallet_outlined,
+                    size: 60,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Пока нет бюджетов',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Создайте свой первый бюджет\nи начните контролировать расходы',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       }
 
@@ -41,68 +81,258 @@ import '../../providers/finance_provider.dart';
       final amount = budget.amount;
       final spent = budget.spent;
       final remaining = budget.remaining;
-      final categoryName = budget.categoryName ?? 'Unknown Category';
+      final categoryName = budget.categoryName ?? 'Без категории';
       final period = budget.period;
 
-      return Card(
+      final color = _getBudgetColor(percentageUsed);
+      final currencyFormat = NumberFormat.currency(
+        locale: 'kk_KZ',
+        symbol: '₸',
+        decimalDigits: 0,
+      );
+
+      String formatCurrency(double value) => currencyFormat.format(value);
+
+      String _periodLabel(String p) {
+        switch (p) {
+          case 'day':
+            return 'День';
+          case 'week':
+            return 'Неделя';
+          case 'month':
+            return 'Месяц';
+          case 'year':
+            return 'Год';
+          default:
+            return 'Период';
+        }
+      }
+
+      return Container(
         margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.10),
+              Colors.white,
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(
+            color: color.withOpacity(0.25),
+            width: 1.2,
+          ),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    categoryName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.25),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.account_balance_wallet_rounded,
+                      color: color,
+                      size: 22,
                     ),
                   ),
-                  Text(
-                    period.capitalize(),
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          categoryName,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                            letterSpacing: -0.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: color.withOpacity(0.4),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today_rounded,
+                                    size: 12,
+                                    color: color,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    _periodLabel(period),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: color.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                '${percentageUsed.toStringAsFixed(0)}%',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: color,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              LinearProgressIndicator(
-                value: percentageUsed / 100,
-                backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  _getBudgetColor(percentageUsed),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: (percentageUsed / 100).clamp(0.0, 1.0),
+                  backgroundColor: Colors.white.withOpacity(0.7),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  minHeight: 10,
                 ),
-                minHeight: 10,
-                borderRadius: BorderRadius.circular(5),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${percentageUsed.toStringAsFixed(1)}% used'),
-                  Text('\$${spent.toStringAsFixed(2)} / \$${amount.toStringAsFixed(2)}'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Remaining: \$${remaining.toStringAsFixed(2)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Лимит',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        formatCurrency(amount),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                  if (budget.startDate != null && budget.endDate != null)
-                    Text(
-                      '${_formatDate(budget.startDate!)} - ${_formatDate(budget.endDate!)}',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Потрачено',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        formatCurrency(spent),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'Осталось',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        formatCurrency(remaining),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: remaining <= 0 ? Colors.red : Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
+              if (budget.startDate != null && budget.endDate != null) ...[
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule_rounded,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${_formatDate(budget.startDate!)} — ${_formatDate(budget.endDate!)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -122,7 +352,7 @@ import '../../providers/finance_provider.dart';
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    return DateFormat('dd.MM.yyyy', 'ru').format(date);
   }
 }
 

@@ -271,9 +271,16 @@ class _TasksScreenState extends State<TasksScreen> {
                 else
                   GestureDetector(
                     onTap: () {
-                      if (!task.isCompleted && task.id != null) {
-                        Provider.of<TasksProvider>(context, listen: false)
-                            .markTaskAsCompleted(task.id!);
+                      if (task.id != null) {
+                        if (task.isCompleted) {
+                          // Отменяем выполнение задачи
+                          Provider.of<TasksProvider>(context, listen: false)
+                              .markTaskAsIncomplete(task.id!);
+                        } else {
+                          // Отмечаем задачу как выполненную
+                          Provider.of<TasksProvider>(context, listen: false)
+                              .markTaskAsCompleted(task.id!);
+                        }
                         // Сохраняем снимок после изменения состояния
                         Future.delayed(const Duration(milliseconds: 500), () {
                           _saveDailySnapshot();

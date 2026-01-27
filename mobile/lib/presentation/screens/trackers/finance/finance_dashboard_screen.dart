@@ -4,17 +4,21 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import '../../../../data/models/finance/finance_summary.dart';
-import '../../../../data/models/finance/financial_advice.dart';
 import '../../../providers/finance_provider.dart';
+import 'finance_records_screen.dart';
 
-class FinanceDashboardWidget extends StatelessWidget {
+class FinanceDashboardWidget extends StatefulWidget {
   const FinanceDashboardWidget({super.key});
 
+  @override
+  State<FinanceDashboardWidget> createState() => _FinanceDashboardWidgetState();
+}
+
+class _FinanceDashboardWidgetState extends State<FinanceDashboardWidget> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FinanceProvider>(context);
     final summary = provider.summary;
-    final advice = provider.advice;
     final theme = Theme.of(context);
 
     if (provider.isLoading) {
@@ -49,7 +53,6 @@ class FinanceDashboardWidget extends StatelessWidget {
               label: const Text('Попробовать снова'),
               onPressed: () {
                 provider.getFinanceRecords(period: 'month');
-                provider.getFinancialAdvice();
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -69,7 +72,6 @@ class FinanceDashboardWidget extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async {
         await provider.getFinanceRecords(period: 'month');
-        await provider.getFinancialAdvice();
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -82,11 +84,6 @@ class FinanceDashboardWidget extends StatelessWidget {
 
             // Summary Card with Circular Chart
             if (summary != null) _buildSummaryCard(context, summary),
-
-            const SizedBox(height: 24),
-
-            // Financial Advice
-            if (advice.isNotEmpty) _buildAdviceSection(context, advice),
 
             const SizedBox(height: 16),
           ],
@@ -279,24 +276,28 @@ class FinanceDashboardWidget extends StatelessWidget {
         summary.totalIncome,
         Colors.green,
         Icons.arrow_downward,
+        'income',
       ),
       _LegendItem(
         'Расходы',
         summary.totalExpense,
         Colors.red,
         Icons.arrow_upward,
+        'expense',
       ),
       _LegendItem(
         'Накопления',
         summary.totalSaving,
         Colors.blue,
         Icons.savings,
+        'saving',
       ),
       _LegendItem(
         'Инвестиции',
         summary.totalInvestment,
         Colors.purple,
         Icons.trending_up,
+        'investment',
       ),
     ];
 
@@ -394,47 +395,83 @@ class FinanceDashboardWidget extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: item.color.withAlpha(20),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: item.color.withAlpha(100), width: 1),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(item.icon, color: item.color, size: 20),
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: item.color,
-                  shape: BoxShape.circle,
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        // Переход к экрану транзакций с нужным типом
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const FinanceRecordsScreen(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: item.color.withAlpha(20),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: item.color.withAlpha(100), width: 1),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(item.icon, color: item.color, size: 20),
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: item.color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              item.title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(180),
+                fontWeight: FontWeight.w500,
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            item.title,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(180),
-              fontWeight: FontWeight.w500,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            formatter.format(item.value),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: item.color,
+            const SizedBox(height: 4),
+            Text(
+              formatter.format(item.value),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: item.color,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    'Смотреть операции',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: item.color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: item.color,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -577,146 +614,6 @@ class FinanceDashboardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildAdviceSection(
-    BuildContext context,
-    List<FinancialAdvice> advice,
-  ) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.amber.withAlpha(100),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(
-                Icons.lightbulb_outline,
-                color: Colors.amber,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Финансовые советы',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ...advice.map((item) => _buildAdviceCard(context, item)),
-      ],
-    );
-  }
-
-  Widget _buildAdviceCard(BuildContext context, FinancialAdvice advice) {
-    final theme = Theme.of(context);
-    final (color, icon) = _getAdviceStyle(advice.type);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shadowColor: color.withAlpha(30),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          // Можно добавить детальное описание по тапу
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [color.withAlpha(20), theme.colorScheme.surface],
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(100),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: color, size: 22),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        advice.title,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        advice.description,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withAlpha(180),
-                        ),
-                      ),
-                      if (advice.action != null) ...[
-                        const SizedBox(height: 12),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: color.withAlpha(100),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              advice.action!,
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: color,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  (Color, IconData) _getAdviceStyle(String type) {
-    switch (type.toLowerCase()) {
-      case 'saving':
-        return (Colors.blue, Icons.savings);
-      case 'expense':
-        return (Colors.red, Icons.money_off);
-      case 'investment':
-        return (Colors.purple, Icons.trending_up);
-      case 'income':
-        return (Colors.green, Icons.payments);
-      default:
-        return (Colors.grey, Icons.info);
-    }
-  }
 }
 
 class _LegendItem {
@@ -724,8 +621,9 @@ class _LegendItem {
   final double value;
   final Color color;
   final IconData icon;
+  final String type;
 
-  _LegendItem(this.title, this.value, this.color, this.icon);
+  _LegendItem(this.title, this.value, this.color, this.icon, this.type);
 }
 
 class CircularChartPainter extends CustomPainter {

@@ -107,7 +107,7 @@ class FinanceController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             type="object",
-     *             required={"amount", "type", "period", "category_id"},
+     *             required={"amount", "type", "category_id"},
      *             @OA\Property(
      *                 property="amount",
      *                 type="number",
@@ -119,12 +119,6 @@ class FinanceController extends Controller
      *                 type="string",
      *                 enum={"expense", "income", "saving", "investment"},
      *                 description="Тип записи (расход, доход, сбережение или инвестиция)."
-     *             ),
-     *             @OA\Property(
-     *                 property="period",
-     *                 type="string",
-     *                 enum={"day", "week", "month", "year"},
-     *                 description="Период записи."
      *             ),
      *             @OA\Property(
      *                 property="category_id",
@@ -141,17 +135,6 @@ class FinanceController extends Controller
      *                 property="description",
      *                 type="string",
      *                 description="Описание записи (опционально)."
-     *             ),
-     *             @OA\Property(
-     *                 property="is_recurring",
-     *                 type="boolean",
-     *                 description="Является ли запись регулярной (опционально)."
-     *             ),
-     *             @OA\Property(
-     *                 property="recurring_frequency",
-     *                 type="string",
-     *                 enum={"daily", "weekly", "monthly", "yearly"},
-     *                 description="Частота повторения для регулярных записей (опционально)."
      *             )
      *         )
      *     ),
@@ -167,12 +150,9 @@ class FinanceController extends Controller
      *                 @OA\Property(property="id", type="integer", description="ID записи."),
      *                 @OA\Property(property="amount", type="number", format="float", description="Сумма."),
      *                 @OA\Property(property="type", type="string", description="Тип записи."),
-     *                 @OA\Property(property="period", type="string", description="Период записи."),
      *                 @OA\Property(property="category_id", type="integer", description="ID категории."),
      *                 @OA\Property(property="date", type="string", format="date", description="Дата записи."),
-     *                 @OA\Property(property="description", type="string", description="Описание записи."),
-     *                 @OA\Property(property="is_recurring", type="boolean", description="Является ли запись регулярной."),
-     *                 @OA\Property(property="recurring_frequency", type="string", description="Частота повторения.")
+     *                 @OA\Property(property="description", type="string", description="Описание записи.")
      *             )
      *         )
      *     )
@@ -314,27 +294,8 @@ class FinanceController extends Controller
         $startDate = $data['start_date'] ?? null;
         $endDate = $data['end_date'] ?? null;
 
-        if (!$startDate && isset($data['period'])) {
-            match ($data['period']) {
-                'day' => [
-                    $startDate = now()->startOfDay(),
-                    $endDate = now()->endOfDay(),
-                ],
-                'week' => [
-                    $startDate = now()->startOfWeek(),
-                    $endDate = now()->endOfWeek(),
-                ],
-                'month' => [
-                    $startDate = now()->startOfMonth(),
-                    $endDate = now()->endOfMonth(),
-                ],
-                'year' => [
-                    $startDate = now()->startOfYear(),
-                    $endDate = now()->endOfYear(),
-                ],
-                default => null,
-            };
-        }
+        // Фильтрация по периоду отключена - показываем все записи
+        // Если нужна фильтрация по датам, используйте start_date и end_date напрямую
         
         $records = $this->recordQuery->getFilteredRecords(
             $userId,
@@ -394,12 +355,6 @@ class FinanceController extends Controller
      *                 description="Тип записи."
      *             ),
      *             @OA\Property(
-     *                 property="period",
-     *                 type="string",
-     *                 enum={"day", "week", "month", "year"},
-     *                 description="Период записи."
-     *             ),
-     *             @OA\Property(
      *                 property="category_id",
      *                 type="integer",
      *                 description="ID категории."
@@ -414,17 +369,6 @@ class FinanceController extends Controller
      *                 property="description",
      *                 type="string",
      *                 description="Описание записи."
-     *             ),
-     *             @OA\Property(
-     *                 property="is_recurring",
-     *                 type="boolean",
-     *                 description="Является ли запись регулярной."
-     *             ),
-     *             @OA\Property(
-     *                 property="recurring_frequency",
-     *                 type="string",
-     *                 enum={"daily", "weekly", "monthly", "yearly"},
-     *                 description="Частота повторения для регулярных записей."
      *             )
      *         )
      *     ),
@@ -440,12 +384,9 @@ class FinanceController extends Controller
      *                 @OA\Property(property="id", type="integer", description="ID записи."),
      *                 @OA\Property(property="amount", type="number", format="float", description="Сумма после обновления."),
      *                 @OA\Property(property="type", type="string", description="Тип записи."),
-     *                 @OA\Property(property="period", type="string", description="Период записи."),
      *                 @OA\Property(property="category_id", type="integer", description="ID категории."),
      *                 @OA\Property(property="date", type="string", format="date", description="Дата записи."),
-     *                 @OA\Property(property="description", type="string", description="Описание записи."),
-     *                 @OA\Property(property="is_recurring", type="boolean", description="Является ли запись регулярной."),
-     *                 @OA\Property(property="recurring_frequency", type="string", description="Частота повторения.")
+     *                 @OA\Property(property="description", type="string", description="Описание записи.")
      *             )
      *         )
      *     ),

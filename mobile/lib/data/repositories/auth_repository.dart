@@ -32,19 +32,58 @@ class AuthRepository {
   }
 
   Future<Map<String, dynamic>> register(Map<String, String> userData) async {
-    final response = await http.post(
-      Uri.parse("${Config.apiUrl}/register"),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(userData),
-    );
+    final url = "${Config.apiUrl}/register";
+    print("🔵 [REGISTER] Отправка запроса на: $url");
+    print("🔵 [REGISTER] Данные: ${userData.keys.map((k) => '$k: ***').join(', ')}");
+    
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode(userData),
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          print("❌ [REGISTER] Таймаут запроса");
+          throw Exception("Таймаут запроса. Проверьте подключение к интернету.");
+        },
+      );
 
-    return {
-      "status": response.statusCode,
-      "body": jsonDecode(response.body),
-    };
+      print("🔵 [REGISTER] Статус ответа: ${response.statusCode}");
+      print("🔵 [REGISTER] Тело ответа: ${response.body}");
+
+      Map<String, dynamic> body;
+      try {
+        if (response.body.isEmpty) {
+          body = {'error': 'Пустой ответ от сервера'};
+        } else {
+          body = jsonDecode(response.body) as Map<String, dynamic>;
+        }
+      } catch (e) {
+        print("❌ [REGISTER] Ошибка парсинга JSON: $e");
+        body = {
+          'error': 'Неверный формат ответа от сервера',
+          'raw_response': response.body,
+        };
+      }
+
+      return {
+        "status": response.statusCode,
+        "body": body,
+      };
+    } catch (e) {
+      print("❌ [REGISTER] Ошибка сети: $e");
+      return {
+        "status": 0,
+        "body": {
+          "error": e.toString(),
+          "message": "Ошибка соединения с сервером. Проверьте подключение к интернету.",
+        },
+      };
+    }
   }
 
   Future<void> logout() async {

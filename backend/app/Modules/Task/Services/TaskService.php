@@ -23,6 +23,11 @@ class TaskService implements TaskServiceInterface
         return $this->taskRepository->markAsCompleted($task);
     }
 
+    public function markAsIncomplete(Task $task): Task
+    {
+        return $this->taskRepository->markAsIncomplete($task);
+    }
+
     public function createTask(array $data): Task {
         $userId = Auth::id();
 

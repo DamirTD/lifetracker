@@ -37,9 +37,7 @@ class TaskItem extends StatelessWidget {
         leading: Checkbox(
           value: task.isCompleted,
           onChanged: (value) {
-            if (!task.isCompleted) {
-              onCompleted();
-            }
+            onCompleted();
           },
         ),
         trailing: Row(

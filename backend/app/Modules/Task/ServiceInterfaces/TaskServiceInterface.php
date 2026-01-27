@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 interface TaskServiceInterface
 {
     public function markAsCompleted(Task $task): Task;
+    public function markAsIncomplete(Task $task): Task;
     public function createTask(array $data);
     public function updateTask(Task $task, array $data);
     public function deleteTask(Task $task);

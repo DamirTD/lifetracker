@@ -161,4 +161,29 @@ class TaskController extends Controller {
     {
         return new TaskResource($this->taskService->markAsCompleted($task));
     }
+
+    /**
+     * @OA\Patch(
+     *     path="/api/tasks/{task}/incomplete",
+     *     summary="Отменить выполнение задачи",
+     *     tags={"Tasks"},
+     *     security={{ "sanctum": {} }},
+     *     @OA\Parameter(
+     *         name="task",
+     *         in="path",
+     *         required=true,
+     *         description="ID задачи",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Выполнение задачи отменено",
+     *         @OA\JsonContent(ref="#/components/schemas/TaskResource")
+     *     )
+     * )
+     */
+    public function markAsIncomplete(Task $task): TaskResource
+    {
+        return new TaskResource($this->taskService->markAsIncomplete($task));
+    }
 }

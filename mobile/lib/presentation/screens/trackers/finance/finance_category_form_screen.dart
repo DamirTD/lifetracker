@@ -57,8 +57,19 @@ class _FinanceCategoryFormScreenState extends State<FinanceCategoryFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: Text(widget.category == null ? 'Add Category' : 'Edit Category'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          widget.category == null ? 'Добавить категорию' : 'Редактировать категорию',
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: false,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

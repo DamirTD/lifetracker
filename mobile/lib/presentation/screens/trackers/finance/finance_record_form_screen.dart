@@ -13,16 +13,28 @@ class FinanceRecordFormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(record == null ? 'Add Record' : 'Edit Record'),
-      ),
-      body: FinanceRecordFormWidget(
-        record: record,
-        onComplete: (success) {
-          if (success) {
-            Navigator.pop(context, true);
-          }
-        },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).primaryColor.withOpacity(0.1),
+              Colors.white,
+              Theme.of(context).primaryColor.withOpacity(0.05),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: FinanceRecordFormWidget(
+            record: record,
+            onComplete: (success) {
+              if (success) {
+                Navigator.pop(context, true);
+              }
+            },
+          ),
+        ),
       ),
     );
   }

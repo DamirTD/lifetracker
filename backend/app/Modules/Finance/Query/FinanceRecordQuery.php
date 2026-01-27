@@ -104,6 +104,11 @@ class FinanceRecordQuery implements FinanceRecordQueryInterface
             $data['date'] = now();
         }
 
+        // Поле period больше не используется, но оставляем null для совместимости
+        if (!isset($data['period'])) {
+            $data['period'] = null;
+        }
+
         $data['user_id'] = auth()->id();
 
         $record = FinanceRecord::create($data);

@@ -120,8 +120,25 @@ class ApiClient {
     } else {
       try {
         final error = jsonDecode(response.body);
-        throw Exception(error['message'] ?? 'Неизвестная ошибка');
+        String errorMessage = error['message'] ?? 'Неизвестная ошибка';
+        
+        // Обработка ошибок валидации (422)
+        if (response.statusCode == 422 && error['errors'] != null) {
+          final errors = error['errors'] as Map<String, dynamic>;
+          final errorList = <String>[];
+          errors.forEach((key, value) {
+            if (value is List) {
+              errorList.addAll(value.map((e) => e.toString()));
+            } else {
+              errorList.add(value.toString());
+            }
+          });
+          errorMessage = errorList.join('\n');
+        }
+        
+        throw Exception(errorMessage);
       } catch (e) {
+        if (e is Exception) rethrow;
         throw Exception('Ошибка сервера: ${response.statusCode}');
       }
     }

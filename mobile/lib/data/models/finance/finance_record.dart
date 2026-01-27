@@ -2,7 +2,7 @@ class FinanceRecord {
   final int id;
   final double amount;
   final String type;
-  final String period;
+  final String? period;
   final int categoryId;
   final String? categoryName;
   final DateTime date;
@@ -14,7 +14,7 @@ class FinanceRecord {
     required this.id,
     required this.amount,
     required this.type,
-    required this.period,
+    this.period,
     required this.categoryId,
     this.categoryName,
     required this.date,
@@ -28,7 +28,7 @@ class FinanceRecord {
       id: json['id'],
       amount: double.parse(json['amount'].toString()),
       type: json['type'],
-      period: json['period'],
+      period: json['period'] as String?,
       categoryId: json['category_id'],
       categoryName: json['category_name'],
       description: json['description'],
@@ -42,12 +42,13 @@ class FinanceRecord {
     final map = {
       'amount': amount,
       'type': type,
-      'period': period,
       'category_id': categoryId,
       'date': date.toIso8601String(),
       'is_recurring': isRecurring,
     };
 
+    // Поле period больше не используется, но оставляем для совместимости
+    if (period != null) map['period'] = period as Object;
     if (description != null) map['description'] = description as Object;
     if (isRecurring && recurringFrequency != null) {
       map['recurring_frequency'] = recurringFrequency as Object;

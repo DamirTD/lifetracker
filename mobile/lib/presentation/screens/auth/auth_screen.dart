@@ -123,6 +123,7 @@ class AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMi
     setState(() => _isLoading = true);
 
     try {
+      print("🔵 [AUTH_SCREEN] Начало регистрации");
       final response = await _authRepository.register({
         "name": _firstNameController.text,
         "surname": _lastNameController.text,
@@ -132,6 +133,8 @@ class AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMi
         "password_confirmation": _confirmPasswordController.text,
       });
 
+      print("🔵 [AUTH_SCREEN] Получен ответ: $response");
+
       if (!mounted) return;
       setState(() => _isLoading = false);
 
@@ -139,16 +142,29 @@ class AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMi
         _showSnackBar("Регистрация успешна!", Colors.green);
         _tabController.animateTo(0);
         _currentStep = 0;
-      } else {
+        _clearFields();
+      } else if (response["status"] == 0) {
+        // Ошибка сети
         final errorData = response["body"];
-        if (errorData.containsKey('errors')) {
-          String errorMessage = errorData['errors'].values.map((e) => e.join("\n")).join("\n");
+        _showSnackBar(errorData["message"] ?? "Ошибка соединения. Попробуйте позже.", Colors.red);
+      } else {
+        // Ошибка валидации или сервера
+        final errorData = response["body"];
+        if (errorData is Map && errorData.containsKey('errors')) {
+          String errorMessage = errorData['errors'].values
+              .map((e) => e is List ? e.join("\n") : e.toString())
+              .join("\n");
           _showSnackBar(errorMessage, Colors.red);
+        } else if (errorData is Map && errorData.containsKey('message')) {
+          _showSnackBar(errorData['message'], Colors.red);
+        } else if (errorData is Map && errorData.containsKey('error')) {
+          _showSnackBar(errorData['error'], Colors.red);
         } else {
           _showSnackBar("Ошибка регистрации. Попробуйте снова.", Colors.red);
         }
       }
     } catch (e) {
+      print("❌ [AUTH_SCREEN] Исключение: $e");
       if (!mounted) return;
       setState(() => _isLoading = false);
       _showSnackBar("Ошибка соединения. Попробуйте позже.", Colors.red);
